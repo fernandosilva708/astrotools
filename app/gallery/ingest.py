@@ -7,10 +7,10 @@ SEESTAR_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.tif', '.tiff', '.fits', '.fit'}
 
 
 def ingest_seestar_folder(folder_path: str, user_id: int) -> int:
-    """Scan a Seestar output folder and import new images into the gallery.
+    """Analisa uma pasta de saída do Seestar e importa novas imagens para a galeria.
 
-    TODO: Parse Seestar FITS headers (TARGET, EXPTIME, GAIN, DATE-OBS) via astropy.io.fits.
-    TODO: Generate JPEG thumbnails using Pillow and store in thumb_path.
+    TODO: Analisar os cabeçalhos FITS do Seestar (TARGET, EXPTIME, GAIN, DATE-OBS) via astropy.io.fits.
+    TODO: Gerar miniaturas JPEG com o Pillow e guardar em thumb_path.
     """
     folder = Path(folder_path)
     if not folder.is_dir():

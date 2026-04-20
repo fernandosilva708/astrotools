@@ -14,13 +14,13 @@ def index():
 @telescopius_bp.route('/proxy')
 @login_required
 def proxy():
-    """Proxy requests to Telescopius.
+    """Encaminha pedidos para o Telescopius.
 
-    TODO: Forward authenticated requests with session cookie / token.
-    TODO: Map local paths to Telescopius API endpoints.
-    TODO: Handle CORS and content-type negotiation.
+    TODO: Encaminhar pedidos autenticados com cookie de sessão / token.
+    TODO: Mapear caminhos locais para os endpoints da API do Telescopius.
+    TODO: Tratar CORS e negociação de content-type.
     """
     base_url = current_app.config.get('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
     path = request.args.get('path', '/')
-    flash('Telescopius proxy is not yet implemented.', 'info')
+    flash('O proxy do Telescopius ainda não está implementado.', 'info')
     return redirect(url_for('telescopius.index'))

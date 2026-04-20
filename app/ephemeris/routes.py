@@ -13,20 +13,20 @@ def index():
 @ephemeris_bp.route('/calculate', methods=['POST'])
 @login_required
 def calculate():
-    """Calculate ephemeris data for a target object.
+    """Calcula dados de efemérides para um objeto alvo.
 
-    TODO: Use Skyfield to compute:
-      - Rise / transit / set times for given lat/lon/elevation
-      - Altitude & azimuth at a given time
-      - Moon phase and illumination
-      - Planetary positions
-    Expects JSON body: {target, lat, lon, elevation, date}
-    Returns JSON with computed values.
+    TODO: Usar o Skyfield para calcular:
+      - Horas de nascimento / trânsito / ocaso para dada lat/lon/altitude
+      - Altitude e azimute num dado instante
+      - Fase e iluminação da Lua
+      - Posições planetárias
+    Recebe corpo JSON: {target, lat, lon, elevation, date}
+    Devolve JSON com os valores calculados.
     """
     data = request.get_json() or {}
     target = data.get('target', '')
     return jsonify({
         'target': target,
         'status': 'not_implemented',
-        'message': 'Ephemeris calculation not yet implemented.',
+        'message': 'Cálculo de efemérides ainda não implementado.',
     })

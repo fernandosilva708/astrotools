@@ -19,7 +19,7 @@ def login():
             login_user(user, remember=remember)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('dashboard.index'))
-        flash('Invalid username or password.', 'danger')
+        flash('Nome de utilizador ou palavra-passe inválidos.', 'danger')
     return render_template('auth/login.html')
 
 
@@ -32,17 +32,17 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         if not username or not email or not password:
-            flash('All fields are required.', 'warning')
+            flash('Todos os campos são obrigatórios.', 'warning')
         elif User.query.filter_by(username=username).first():
-            flash('Username already taken.', 'warning')
+            flash('Nome de utilizador já em uso.', 'warning')
         elif User.query.filter_by(email=email).first():
-            flash('Email already registered.', 'warning')
+            flash('Email já registado.', 'warning')
         else:
             user = User(username=username, email=email)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
-            flash('Account created. Please log in.', 'success')
+            flash('Conta criada. Por favor inicie sessão.', 'success')
             return redirect(url_for('auth.login'))
     return render_template('auth/register.html')
 
@@ -51,5 +51,5 @@ def register():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
+    flash('Sessão terminada.', 'info')
     return redirect(url_for('auth.login'))

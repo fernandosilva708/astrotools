@@ -14,16 +14,16 @@ def index():
 @backup_bp.route('/run', methods=['POST'])
 @login_required
 def run_backup():
-    """Run rclone sync to back up the gallery upload folder.
+    """Executa sincronização rclone para fazer cópia de segurança da pasta de carregamentos da galeria.
 
-    TODO: Stream rclone output via Server-Sent Events for live progress.
-    TODO: Persist last-run timestamp and result to the database.
-    TODO: Support scheduled / automatic backups.
+    TODO: Transmitir a saída do rclone via Server-Sent Events para progresso em tempo real.
+    TODO: Guardar a data/hora e resultado da última execução na base de dados.
+    TODO: Suportar cópias de segurança agendadas / automáticas.
     """
     remote = current_app.config.get('RCLONE_REMOTE', '')
     path = current_app.config.get('RCLONE_PATH', '')
     if not remote or not path:
-        flash('RCLONE_REMOTE and RCLONE_PATH must be set in .env.', 'danger')
+        flash('RCLONE_REMOTE e RCLONE_PATH têm de estar definidos no ficheiro .env.', 'danger')
         return redirect(url_for('backup.index'))
     try:
         result = subprocess.run(
@@ -31,11 +31,11 @@ def run_backup():
             capture_output=True, text=True, timeout=300,
         )
         if result.returncode == 0:
-            flash('Backup completed successfully.', 'success')
+            flash('Cópia de segurança concluída com sucesso.', 'success')
         else:
-            flash(f'Backup failed: {result.stderr[:300]}', 'danger')
+            flash(f'Falha na cópia de segurança: {result.stderr[:300]}', 'danger')
     except FileNotFoundError:
-        flash('rclone not found. Install rclone and add it to PATH.', 'danger')
+        flash('rclone não encontrado. Instale o rclone e adicione-o ao PATH.', 'danger')
     except subprocess.TimeoutExpired:
-        flash('Backup timed out after 5 minutes.', 'warning')
+        flash('A cópia de segurança excedeu o tempo limite de 5 minutos.', 'warning')
     return redirect(url_for('backup.index'))

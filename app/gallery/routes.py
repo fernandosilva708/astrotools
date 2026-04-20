@@ -21,7 +21,7 @@ def upload():
     if request.method == 'POST':
         file = request.files.get('image')
         if not file or file.filename == '':
-            flash('No file selected.', 'warning')
+            flash('Nenhum ficheiro selecionado.', 'warning')
             return redirect(request.url)
         upload_dir = Path(current_app.root_path).parent / current_app.config['GALLERY_UPLOAD_FOLDER']
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -36,7 +36,7 @@ def upload():
         )
         db.session.add(image)
         db.session.commit()
-        flash('Image uploaded successfully.', 'success')
+        flash('Imagem carregada com sucesso.', 'success')
         return redirect(url_for('gallery.index'))
     return render_template('gallery/upload.html')
 
@@ -46,10 +46,10 @@ def upload():
 def ingest():
     seestar_path = current_app.config.get('SEESTAR_IMPORT_PATH', '')
     if not seestar_path:
-        flash('SEESTAR_IMPORT_PATH is not configured in .env.', 'danger')
+        flash('SEESTAR_IMPORT_PATH não está configurado no ficheiro .env.', 'danger')
         return redirect(url_for('gallery.index'))
     count = ingest_seestar_folder(seestar_path, current_user.id)
-    flash(f'Ingested {count} new image(s) from Seestar folder.', 'success')
+    flash(f'Importadas {count} nova(s) imagem(ns) da pasta do Seestar.', 'success')
     return redirect(url_for('gallery.index'))
 
 
@@ -59,5 +59,5 @@ def delete(image_id):
     image = GalleryImage.query.get_or_404(image_id)
     db.session.delete(image)
     db.session.commit()
-    flash('Image deleted.', 'success')
+    flash('Imagem eliminada.', 'success')
     return redirect(url_for('gallery.index'))

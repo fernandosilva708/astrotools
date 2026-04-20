@@ -42,12 +42,12 @@ class GalleryImage(db.Model):
     thumb_path = db.Column(db.String(512))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    # Plate-solve data
+    # Dados do plate-solve
     ra = db.Column(db.Float)
     dec = db.Column(db.Float)
     plate_solved = db.Column(db.Boolean, default=False)
     astrometry_job_id = db.Column(db.String(64))
-    # Seestar metadata
+    # Metadados do Seestar
     target_name = db.Column(db.String(128))
     exposure_time = db.Column(db.Float)
     gain = db.Column(db.Integer)
