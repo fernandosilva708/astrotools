@@ -1,38 +1,38 @@
 {% extends 'base.html' %}
-{% block title %}Ephemeris — AstroTools{% endblock %}
+{% block title %}Efemérides — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-calendar3"></i> Ephemeris</h2>
+<h2 class="mb-4"><i class="bi bi-calendar3"></i> <span data-i18n="nav_ephemeris">Efemérides</span></h2>
 
 <div class="row">
   <div class="col-md-5">
     <div class="card bg-dark border-secondary">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">Object Lookup</h5>
+        <h5 class="card-title mb-3" data-i18n="eph_search">Pesquisa de Objeto</h5>
         <form id="ephemerisForm">
           <div class="mb-3">
-            <label class="form-label">Target</label>
+            <label class="form-label" data-i18n="eph_target">Objeto Alvo</label>
             <input type="text" id="target" class="form-control" placeholder="e.g. Mars, M42, NGC 224" required>
           </div>
           <div class="row g-2 mb-3">
             <div class="col">
-              <label class="form-label">Latitude</label>
+              <label class="form-label" data-i18n="eph_lat">Latitude</label>
               <input type="number" id="lat" class="form-control" step="0.0001" placeholder="38.7169">
             </div>
             <div class="col">
-              <label class="form-label">Longitude</label>
+              <label class="form-label" data-i18n="eph_lon">Longitude</label>
               <input type="number" id="lon" class="form-control" step="0.0001" placeholder="-9.1395">
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">Elevation (m)</label>
+            <label class="form-label" data-i18n="eph_elevation">Altitude (m)</label>
             <input type="number" id="elevation" class="form-control" value="0">
           </div>
           <div class="mb-3">
-            <label class="form-label">Date</label>
+            <label class="form-label" data-i18n="eph_date">Data</label>
             <input type="date" id="date" class="form-control">
           </div>
-          <button type="submit" class="btn btn-primary w-100">Calculate</button>
+          <button type="submit" class="btn btn-primary w-100" data-i18n="eph_calculate">Calcular</button>
         </form>
       </div>
     </div>
@@ -41,9 +41,10 @@
     <div id="results" class="mt-4 mt-md-0">
       <div class="text-center py-5 text-muted">
         <i class="bi bi-stars display-3"></i>
-        <p class="mt-3">Enter a target and location to compute ephemeris data.</p>
+        <p class="mt-3" data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
         <p class="small text-warning">
-          <i class="bi bi-exclamation-triangle"></i> Calculation backend not yet implemented.
+          <i class="bi bi-exclamation-triangle"></i>
+          <span data-i18n="eph_not_implemented">Motor de cálculo ainda não implementado.</span>
         </p>
       </div>
     </div>

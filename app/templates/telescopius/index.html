@@ -2,17 +2,15 @@
 {% block title %}Telescopius — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-telescope"></i> Telescopius</h2>
+<h2 class="mb-4"><i class="bi bi-telescope"></i> <span data-i18n="nav_telescopius">Telescopius</span></h2>
 
 <div class="alert alert-info">
   <i class="bi bi-info-circle"></i>
-  The Telescopius proxy is not yet implemented. Configure <code>TELESCOPIUS_BASE_URL</code> in
-  <code>.env</code> and implement the proxy logic in
-  <code>app/telescopius/routes.py</code>.
+  <span data-i18n="tele_not_implemented">O proxy do Telescopius ainda não está implementado. Configure <code>TELESCOPIUS_BASE_URL</code> no ficheiro <code>.env</code> e implemente a lógica do proxy em <code>app/telescopius/routes.py</code>.</span>
 </div>
 
 <div class="text-center py-5 text-muted">
   <i class="bi bi-telescope display-1"></i>
-  <p class="mt-3">Telescopius integration coming soon.</p>
+  <p class="mt-3" data-i18n="tele_coming_soon">Integração com o Telescopius em breve.</p>
 </div>
 {% endblock %}

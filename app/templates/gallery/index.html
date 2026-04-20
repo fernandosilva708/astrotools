@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}Gallery — AstroTools{% endblock %}
+{% block title %}Galeria — AstroTools{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h2><i class="bi bi-images"></i> Gallery</h2>
+  <h2><i class="bi bi-images"></i> <span data-i18n="nav_gallery">Galeria</span></h2>
   <div>
     <form method="post" action="{{ url_for('gallery.ingest') }}" class="d-inline">
       <button type="submit" class="btn btn-outline-secondary me-2">
-        <i class="bi bi-folder-symlink"></i> Ingest from Seestar
+        <i class="bi bi-folder-symlink"></i> <span data-i18n="gallery_import_seestar">Importar do Seestar</span>
       </button>
     </form>
     <a href="{{ url_for('gallery.upload') }}" class="btn btn-primary">
-      <i class="bi bi-upload"></i> Upload
+      <i class="bi bi-upload"></i> <span data-i18n="gallery_upload_short">Carregar</span>
     </a>
   </div>
 </div>
@@ -28,7 +28,7 @@
         </h6>
         {% if img.plate_solved %}
           <span class="badge bg-success">
-            <i class="bi bi-crosshair"></i> Solved
+            <i class="bi bi-crosshair"></i> <span data-i18n="gallery_solved_badge">Resolvido</span>
           </span>
         {% endif %}
         {% if img.target_name %}
@@ -41,7 +41,8 @@
           <i class="bi bi-crosshair"></i>
         </a>
         <form method="post" action="{{ url_for('gallery.delete', image_id=img.id) }}"
-              onsubmit="return confirm('Delete this image?')">
+              data-confirm-key="gallery_delete_confirm"
+              onsubmit="return confirm(window._t('gallery_delete_confirm') || 'Eliminar esta imagem?')">
           <button class="btn btn-sm btn-outline-danger">
             <i class="bi bi-trash"></i>
           </button>
@@ -54,7 +55,7 @@
 {% else %}
 <div class="text-center py-5 text-muted">
   <i class="bi bi-images display-1"></i>
-  <p class="mt-3">No images yet. Upload one or ingest from Seestar.</p>
+  <p class="mt-3" data-i18n="gallery_no_images">Sem imagens. Carregue uma ou importe do Seestar.</p>
 </div>
 {% endif %}
 {% endblock %}

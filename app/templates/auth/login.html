@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Login — AstroTools{% endblock %}
+{% block title %}Entrar — AstroTools{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -11,22 +11,25 @@
         </h4>
         <form method="post">
           <div class="mb-3">
-            <label class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" required autofocus>
+            <label class="form-label" data-i18n="auth_username">Nome de utilizador</label>
+            <input type="text" name="username" class="form-control" required autofocus
+                   data-i18n-placeholder="auth_username">
           </div>
           <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <label class="form-label" data-i18n="auth_password">Palavra-passe</label>
+            <input type="password" name="password" class="form-control" required
+                   data-i18n-placeholder="auth_password">
           </div>
           <div class="mb-3 form-check">
             <input type="checkbox" name="remember" id="remember" class="form-check-input">
-            <label for="remember" class="form-check-label">Remember me</label>
+            <label for="remember" class="form-check-label" data-i18n="auth_remember">Lembrar-me</label>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Log in</button>
+          <button type="submit" class="btn btn-primary w-100" data-i18n="auth_login">Iniciar Sessão</button>
         </form>
         <hr class="border-secondary">
         <p class="text-center mb-0 small">
-          No account? <a href="{{ url_for('auth.register') }}">Register</a>
+          <span data-i18n="auth_no_account">Sem conta?</span>
+          <a href="{{ url_for('auth.register') }}" data-i18n="auth_register">Registar</a>
         </p>
       </div>
     </div>

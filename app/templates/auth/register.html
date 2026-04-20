@@ -1,30 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Register — AstroTools{% endblock %}
+{% block title %}Registar — AstroTools{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-md-4">
     <div class="card bg-dark border-secondary mt-5">
       <div class="card-body p-4">
-        <h4 class="card-title text-center mb-4">Create Account</h4>
+        <h4 class="card-title text-center mb-4" data-i18n="auth_create_account">Criar Conta</h4>
         <form method="post">
           <div class="mb-3">
-            <label class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" required autofocus>
+            <label class="form-label" data-i18n="auth_username">Nome de utilizador</label>
+            <input type="text" name="username" class="form-control" required autofocus
+                   data-i18n-placeholder="auth_username">
           </div>
           <div class="mb-3">
-            <label class="form-label">Email</label>
+            <label class="form-label" data-i18n="auth_email">Email</label>
             <input type="email" name="email" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <label class="form-label" data-i18n="auth_password">Palavra-passe</label>
+            <input type="password" name="password" class="form-control" required
+                   data-i18n-placeholder="auth_password">
           </div>
-          <button type="submit" class="btn btn-primary w-100">Register</button>
+          <button type="submit" class="btn btn-primary w-100" data-i18n="auth_register">Registar</button>
         </form>
         <hr class="border-secondary">
         <p class="text-center mb-0 small">
-          Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+          <span data-i18n="auth_has_account">Já tem conta?</span>
+          <a href="{{ url_for('auth.login') }}" data-i18n="auth_login_link">Iniciar sessão</a>
         </p>
       </div>
     </div>

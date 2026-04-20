@@ -2,14 +2,14 @@
 {% block title %}Dashboard — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-house"></i> Dashboard</h2>
+<h2 class="mb-4"><i class="bi bi-house"></i> <span data-i18n="nav_dashboard">Dashboard</span></h2>
 
 <div class="row g-3 mb-4">
   <div class="col-sm-6 col-md-3">
     <div class="card bg-dark border-secondary text-center">
       <div class="card-body">
         <div class="display-5 fw-bold text-primary">{{ image_count }}</div>
-        <div class="text-muted">Images</div>
+        <div class="text-muted" data-i18n="dash_images">Imagens</div>
       </div>
     </div>
   </div>
@@ -17,13 +17,13 @@
     <div class="card bg-dark border-secondary text-center">
       <div class="card-body">
         <div class="display-5 fw-bold text-info">{{ obs_count }}</div>
-        <div class="text-muted">Observations</div>
+        <div class="text-muted" data-i18n="dash_observations">Observações</div>
       </div>
     </div>
   </div>
 </div>
 
-<h5 class="mb-3">Recent Images</h5>
+<h5 class="mb-3" data-i18n="dash_recent_images">Imagens Recentes</h5>
 {% if recent_images %}
 <div class="row g-3">
   {% for img in recent_images %}
@@ -38,20 +38,23 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="text-muted">No images yet. <a href="{{ url_for('gallery.upload') }}">Upload your first image.</a></p>
+<p class="text-muted">
+  <span data-i18n="dash_no_images">Sem imagens.</span>
+  <a href="{{ url_for('gallery.upload') }}"><span data-i18n="dash_upload_image">Carregar Imagem</span></a>
+</p>
 {% endif %}
 
 <div class="row g-3 mt-3">
   <div class="col">
-    <h5 class="mb-3">Quick Actions</h5>
+    <h5 class="mb-3" data-i18n="dash_quick_actions">Ações Rápidas</h5>
     <a href="{{ url_for('gallery.upload') }}" class="btn btn-outline-primary me-2">
-      <i class="bi bi-upload"></i> Upload Image
+      <i class="bi bi-upload"></i> <span data-i18n="dash_upload_image">Carregar Imagem</span>
     </a>
     <a href="{{ url_for('ephemeris.index') }}" class="btn btn-outline-info me-2">
-      <i class="bi bi-calendar3"></i> Ephemeris
+      <i class="bi bi-calendar3"></i> <span data-i18n="nav_ephemeris">Efemérides</span>
     </a>
     <a href="{{ url_for('backup.index') }}" class="btn btn-outline-secondary">
-      <i class="bi bi-cloud-upload"></i> Backup
+      <i class="bi bi-cloud-upload"></i> <span data-i18n="nav_backup">Backup</span>
     </a>
   </div>
 </div>

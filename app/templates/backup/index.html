@@ -2,20 +2,20 @@
 {% block title %}Backup — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-cloud-upload"></i> Backup</h2>
+<h2 class="mb-4"><i class="bi bi-cloud-upload"></i> <span data-i18n="nav_backup">Backup</span></h2>
 
 <div class="row">
   <div class="col-md-6">
     <div class="card bg-dark border-secondary">
       <div class="card-body p-4">
-        <h5 class="card-title">rclone Sync</h5>
-        <p class="card-text text-muted">
-          Syncs <code>RCLONE_PATH</code> to <code>RCLONE_REMOTE</code> as configured in <code>.env</code>.
+        <h5 class="card-title" data-i18n="backup_sync_title">Sincronização rclone</h5>
+        <p class="card-text text-muted" data-i18n="backup_sync_desc">
+          Sincroniza <code>RCLONE_PATH</code> com <code>RCLONE_REMOTE</code> conforme configurado em <code>.env</code>.
         </p>
         <form method="post" action="{{ url_for('backup.run_backup') }}"
-              onsubmit="return confirm('Start backup now?')">
+              onsubmit="return confirm(window._t('backup_confirm') || 'Iniciar cópia de segurança agora?')">
           <button type="submit" class="btn btn-primary">
-            <i class="bi bi-play-circle"></i> Run Backup Now
+            <i class="bi bi-play-circle"></i> <span data-i18n="backup_run">Executar Cópia de Segurança</span>
           </button>
         </form>
       </div>
@@ -24,14 +24,14 @@
   <div class="col-md-6">
     <div class="card bg-dark border-secondary">
       <div class="card-body p-4">
-        <h5 class="card-title">Configuration</h5>
+        <h5 class="card-title" data-i18n="backup_config">Configuração</h5>
         <table class="table table-dark table-sm">
           <tbody>
             <tr><th>RCLONE_REMOTE</th><td><code>{{ config.get('RCLONE_REMOTE') or '(not set)' }}</code></td></tr>
             <tr><th>RCLONE_PATH</th><td><code>{{ config.get('RCLONE_PATH') or '(not set)' }}</code></td></tr>
           </tbody>
         </table>
-        <p class="small text-muted mb-0">Edit <code>.env</code> to configure rclone settings.</p>
+        <p class="small text-muted mb-0" data-i18n="backup_config_hint">Edite o ficheiro <code>.env</code> para configurar as definições do rclone.</p>
       </div>
     </div>
   </div>
