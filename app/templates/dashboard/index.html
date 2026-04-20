@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — AstroTools{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-house"></i> Dashboard</h2>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-md-3">
+    <div class="card bg-dark border-secondary text-center">
+      <div class="card-body">
+        <div class="display-5 fw-bold text-primary">{{ image_count }}</div>
+        <div class="text-muted">Images</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-3">
+    <div class="card bg-dark border-secondary text-center">
+      <div class="card-body">
+        <div class="display-5 fw-bold text-info">{{ obs_count }}</div>
+        <div class="text-muted">Observations</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5 class="mb-3">Recent Images</h5>
+{% if recent_images %}
+<div class="row g-3">
+  {% for img in recent_images %}
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="card bg-dark border-secondary h-100">
+      <div class="card-body p-2 text-center">
+        <i class="bi bi-image fs-1 text-secondary"></i>
+        <p class="card-text small mt-1 text-truncate" title="{{ img.filename }}">{{ img.title or img.filename }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No images yet. <a href="{{ url_for('gallery.upload') }}">Upload your first image.</a></p>
+{% endif %}
+
+<div class="row g-3 mt-3">
+  <div class="col">
+    <h5 class="mb-3">Quick Actions</h5>
+    <a href="{{ url_for('gallery.upload') }}" class="btn btn-outline-primary me-2">
+      <i class="bi bi-upload"></i> Upload Image
+    </a>
+    <a href="{{ url_for('ephemeris.index') }}" class="btn btn-outline-info me-2">
+      <i class="bi bi-calendar3"></i> Ephemeris
+    </a>
+    <a href="{{ url_for('backup.index') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-cloud-upload"></i> Backup
+    </a>
+  </div>
+</div>
+{% endblock %}

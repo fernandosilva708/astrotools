@@ -1,0 +1,35 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Flask / SQLite
+instance/
+astrotools.db
+*.db
+
+# Uploads (user data, not code)
+uploads/
+
+# Migrations auto-generated (keep env.py and versions/)
+# migrations/ is kept in full
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local settings
+.claude/
