@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
 from app import create_app
 
 app = create_app()

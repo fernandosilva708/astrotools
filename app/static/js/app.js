@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-only
 // Utilitários de frontend do AstroTools
 
 (function () {

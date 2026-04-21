@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-only
 const TRANSLATIONS = {
   pt: {
     nav_dashboard: 'Dashboard', nav_gallery: 'Galeria', nav_platesolve: 'Plate Solve',
@@ -19,6 +20,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Deixe em branco para usar o nome do ficheiro',
     gallery_description: 'Descrição', optional: '(opcional)', cancel: 'Cancelar',
     gallery_solved_badge: 'Resolvido',
+    gallery_delete_confirm: 'Eliminar esta imagem?'
     astrometry_title: 'Plate Solving (Identificação de Campo)',
     astrometry_pending: 'A aguardar plate-solve',
     astrometry_file: 'Ficheiro', astrometry_uploaded: 'Carregado',
@@ -59,6 +61,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Leave blank to use filename',
     gallery_description: 'Description', optional: '(optional)', cancel: 'Cancel',
     gallery_solved_badge: 'Solved',
+    gallery_delete_confirm: 'Delete this image?'
     astrometry_title: 'Plate Solving (Field Identification)',
     astrometry_pending: 'Awaiting plate-solve',
     astrometry_file: 'File', astrometry_uploaded: 'Uploaded',
@@ -99,6 +102,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Dejar en blanco para usar el nombre del archivo',
     gallery_description: 'Descripción', optional: '(opcional)', cancel: 'Cancelar',
     gallery_solved_badge: 'Resuelto',
+    gallery_delete_confirm: '¿Eliminar esta imagen?'
     astrometry_title: 'Plate Solving (Identificación de campo)',
     astrometry_pending: 'En espera de plate-solve',
     astrometry_file: 'Archivo', astrometry_uploaded: 'Subido',
@@ -139,6 +143,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Laisser vide pour utiliser le nom du fichier',
     gallery_description: 'Description', optional: '(facultatif)', cancel: 'Annuler',
     gallery_solved_badge: 'Résolu',
+    gallery_delete_confirm: 'Supprimer cette image ?'
     astrometry_title: 'Plate Solving (Identification de champ)',
     astrometry_pending: 'En attente de plate-solve',
     astrometry_file: 'Fichier', astrometry_uploaded: 'Téléversé',
@@ -179,6 +184,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Leer lassen, um den Dateinamen zu verwenden',
     gallery_description: 'Beschreibung', optional: '(optional)', cancel: 'Abbrechen',
     gallery_solved_badge: 'Gelöst',
+    gallery_delete_confirm: 'Dieses Bild löschen?'
     astrometry_title: 'Plate Solving (Feldidentifikation)',
     astrometry_pending: 'Warte auf Plate-Solve',
     astrometry_file: 'Datei', astrometry_uploaded: 'Hochgeladen',
@@ -219,6 +225,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Lascia vuoto per usare il nome del file',
     gallery_description: 'Descrizione', optional: '(opzionale)', cancel: 'Annulla',
     gallery_solved_badge: 'Risolto',
+    gallery_delete_confirm: 'Eliminare questa immagine?'
     astrometry_title: 'Plate Solving (Identificazione del campo)',
     astrometry_pending: 'In attesa di plate-solve',
     astrometry_file: 'File', astrometry_uploaded: 'Caricato',
@@ -259,6 +266,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Leeg laten om bestandsnaam te gebruiken',
     gallery_description: 'Beschrijving', optional: '(optioneel)', cancel: 'Annuleren',
     gallery_solved_badge: 'Opgelost',
+    gallery_delete_confirm: 'Deze afbeelding verwijderen?'
     astrometry_title: 'Plate Solving (Veldidentificatie)',
     astrometry_pending: 'Wachtend op plate-solve',
     astrometry_file: 'Bestand', astrometry_uploaded: 'Geüpload',
@@ -299,6 +307,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Zostaw puste, aby użyć nazwy pliku',
     gallery_description: 'Opis', optional: '(opcjonalne)', cancel: 'Anuluj',
     gallery_solved_badge: 'Rozwiązano',
+    gallery_delete_confirm: 'Usunąć to zdjęcie?'
     astrometry_title: 'Plate Solving (Identyfikacja pola)',
     astrometry_pending: 'Oczekujące na plate-solve',
     astrometry_file: 'Plik', astrometry_uploaded: 'Przesłano',
@@ -339,6 +348,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Lämna tomt för att använda filnamnet',
     gallery_description: 'Beskrivning', optional: '(valfritt)', cancel: 'Avbryt',
     gallery_solved_badge: 'Löst',
+    gallery_delete_confirm: 'Ta bort den här bilden?'
     astrometry_title: 'Plate Solving (Fältidentifiering)',
     astrometry_pending: 'Väntar på plate-solve',
     astrometry_file: 'Fil', astrometry_uploaded: 'Uppladdad',
@@ -379,6 +389,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Lad stå tomt for at bruge filnavnet',
     gallery_description: 'Beskrivelse', optional: '(valgfrit)', cancel: 'Annullér',
     gallery_solved_badge: 'Løst',
+    gallery_delete_confirm: 'Slet dette billede?'
     astrometry_title: 'Plate Solving (Feltidentifikation)',
     astrometry_pending: 'Afventer plate-solve',
     astrometry_file: 'Fil', astrometry_uploaded: 'Uploadet',
@@ -419,6 +430,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Jätä tyhjäksi käyttääksesi tiedostonimeä',
     gallery_description: 'Kuvaus', optional: '(valinnainen)', cancel: 'Peruuta',
     gallery_solved_badge: 'Ratkaistu',
+    gallery_delete_confirm: 'Poista tämä kuva?'
     astrometry_title: 'Plate Solving (Kentän tunnistus)',
     astrometry_pending: 'Odottaa plate-solvea',
     astrometry_file: 'Tiedosto', astrometry_uploaded: 'Ladattu',
@@ -459,6 +471,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Lăsați gol pentru a folosi numele fișierului',
     gallery_description: 'Descriere', optional: '(opțional)', cancel: 'Anulare',
     gallery_solved_badge: 'Rezolvat',
+    gallery_delete_confirm: 'Ștergeți această imagine?'
     astrometry_title: 'Plate Solving (Identificare câmp)',
     astrometry_pending: 'În așteptare plate-solve',
     astrometry_file: 'Fișier', astrometry_uploaded: 'Încărcat',
@@ -499,6 +512,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Hagyja üresen a fájlnév használatához',
     gallery_description: 'Leírás', optional: '(opcionális)', cancel: 'Mégse',
     gallery_solved_badge: 'Megoldva',
+    gallery_delete_confirm: 'Törli ezt a képet?'
     astrometry_title: 'Plate Solving (Mezőazonosítás)',
     astrometry_pending: 'Plate-solve-ra várakozó',
     astrometry_file: 'Fájl', astrometry_uploaded: 'Feltöltve',
@@ -539,6 +553,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Ponechte prázdné pro použití názvu souboru',
     gallery_description: 'Popis', optional: '(volitelné)', cancel: 'Zrušit',
     gallery_solved_badge: 'Vyřešeno',
+    gallery_delete_confirm: 'Smazat tento snímek?'
     astrometry_title: 'Plate Solving (Identifikace pole)',
     astrometry_pending: 'Čeká na plate-solve',
     astrometry_file: 'Soubor', astrometry_uploaded: 'Nahráno',
@@ -579,6 +594,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Nechajte prázdne pre použitie názvu súboru',
     gallery_description: 'Popis', optional: '(voliteľné)', cancel: 'Zrušiť',
     gallery_solved_badge: 'Vyriešené',
+    gallery_delete_confirm: 'Vymazať tento snímok?'
     astrometry_title: 'Plate Solving (Identifikácia poľa)',
     astrometry_pending: 'Čaká na plate-solve',
     astrometry_file: 'Súbor', astrometry_uploaded: 'Nahrané',
@@ -619,6 +635,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Ostavite prazno za korištenje naziva datoteke',
     gallery_description: 'Opis', optional: '(neobavezno)', cancel: 'Odustani',
     gallery_solved_badge: 'Riješeno',
+    gallery_delete_confirm: 'Obrisati ovu sliku?'
     astrometry_title: 'Plate Solving (Identifikacija polja)',
     astrometry_pending: 'Čeka plate-solve',
     astrometry_file: 'Datoteka', astrometry_uploaded: 'Preneseno',
@@ -659,6 +676,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Pustite prazno za uporabo imena datoteke',
     gallery_description: 'Opis', optional: '(neobvezno)', cancel: 'Prekliči',
     gallery_solved_badge: 'Rešeno',
+    gallery_delete_confirm: 'Izbrisati to sliko?'
     astrometry_title: 'Plate Solving (Identifikacija polja)',
     astrometry_pending: 'Čaka na plate-solve',
     astrometry_file: 'Datoteka', astrometry_uploaded: 'Naloženo',
@@ -699,6 +717,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Jätke tühjaks failinime kasutamiseks',
     gallery_description: 'Kirjeldus', optional: '(valikuline)', cancel: 'Tühista',
     gallery_solved_badge: 'Lahendatud',
+    gallery_delete_confirm: 'Kustuta see pilt?'
     astrometry_title: 'Plate Solving (Välja tuvastamine)',
     astrometry_pending: 'Ootab plate-solve\'i',
     astrometry_file: 'Fail', astrometry_uploaded: 'Üles laaditud',
@@ -739,6 +758,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Atstājiet tukšu, lai izmantotu faila nosaukumu',
     gallery_description: 'Apraksts', optional: '(neobligāti)', cancel: 'Atcelt',
     gallery_solved_badge: 'Atrisināts',
+    gallery_delete_confirm: 'Dzēst šo attēlu?'
     astrometry_title: 'Plate Solving (Lauka identifikācija)',
     astrometry_pending: 'Gaida plate-solve',
     astrometry_file: 'Fails', astrometry_uploaded: 'Augšupielādēts',
@@ -779,6 +799,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Palikite tuščią, kad naudotumėte failo pavadinimą',
     gallery_description: 'Aprašymas', optional: '(neprivaloma)', cancel: 'Atšaukti',
     gallery_solved_badge: 'Išspręsta',
+    gallery_delete_confirm: 'Ištrinti šį vaizdą?'
     astrometry_title: 'Plate Solving (Lauko identifikacija)',
     astrometry_pending: 'Laukia plate-solve',
     astrometry_file: 'Failas', astrometry_uploaded: 'Įkelta',
@@ -819,6 +840,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Оставете празно, за да използвате името на файла',
     gallery_description: 'Описание', optional: '(по избор)', cancel: 'Отказ',
     gallery_solved_badge: 'Решено',
+    gallery_delete_confirm: 'Изтриване на изображението?'
     astrometry_title: 'Plate Solving (Идентификация на поле)',
     astrometry_pending: 'Изчаква plate-solve',
     astrometry_file: 'Файл', astrometry_uploaded: 'Качено',
@@ -859,6 +881,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Αφήστε κενό για χρήση ονόματος αρχείου',
     gallery_description: 'Περιγραφή', optional: '(προαιρετικό)', cancel: 'Ακύρωση',
     gallery_solved_badge: 'Επιλύθηκε',
+    gallery_delete_confirm: 'Διαγραφή αυτής της εικόνας;'
     astrometry_title: 'Plate Solving (Αναγνώριση πεδίου)',
     astrometry_pending: 'Αναμένει plate-solve',
     astrometry_file: 'Αρχείο', astrometry_uploaded: 'Ανεβάστηκε',
@@ -899,6 +922,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Ħalli vojt biex tuża l-isem tal-fajl',
     gallery_description: 'Deskrizzjoni', optional: '(fakultattiv)', cancel: 'Ikkanċella',
     gallery_solved_badge: 'Solvut',
+    gallery_delete_confirm: "Tħassar din l-immaġni?"
     astrometry_title: 'Plate Solving (Identifikazzjoni tal-qasam)',
     astrometry_pending: 'Qed jistenna plate-solve',
     astrometry_file: 'Fajl', astrometry_uploaded: 'Mgħolli',
@@ -939,6 +963,7 @@ const TRANSLATIONS = {
     gallery_title_placeholder: 'Fág folamh chun ainm an chomhaid a úsáid',
     gallery_description: 'Cur síos', optional: '(roghnach)', cancel: 'Cealaigh',
     gallery_solved_badge: 'Réitithe',
+    gallery_delete_confirm: 'Scrios an íomhá seo?'
     astrometry_title: 'Plate Solving (Aithint réimse)',
     astrometry_pending: 'Ag fanacht le plate-solve',
     astrometry_file: 'Comhad', astrometry_uploaded: 'Uaslódáilte',

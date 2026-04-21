@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
 {% extends 'base.html' %}
 {% block title %}Registar — AstroTools{% endblock %}
 
@@ -8,6 +9,7 @@
       <div class="card-body p-4">
         <h4 class="card-title text-center mb-4" data-i18n="auth_create_account">Criar Conta</h4>
         <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="mb-3">
             <label class="form-label" data-i18n="auth_username">Nome de utilizador</label>
             <input type="text" name="username" class="form-control" required autofocus

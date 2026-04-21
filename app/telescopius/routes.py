@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
 from flask import Blueprint, render_template, request, Response, current_app, flash, redirect, url_for
 from flask_login import login_required
 import requests as http

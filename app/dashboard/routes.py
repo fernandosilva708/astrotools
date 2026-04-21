@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-only
 from flask import Blueprint, render_template
 from flask_login import login_required
 from app.models import GalleryImage, Observation
