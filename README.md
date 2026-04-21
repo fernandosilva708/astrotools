@@ -281,29 +281,29 @@ pytest tests/
 
 # AstroTools
 
-A Python Flask web application providing astronomy tools for amateur astronomers. Designed to run on a local network server (Raspberry Pi or Windows PC) and accessed from any browser on the same network.
+Uma aplicação web em Flask (Python) que disponibiliza um conjunto de ferramentas para astrónomos amadores. Concebida para correr num servidor local (Raspberry Pi ou PC) e acedida a partir de qualquer navegador na mesma rede.
 
-## License
+## Licença
 
-This project is licensed under the **GPL-2.0-only** license.
+Este projeto está licenciado sob a licença **GPL-2.0-only**.
 
 ---
 
-## Project Highlights & RPi 2 Optimizations
+## Destaques do Projeto e Otimizações para RPi 2
 
-- **Resource Efficient:** Specifically optimized for Raspberry Pi 2 (1GB RAM, ARMv7).
-- **Production Ready:** Configured for `gunicorn` (max 2 workers) with custom timeout management.
-- **Async Processing:** Long-running tasks (Backup, Image Ingestion) offloaded to background threads.
-- **Secure:** Integrated CSRF protection, secure header management, and safe redirect validation.
-- **Infrastructure:** System-level init support via `setup.sh` and `systemd` configuration.
+- **Eficiência de Recursos:** Otimizado especificamente para Raspberry Pi 2 (1GB RAM, ARMv7).
+- **Pronto para Produção:** Configurado para `gunicorn` (máximo de 2 trabalhadores) com gestão personalizada de *timeout*.
+- **Processamento Assíncrono:** Tarefas de longa duração (Cópias de segurança, Ingestão de imagens) delegadas para *threads* em segundo plano.
+- **Seguro:** Proteção CSRF integrada, gestão segura de cabeçalhos e validação de redirecionamentos.
+- **Infraestrutura:** Suporte para inicialização ao nível do sistema via `setup.sh` e configuração de `systemd`.
 
-## Implementation Status
+## Estado da Implementação
 
-Core functionality is fully implemented and optimized:
+A funcionalidade principal está totalmente implementada e otimizada:
 
-- ✅ **Auth:** Fully secure, CSRF-protected, email validation.
-- ✅ **Gallery:** Batch processing, efficient duplicate checking, and memory-safe ingestion.
-- ✅ **Backup:** Threaded `rclone` background management.
-- 🚧 **Astrometry:** Stubbed (Pending API flow implementation).
-- 🚧 **Ephemeris:** Stubbed (Pending calculation logic).
-- 🚧 **Telescopius:** Proxy placeholder.
+- ✅ **Autenticação:** Totalmente segura, protegida por CSRF, validação de e-mail.
+- ✅ **Galeria:** Processamento em lote, verificação eficiente de duplicados e ingestão otimizada para memória.
+- ✅ **Cópias de Segurança:** Gestão de `rclone` em segundo plano via *threads*.
+- 🚧 **Astrometria:** *Stub* (Aguarda implementação do fluxo da API).
+- 🚧 **Efemérides:** *Stub* (Aguarda lógica de cálculo).
+- 🚧 **Telescopius:** *Placeholder* de *proxy*.
