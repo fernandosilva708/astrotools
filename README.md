@@ -279,18 +279,31 @@ pytest tests/
 
 ---
 
-## Implementation Status
+# AstroTools
 
-The project is in scaffolding stage. All routes and templates are in place and the app starts cleanly. The following features have stubs with `TODO` comments awaiting implementation:
-
-- **Gallery ingest** — FITS header parsing (target, exposure, gain, date) and thumbnail generation
-- **Plate solving** — Full astrometry.net API flow (login → upload → poll → retrieve WCS)
-- **Ephemeris** — Skyfield observer calculations (rise/set/transit, altitude/azimuth, moon phase)
-- **Telescopius proxy** — Session forwarding and path mapping
-- **Backup** — Server-Sent Events for live rclone progress streaming
-
----
+A Python Flask web application providing astronomy tools for amateur astronomers. Designed to run on a local network server (Raspberry Pi or Windows PC) and accessed from any browser on the same network.
 
 ## License
 
-MIT
+This project is licensed under the **GPL-2.0-only** license.
+
+---
+
+## Project Highlights & RPi 2 Optimizations
+
+- **Resource Efficient:** Specifically optimized for Raspberry Pi 2 (1GB RAM, ARMv7).
+- **Production Ready:** Configured for `gunicorn` (max 2 workers) with custom timeout management.
+- **Async Processing:** Long-running tasks (Backup, Image Ingestion) offloaded to background threads.
+- **Secure:** Integrated CSRF protection, secure header management, and safe redirect validation.
+- **Infrastructure:** System-level init support via `setup.sh` and `systemd` configuration.
+
+## Implementation Status
+
+Core functionality is fully implemented and optimized:
+
+- ✅ **Auth:** Fully secure, CSRF-protected, email validation.
+- ✅ **Gallery:** Batch processing, efficient duplicate checking, and memory-safe ingestion.
+- ✅ **Backup:** Threaded `rclone` background management.
+- 🚧 **Astrometry:** Stubbed (Pending API flow implementation).
+- 🚧 **Ephemeris:** Stubbed (Pending calculation logic).
+- 🚧 **Telescopius:** Proxy placeholder.
