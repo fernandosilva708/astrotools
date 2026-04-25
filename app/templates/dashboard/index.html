@@ -18,11 +18,40 @@
         </div>
         <div class="col-6">
             <div class="box">
-                <h3 class="icon fa-solid fa-eye" style="color: var(--accent);"> <span data-i18n="dash_observations">Observações</span></h3>
-                <p style="font-size: 2em; font-weight: 800; margin: 0;">{{ obs_count }}</p>
+                <h3 class="icon fa-solid fa-cloud-arrow-down" style="color: red;"> <span>Imagens sem Backup</span></h3>
+                <p style="font-size: 2em; font-weight: 800; margin: 0;">{{ images_no_backup|length }}</p>
             </div>
         </div>
     </div>
+</section>
+
+<!-- Images without backup -->
+<section>
+    <header class="major">
+        <h2>Imagens sem Backup</h2>
+    </header>
+    {% if images_no_backup %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ficheiro</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for img in images_no_backup %}
+                <tr>
+                    <td>{{ img.filename }}</td>
+                    <td>{{ img.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Todas as imagens têm backup.</p>
+    {% endif %}
 </section>
 
 <!-- Recent Images -->

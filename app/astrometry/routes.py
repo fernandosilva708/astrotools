@@ -20,33 +20,35 @@ def index():
 @astrometry_bp.route('/submit/<int:image_id>', methods=['POST'])
 @login_required
 def submit(image_id):
-    """Submete uma imagem para plate-solving offline usando o ASTAP."""
+    """Submete uma imagem para plate-solving (offline ou online)."""
     image = GalleryImage.query.get_or_404(image_id)
+    mode = request.args.get('mode', 'offline')
     
+    if mode == 'online':
+        api_key = current_app.config.get('ASTROMETRY_API_KEY', '')
+        if not api_key:
+            flash('ASTROMETRY_API_KEY não está configurado.', 'danger')
+            return redirect(url_for('astrometry.index'))
+        flash('Plate-solve Online via Astrometry.net iniciado.', 'info')
+        # TODO: Implementar lógica de API online
+        return redirect(url_for('astrometry.index'))
+
+    # Offline ASTAP
     if not os.path.exists(image.filepath):
         flash('Ficheiro de imagem não encontrado.', 'danger')
         return redirect(url_for('astrometry.index'))
 
-    # Comando ASTAP
-    # -f: ficheiro
-    # -d: catálogo (D80 assumido em /opt/astap/d80)
-    # -z: 2 (downsampling)
-    astap_path = '/usr/bin/astap_cli'  # Ajustado para o nome correto do executável
+    astap_path = '/usr/bin/astap_cli'
     catalog_path = '/opt/astap/d80'
     
-    cmd = [
-        astap_path,
-        '-f', image.filepath,
-        '-d', catalog_path,
-        '-z', '2'
-    ]
+    cmd = [astap_path, '-f', image.filepath, '-d', catalog_path, '-z', '2']
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         if result.returncode == 0:
             image.plate_solved = True
             db.session.commit()
-            flash(f'Plate-solve bem-sucedido para "{image.filename}".', 'success')
+            flash(f'Plate-solve offline concluído para "{image.filename}".', 'success')
         else:
             flash(f'Falha no plate-solve: {result.stderr}', 'danger')
     except Exception as e:

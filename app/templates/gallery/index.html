@@ -24,14 +24,14 @@
 
 {% if images %}
 <div class="posts">
-{% for img in images %}
-    <article>
+    {% for img in images|sort(attribute='created_at', reverse=True) %}
+    <article style="border: {% if not img.backup_status %}2px solid red{% else %}none{% endif %}; padding: 1em;">
         <div class="image">
-            <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.title or img.filename }}" style="width: 100%; height: 200px; object-fit: cover;">
+            <a href="{{ url_for('gallery.serve_image', filename=img.filename) }}" target="_blank">
+                <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.filename }}" style="width: 100%; height: 200px; object-fit: cover;">
+            </a>
         </div>
-        <h3>{{ img.title or img.filename }}</h3>
         <p>
-            {% if img.target_name %}<strong>{{ img.target_name }}</strong><br>{% endif %}
             {{ img.created_at.strftime('%Y-%m-%d') }}
         </p>
         {% if img.plate_solved %}
@@ -39,9 +39,6 @@
                 <i class="fa-solid fa-crosshairs"></i> <span data-i18n="gallery_solved_badge">Resolvido</span>
             </span>
         {% endif %}
-        <ul class="actions">
-            <li><a href="#" class="button small">Detalhes</a></li>
-        </ul>
     </article>
     {% endfor %}
 </div>
