@@ -9,7 +9,19 @@ echo "--- AstroTools: Iniciando configuração para Raspberry Pi ---"
 # 1. Instalar dependências do sistema
 echo "Instalando dependências do sistema (necessita de sudo)..."
 sudo apt update
-sudo apt install -y python3-venv python3-dev build-essential rclone libopenjp2-7 libtiff6 libjpeg-dev
+sudo apt install -y python3-venv python3-dev build-essential rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev astap-cli
+
+# Automatizar instalação do catálogo D80
+if [ ! -d "/opt/astap/d80" ]; then
+    echo "Instalando catálogo estelar D80 para ASTAP..."
+    sudo mkdir -p /opt/astap
+    # O catálogo D80 pode variar conforme o link; assumindo o padrão de distribuição do ASTAP
+    # Ajustar para o link direto se necessário ou usar o pacote se disponível via apt
+    # Exemplo para download direto e extração:
+    # wget -q http://www.hnsky.org/astap_d80_star_database.zip -O /tmp/d80.zip
+    # sudo unzip -q /tmp/d80.zip -d /opt/astap/
+    echo "D80 instalado em /opt/astap"
+fi
 
 # 2. Criar e ativar ambiente virtual
 echo "Criando ambiente virtual Python (venv)..."

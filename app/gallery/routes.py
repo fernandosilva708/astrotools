@@ -1,5 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, send_from_directory
 from flask_login import login_required, current_user
 from pathlib import Path
 from werkzeug.utils import secure_filename
@@ -7,6 +6,7 @@ from app import db
 from app.models import GalleryImage
 from app.gallery.ingest import ingest_seestar_folder
 import threading
+import os
 
 ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.tif', '.tiff', '.fits', '.fit', '.gif', '.webp'}
 
@@ -34,6 +34,14 @@ def run_ingest_task(app_context, path, user_id):
 def index():
     images = GalleryImage.query.order_by(GalleryImage.created_at.desc()).all()
     return render_template('gallery/index.html', images=images, ingest_status=ingest_status)
+
+
+@gallery_bp.route('/image/<path:filename>')
+@login_required
+def serve_image(filename):
+    """Serve ficheiros da galeria."""
+    upload_dir = Path(current_app.root_path).parent / current_app.config['GALLERY_UPLOAD_FOLDER']
+    return send_from_directory(upload_dir, filename)
 
 
 @gallery_bp.route('/upload', methods=['GET', 'POST'])
