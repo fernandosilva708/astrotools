@@ -67,7 +67,8 @@ def calculate():
         return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400
 
     try:
-        t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=None))
+        from skyfield.api import utc
+        t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
         observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev)
         
         body = planets[target_map[target_name]]
