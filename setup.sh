@@ -9,7 +9,7 @@ echo "--- AstroTools: Iniciando configuração para Raspberry Pi ---"
 # 1. Instalar dependências do sistema
 echo "Instalando dependências do sistema (necessita de sudo)..."
 sudo apt update
-sudo apt install -y python3-venv python3-dev build-essential rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev astap-cli
+sudo apt install -y python3-venv python3-dev build-essential rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev astap_cli
 
 # Automatizar instalação do catálogo D80
 if [ ! -d "/opt/astap/d80" ]; then

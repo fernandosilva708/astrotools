@@ -31,7 +31,7 @@ def submit(image_id):
     # -f: ficheiro
     # -d: catálogo (D80 assumido em /opt/astap/d80)
     # -z: 2 (downsampling)
-    astap_path = '/usr/bin/astap'  # Ajustar se necessário
+    astap_path = '/usr/bin/astap_cli'  # Ajustado para o nome correto do executável
     catalog_path = '/opt/astap/d80'
     
     cmd = [
