@@ -13,9 +13,6 @@
 </head>
 <body class="is-preload">
 
-    <!-- Sidebar Toggle -->
-    <button class="sidebar-toggle"><i class="fa fa-bars"></i></button>
-
     <!-- Wrapper -->
     <div id="wrapper">
 
@@ -25,6 +22,9 @@
 
                 <!-- Header -->
                 <header id="header">
+                    <button id="sidebar-toggle" style="background: none; border: none; margin-right: 1em; cursor: pointer;">
+                        <i class="fa fa-bars" style="font-size: 1.5em;"></i>
+                    </button>
                     <a href="{{ url_for('dashboard.index') }}" class="logo"><strong>Astro</strong>Tools</a>
                     <ul class="icons">
                         {% if current_user.is_authenticated %}
@@ -53,57 +53,43 @@
         </div>
 
         <!-- Sidebar -->
-        <div id="sidebar">
-            <div class="inner">
+        <div id="sidebar" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 250px; background: #333; z-index: 1000; overflow-y: auto;">
+            <div class="inner" style="padding: 2em; color: white;">
 
-                <!-- Search -->
-                <section id="search" class="alt">
-                    <form method="post" action="#">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="text" name="query" id="query" placeholder="Procurar..." />
-                    </form>
-                </section>
+                <!-- Sidebar Close -->
+                <button id="sidebar-close" style="background: none; border: none; color: white; cursor: pointer; float: right;">
+                    <i class="fa fa-times" style="font-size: 1.5em;"></i>
+                </button>
 
                 <!-- Menu -->
-                <nav id="menu">
+                <nav id="menu" style="margin-top: 3em;">
                     <header class="major">
                         <h2>Menu</h2>
                     </header>
-                    <ul>
-                        <li><a href="{{ url_for('dashboard.index') }}" class="{% if request.blueprint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
-                        <li><a href="{{ url_for('gallery.index') }}" class="{% if request.blueprint == 'gallery' %}active{% endif %}">Galeria</a></li>
-                        <li><a href="{{ url_for('astrometry.index') }}" class="{% if request.blueprint == 'astrometry' %}active{% endif %}">Plate Solve</a></li>
-                        <li><a href="{{ url_for('ephemeris.index') }}" class="{% if request.blueprint == 'ephemeris' %}active{% endif %}">Efemérides</a></li>
-                        <li><a href="{{ url_for('telescopius.index') }}" class="{% if request.blueprint == 'telescopius' %}active{% endif %}">Telescopius</a></li>
-                        <li><a href="{{ url_for('backup.index') }}" class="{% if request.blueprint == 'backup' %}active{% endif %}">Backup</a></li>
-                        <li><a href="{{ url_for('config.index') }}" class="{% if request.blueprint == 'config' %}active{% endif %}">Configuração</a></li>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><a href="{{ url_for('dashboard.index') }}" style="color: white;">Dashboard</a></li>
+                        <li><a href="{{ url_for('gallery.index') }}" style="color: white;">Galeria</a></li>
+                        <li><a href="{{ url_for('astrometry.index') }}" style="color: white;">Plate Solve</a></li>
+                        <li><a href="{{ url_for('ephemeris.index') }}" style="color: white;">Efemérides</a></li>
+                        <li><a href="{{ url_for('telescopius.index') }}" style="color: white;">Telescopius</a></li>
+                        <li><a href="{{ url_for('backup.index') }}" style="color: white;">Backup</a></li>
+                        <li><a href="{{ url_for('config.index') }}" style="color: white;">Configuração</a></li>
                     </ul>
                 </nav>
-
-                <!-- Section: Idioma -->
-                <section>
-                    <header class="major">
-                        <h2>Idioma</h2>
-                    </header>
-                    <div class="mini-posts">
-                        <select id="lang-selector" style="width: 100%;">
-                            <option value="pt" selected>Português</option>
-                            <option value="en">English</option>
-                        </select>
-                    </div>
-                </section>
-
-                <!-- Footer -->
-                <footer id="footer">
-                    <p class="copyright">&copy; AstroTools. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
-                </footer>
-
             </div>
         </div>
 
     </div>
 
     <!-- Scripts -->
+    <script>
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('sidebar').style.display = 'block';
+        });
+        document.getElementById('sidebar-close').addEventListener('click', () => {
+            document.getElementById('sidebar').style.display = 'none';
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
