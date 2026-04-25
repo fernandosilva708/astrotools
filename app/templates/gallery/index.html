@@ -8,6 +8,7 @@
     <ul class="actions">
         <li>
             <form method="post" action="{{ url_for('gallery.ingest') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="button icon fa-solid fa-folder-open">
                     <span data-i18n="gallery_import_seestar">Importar do Seestar</span>
                 </button>

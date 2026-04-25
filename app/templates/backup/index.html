@@ -21,6 +21,7 @@
             <ul class="actions">
                 <li>
                     <form method="post" action="{{ url_for('backup.run_backup') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="button primary" {% if status.running %}disabled{% endif %}>
                             Executar Backup
                         </button>

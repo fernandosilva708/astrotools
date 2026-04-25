@@ -28,6 +28,7 @@
                         <td>{{ img.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                         <td>
                             <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="button small">Submeter</button>
                             </form>
                         </td>
