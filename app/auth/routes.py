@@ -40,17 +40,17 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         
-        # Validação simples de email
+        # Validação simples de e-mail
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         
         if not username or not email or not password:
             flash('Todos os campos são obrigatórios.', 'warning')
         elif not re.match(email_regex, email):
-            flash('Endereço de email inválido.', 'warning')
+            flash('Endereço de e-mail inválido.', 'warning')
         elif User.query.filter_by(username=username).first():
             flash('Nome de utilizador já em uso.', 'warning')
         elif User.query.filter_by(email=email).first():
-            flash('Email já registado.', 'warning')
+            flash('E-mail já registado.', 'warning')
         else:
             user = User(username=username, email=email)
             user.set_password(password)

@@ -3,38 +3,37 @@
 {% block title %}Entrar — AstroTools{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <div class="card bg-dark border-secondary mt-5">
-      <div class="card-body p-4">
-        <h4 class="card-title text-center mb-4">
-          <i class="bi bi-stars"></i> AstroTools
-        </h4>
-        <form method="post">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <div class="mb-3">
-            <label class="form-label" data-i18n="auth_username">Nome de utilizador</label>
-            <input type="text" name="username" class="form-control" required autofocus
-                   data-i18n-placeholder="auth_username">
-          </div>
-          <div class="mb-3">
-            <label class="form-label" data-i18n="auth_password">Palavra-passe</label>
-            <input type="password" name="password" class="form-control" required
-                   data-i18n-placeholder="auth_password">
-          </div>
-          <div class="mb-3 form-check">
-            <input type="checkbox" name="remember" id="remember" class="form-check-input">
-            <label for="remember" class="form-check-label" data-i18n="auth_remember">Lembrar-me</label>
-          </div>
-          <button type="submit" class="btn btn-primary w-100" data-i18n="auth_login">Iniciar Sessão</button>
-        </form>
-        <hr class="border-secondary">
-        <p class="text-center mb-0 small">
-          <span data-i18n="auth_no_account">Sem conta?</span>
-          <a href="{{ url_for('auth.register') }}" data-i18n="auth_register">Registar</a>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+<header class="main">
+    <h1>Iniciar Sessão</h1>
+</header>
+
+<section>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row">
+            <div class="col-6">
+                <label data-i18n="auth_username">Nome de utilizador</label>
+                <input type="text" name="username" required autofocus data-i18n-placeholder="auth_username">
+            </div>
+            <div class="col-6">
+                <label data-i18n="auth_password">Palavra-passe</label>
+                <input type="password" name="password" required data-i18n-placeholder="auth_password">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 1em;">
+            <div class="col-6">
+                <input type="checkbox" name="remember" id="remember">
+                <label for="remember" data-i18n="auth_remember">Lembrar-me</label>
+            </div>
+        </div>
+        <ul class="actions" style="margin-top: 2em;">
+            <li><button type="submit" class="button primary" data-i18n="auth_login">Iniciar Sessão</button></li>
+        </ul>
+    </form>
+    <hr>
+    <p>
+        <span data-i18n="auth_no_account">Sem conta?</span>
+        <a href="{{ url_for('auth.register') }}" data-i18n="auth_register">Registar</a>
+    </p>
+</section>
 {% endblock %}

@@ -3,38 +3,44 @@
 {% block title %}Backup — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-cloud-upload"></i> <span data-i18n="nav_backup">Backup</span></h2>
+<header class="main">
+    <h1>Backup</h1>
+</header>
 
 <div class="row">
-  <div class="col-md-6">
-    <div class="card bg-dark border-secondary">
-      <div class="card-body p-4">
-        <h5 class="card-title" data-i18n="backup_sync_title">Sincronização rclone</h5>
-        <p class="card-text text-muted" data-i18n="backup_sync_desc">
-          Sincroniza <code>RCLONE_PATH</code> com <code>RCLONE_REMOTE</code> conforme configurado em <code>.env</code>.
-        </p>
-        <form method="post" action="{{ url_for('backup.run_backup') }}"
-              onsubmit="return confirm(window._t('backup_confirm') || 'Iniciar cópia de segurança agora?')">
-          <button type="submit" class="btn btn-primary">
-            <i class="bi bi-play-circle"></i> <span data-i18n="backup_run">Executar Cópia de Segurança</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card bg-dark border-secondary">
-      <div class="card-body p-4">
-        <h5 class="card-title" data-i18n="backup_config">Configuração</h5>
-        <table class="table table-dark table-sm">
-          <tbody>
-            <tr><th>RCLONE_REMOTE</th><td><code>{{ config.get('RCLONE_REMOTE') or '(not set)' }}</code></td></tr>
-            <tr><th>RCLONE_PATH</th><td><code>{{ config.get('RCLONE_PATH') or '(not set)' }}</code></td></tr>
-          </tbody>
-        </table>
-        <p class="small text-muted mb-0" data-i18n="backup_config_hint">Edite o ficheiro <code>.env</code> para configurar as definições do rclone.</p>
-      </div>
-    </div>
-  </div>
+    <section class="col-6">
+        <header class="major">
+            <h2>Estado do Sistema</h2>
+        </header>
+        <div class="box">
+            <p>
+                <strong>Status:</strong> {{ 'Em curso...' if status.running else 'Parado' }}<br>
+                <strong>Último resultado:</strong> {{ status.last_result }}<br>
+                <strong>Última execução:</strong> {{ status.last_run or 'Nunca' }}
+            </p>
+            <ul class="actions">
+                <li>
+                    <form method="post" action="{{ url_for('backup.run_backup') }}">
+                        <button type="submit" class="button primary" {% if status.running %}disabled{% endif %}>
+                            Executar Backup
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="col-6">
+        <header class="major">
+            <h2>Configuração</h2>
+        </header>
+        <div class="box">
+            <p>Edite o ficheiro <code>.env</code> para configurar as definições do rclone.</p>
+            <ul>
+                <li><strong>Remote:</strong> <code>{{ config.get('RCLONE_REMOTE') or 'Não definido' }}</code></li>
+                <li><strong>Path:</strong> <code>{{ config.get('RCLONE_PATH') or 'Não definido' }}</code></li>
+            </ul>
+        </div>
+    </section>
 </div>
 {% endblock %}

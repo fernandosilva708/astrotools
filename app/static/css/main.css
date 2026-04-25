@@ -1,0 +1,325 @@
+/*
+    Editorial by HTML5 UP (Inspired/Recreated)
+    License: Creative Commons Attribution 3.0
+*/
+
+:root {
+    --bg: #ffffff;
+    --sidebar-bg: #f5f5f5;
+    --accent: #f56a6a;
+    --text: #3d4449;
+    --text-strong: #3d4449;
+    --border: rgba(144, 144, 144, 0.075);
+    --font-family: "Open Sans", sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-family);
+    font-size: 13pt;
+    font-weight: 400;
+    line-height: 1.65;
+    margin: 0;
+    padding: 0;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    min-height: 100vh;
+}
+
+#main {
+    flex-grow: 1;
+    width: 100%;
+    padding: 4em 4em 0.1em 4em;
+    max-width: 100%;
+}
+
+#sidebar {
+    width: 24em;
+    min-width: 24em;
+    background: var(--sidebar-bg);
+    padding: 4em 2.5em;
+    border-right: solid 1px var(--border);
+    transition: margin-left 0.5s ease;
+    position: relative;
+}
+
+#sidebar .inner {
+    position: sticky;
+    top: 4em;
+}
+
+header#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid 2px var(--text-strong);
+    padding-bottom: 1em;
+    margin-bottom: 3em;
+}
+
+header#header a.logo {
+    color: var(--text-strong);
+    text-decoration: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+header#header a.logo strong {
+    color: var(--accent);
+}
+
+/* Sidebar Menu */
+#menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2em 0;
+}
+
+#menu ul li {
+    border-top: solid 1px var(--border);
+    padding: 0.75em 0;
+}
+
+#menu ul li:first-child {
+    border-top: 0;
+}
+
+#menu ul li a {
+    color: var(--text-strong);
+    text-decoration: none;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.8em;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+#menu ul li a:hover {
+    color: var(--accent);
+}
+
+#menu ul li a.active {
+    color: var(--accent);
+}
+
+/* Sidebar Toggle for Mobile */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 1em;
+    left: 1em;
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.5);
+    border: 0;
+    cursor: pointer;
+    font-size: 1.5em;
+    padding: 0.5em;
+    border-radius: 4px;
+}
+
+/* Section/Blocks */
+section {
+    margin-bottom: 4em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-strong);
+    font-weight: 800;
+    line-height: 1.5;
+    margin: 0 0 1em 0;
+    text-transform: uppercase;
+    letter-spacing: 0.075em;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+}
+
+a:hover {
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.button {
+    appearance: none;
+    background-color: transparent;
+    border: solid 3px var(--text-strong);
+    border-radius: 0.375em;
+    color: var(--text-strong) !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8em;
+    font-weight: 800;
+    height: 3.5em;
+    line-height: 3.25em;
+    padding: 0 2.25em;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.button.primary {
+    background-color: var(--text-strong);
+    color: #ffffff !important;
+}
+
+/* Grid/Forms */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -1em 0 0 -1em;
+}
+
+.col-6 {
+    width: 50%;
+    padding: 1em 0 0 1em;
+}
+
+/* Box */
+.box {
+    border: solid 1px var(--border);
+    border-radius: 0.375em;
+    margin-bottom: 2em;
+    padding: 1.5em;
+}
+
+/* Actions */
+ul.actions {
+    display: flex;
+    cursor: default;
+    list-style: none;
+    padding-left: 0;
+}
+ul.actions li {
+    padding: 0 1em 0 0;
+}
+ul.actions.vertical {
+    flex-direction: column;
+}
+ul.actions.vertical li {
+    padding: 1em 0 0 0;
+}
+
+/* Posts */
+.posts {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -2.5em 0 2em -2.5em;
+}
+.posts article {
+    width: 33.33333%;
+    padding: 2.5em 0 0 2.5em;
+}
+.posts article .image {
+    display: block;
+    margin: 0 0 2em 0;
+    border-radius: 0.375em;
+    overflow: hidden;
+}
+.posts article .image img {
+    display: block;
+    width: 100%;
+    transition: transform 0.2s ease;
+}
+.posts article .image:hover img {
+    transform: scale(1.05);
+}
+
+/* Icons */
+.icon {
+    text-decoration: none;
+    border-bottom: none;
+    position: relative;
+}
+.icon > .label {
+    display: none;
+}
+header.major h2 {
+    border-bottom: solid 3px var(--accent);
+    display: inline-block;
+    padding-bottom: 0.5em;
+    margin-bottom: 2em;
+}
+
+/* Forms */
+input[type="text"], select {
+    appearance: none;
+    background: #ffffff;
+    border-radius: 0.375em;
+    border: solid 1px var(--border);
+    color: inherit;
+    display: block;
+    outline: 0;
+    padding: 0 1em;
+    text-decoration: none;
+    width: 100%;
+    height: 3em;
+}
+
+/* Responsive */
+@media screen and (max-width: 1280px) {
+    #sidebar {
+        width: 18em;
+        min-width: 18em;
+    }
+    .posts article {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    #wrapper {
+        display: block;
+    }
+    #sidebar {
+        width: 100%;
+        min-width: 0;
+        margin-left: -100%;
+        position: fixed;
+        height: 100vh;
+        z-index: 9999;
+        overflow-y: auto;
+    }
+    #sidebar.visible {
+        margin-left: 0;
+    }
+    .sidebar-toggle {
+        display: block;
+    }
+    #main {
+        padding: 6em 2em 1em 2em;
+    }
+}
+
+@media screen and (max-width: 736px) {
+    .posts article {
+        width: 100%;
+    }
+    .col-6 {
+        width: 100%;
+    }
+}
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 2em;
+}
+.alert {
+    padding: 1em;
+    border-radius: 4px;
+    margin-bottom: 1em;
+    border: solid 1px;
+}
+.alert-info { background: #e1f5fe; border-color: #b3e5fc; color: #01579b; }
+.alert-success { background: #e8f5e9; border-color: #c8e6c9; color: #1b5e20; }
+.alert-danger { background: #ffebee; border-color: #ffcdd2; color: #b71c1c; }
+.alert-warning { background: #fffde7; border-color: #fff9c4; color: #f57f17; }

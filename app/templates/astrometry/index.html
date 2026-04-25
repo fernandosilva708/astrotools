@@ -3,74 +3,71 @@
 {% block title %}Plate Solve — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-crosshair"></i> <span data-i18n="astrometry_title">Plate Solving (Identificação de Campo)</span></h2>
+<header class="main">
+    <h1>Plate Solving</h1>
+</header>
 
-{% if unsolved %}
-<h5 class="mb-3">
-  <span data-i18n="astrometry_pending">A aguardar plate-solve</span> ({{ unsolved|length }})
-</h5>
-<div class="table-responsive mb-4">
-  <table class="table table-dark table-hover">
-    <thead>
-      <tr>
-        <th data-i18n="astrometry_file">Ficheiro</th>
-        <th data-i18n="astrometry_uploaded">Carregado</th>
-        <th data-i18n="astrometry_action">Ação</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for img in unsolved %}
-      <tr>
-        <td>{{ img.title or img.filename }}</td>
-        <td>{{ img.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-        <td>
-          <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id) }}">
-            <button class="btn btn-sm btn-outline-primary">
-              <i class="bi bi-send"></i> <span data-i18n="astrometry_submit">Submeter</span>
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% else %}
-<p class="text-muted mb-4" data-i18n="astrometry_none_pending">Sem imagens a aguardar plate-solving.</p>
-{% endif %}
+<section>
+    <header class="major">
+        <h2 data-i18n="astrometry_pending">A aguardar plate-solve</h2>
+    </header>
+    {% if unsolved %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-i18n="astrometry_file">Ficheiro</th>
+                        <th data-i18n="astrometry_uploaded">Carregado</th>
+                        <th data-i18n="astrometry_action">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for img in unsolved %}
+                    <tr>
+                        <td>{{ img.title or img.filename }}</td>
+                        <td>{{ img.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id) }}">
+                                <button type="submit" class="button small">Submeter</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p data-i18n="astrometry_none_pending">Sem imagens a aguardar plate-solving.</p>
+    {% endif %}
+</section>
 
-{% if solved %}
-<h5 class="mb-3">
-  <span data-i18n="astrometry_solved_section">Resolvidas</span> ({{ solved|length }})
-</h5>
-<div class="table-responsive">
-  <table class="table table-dark table-hover">
-    <thead>
-      <tr>
-        <th data-i18n="astrometry_file">Ficheiro</th>
-        <th>RA</th>
-        <th>Dec</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for img in solved %}
-      <tr>
-        <td>{{ img.title or img.filename }}</td>
-        <td>{{ '%.4f'|format(img.ra) if img.ra else '—' }}</td>
-        <td>{{ '%.4f'|format(img.dec) if img.dec else '—' }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% endif %}
-
-{% if not unsolved and not solved %}
-<div class="text-center py-5 text-muted">
-  <i class="bi bi-crosshair display-1"></i>
-  <p class="mt-3" data-i18n="astrometry_no_images">Sem imagens na galeria.
-    <a href="{{ url_for('gallery.upload') }}">Carregue uma.</a>
-  </p>
-</div>
-{% endif %}
+<section>
+    <header class="major">
+        <h2 data-i18n="astrometry_solved_section">Resolvidas</h2>
+    </header>
+    {% if solved %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-i18n="astrometry_file">Ficheiro</th>
+                        <th>RA</th>
+                        <th>Dec</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for img in solved %}
+                    <tr>
+                        <td>{{ img.title or img.filename }}</td>
+                        <td>{{ '%.4f'|format(img.ra) if img.ra else '—' }}</td>
+                        <td>{{ '%.4f'|format(img.dec) if img.dec else '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Sem imagens resolvidas.</p>
+    {% endif %}
+</section>
 {% endblock %}

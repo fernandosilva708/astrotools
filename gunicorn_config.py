@@ -5,7 +5,7 @@ import os
 # Configuração Gunicorn para Raspberry Pi 2
 # RAM: 1GB, CPU: 4 Cores (ARMv7)
 
-# Bind à porta 5000 em todos os interfaces
+# Bind à porta 5000 em todas as interfaces
 bind = "0.0.0.0:5000"
 
 # Número de workers: 2 é o ideal para o Pi 2 para não esgotar a RAM

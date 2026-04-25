@@ -4,13 +4,13 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-
+# Gestão de sessão de utilizador: carrega o utilizador a partir do ID guardado na sessão
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 class User(UserMixin, db.Model):
+    """Modelo de utilizador para autenticação e relação com dados astronómicos."""
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -19,13 +19,16 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relações: um utilizador pode ter várias imagens e observações
     images = db.relationship('GalleryImage', backref='author', lazy='dynamic')
     observations = db.relationship('Observation', backref='observer', lazy='dynamic')
 
     def set_password(self, password):
+        """Hasheia a palavra-passe para armazenamento seguro."""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """Verifica a palavra-passe fornecida contra o hash armazenado."""
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):

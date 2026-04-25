@@ -3,60 +3,63 @@
 {% block title %}Dashboard — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-house"></i> <span data-i18n="nav_dashboard">Dashboard</span></h2>
+<header class="main">
+    <h1>Dashboard</h1>
+</header>
 
-<div class="row g-3 mb-4">
-  <div class="col-sm-6 col-md-3">
-    <div class="card bg-dark border-secondary text-center">
-      <div class="card-body">
-        <div class="display-5 fw-bold text-primary">{{ image_count }}</div>
-        <div class="text-muted" data-i18n="dash_images">Imagens</div>
-      </div>
+<!-- Statistics -->
+<section>
+    <div class="row">
+        <div class="col-6">
+            <div class="box">
+                <h3 class="icon fa-solid fa-image" style="color: var(--accent);"> <span data-i18n="dash_images">Imagens</span></h3>
+                <p style="font-size: 2em; font-weight: 800; margin: 0;">{{ image_count }}</p>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="box">
+                <h3 class="icon fa-solid fa-eye" style="color: var(--accent);"> <span data-i18n="dash_observations">Observações</span></h3>
+                <p style="font-size: 2em; font-weight: 800; margin: 0;">{{ obs_count }}</p>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-sm-6 col-md-3">
-    <div class="card bg-dark border-secondary text-center">
-      <div class="card-body">
-        <div class="display-5 fw-bold text-info">{{ obs_count }}</div>
-        <div class="text-muted" data-i18n="dash_observations">Observações</div>
-      </div>
-    </div>
-  </div>
-</div>
+</section>
 
-<h5 class="mb-3" data-i18n="dash_recent_images">Imagens Recentes</h5>
-{% if recent_images %}
-<div class="row g-3">
-  {% for img in recent_images %}
-  <div class="col-6 col-md-4 col-lg-2">
-    <div class="card bg-dark border-secondary h-100">
-      <div class="card-body p-2 text-center">
-        <i class="bi bi-image fs-1 text-secondary"></i>
-        <p class="card-text small mt-1 text-truncate" title="{{ img.filename }}">{{ img.title or img.filename }}</p>
-      </div>
+<!-- Recent Images -->
+<section>
+    <header class="major">
+        <h2 data-i18n="dash_recent_images">Imagens Recentes</h2>
+    </header>
+    {% if recent_images %}
+    <div class="posts">
+        {% for img in recent_images %}
+        <article>
+            <a href="#" class="image"><img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="" /></a>
+            <h3>{{ img.title or img.filename }}</h3>
+            <p>{{ img.description or '' }}</p>
+            <ul class="actions">
+                <li><a href="#" class="button">Ver Detalhes</a></li>
+            </ul>
+        </article>
+        {% endfor %}
     </div>
-  </div>
-  {% endfor %}
-</div>
-{% else %}
-<p class="text-muted">
-  <span data-i18n="dash_no_images">Sem imagens.</span>
-  <a href="{{ url_for('gallery.upload') }}"><span data-i18n="dash_upload_image">Carregar Imagem</span></a>
-</p>
-{% endif %}
+    {% else %}
+    <p class="text-muted">
+        <span data-i18n="dash_no_images">Sem imagens.</span>
+        <a href="{{ url_for('gallery.upload') }}"><span data-i18n="dash_upload_image">Carregar Imagem</span></a>
+    </p>
+    {% endif %}
+</section>
 
-<div class="row g-3 mt-3">
-  <div class="col">
-    <h5 class="mb-3" data-i18n="dash_quick_actions">Ações Rápidas</h5>
-    <a href="{{ url_for('gallery.upload') }}" class="btn btn-outline-primary me-2">
-      <i class="bi bi-upload"></i> <span data-i18n="dash_upload_image">Carregar Imagem</span>
-    </a>
-    <a href="{{ url_for('ephemeris.index') }}" class="btn btn-outline-info me-2">
-      <i class="bi bi-calendar3"></i> <span data-i18n="nav_ephemeris">Efemérides</span>
-    </a>
-    <a href="{{ url_for('backup.index') }}" class="btn btn-outline-secondary">
-      <i class="bi bi-cloud-upload"></i> <span data-i18n="nav_backup">Backup</span>
-    </a>
-  </div>
-</div>
+<!-- Quick Actions -->
+<section>
+    <header class="major">
+        <h2 data-i18n="dash_quick_actions">Ações Rápidas</h2>
+    </header>
+    <ul class="actions">
+        <li><a href="{{ url_for('gallery.upload') }}" class="button primary big icon fa-solid fa-upload"><span data-i18n="dash_upload_image">Carregar Imagem</span></a></li>
+        <li><a href="{{ url_for('ephemeris.index') }}" class="button big icon fa-solid fa-calendar-days"><span data-i18n="nav_ephemeris">Efemérides</span></a></li>
+        <li><a href="{{ url_for('backup.index') }}" class="button big icon fa-solid fa-cloud-arrow-up"><span data-i18n="nav_backup">Backup</span></a></li>
+    </ul>
+</section>
 {% endblock %}

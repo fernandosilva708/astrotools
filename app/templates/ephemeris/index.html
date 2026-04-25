@@ -3,59 +3,82 @@
 {% block title %}Efemérides — AstroTools{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-calendar3"></i> <span data-i18n="nav_ephemeris">Efemérides</span></h2>
+<header class="main">
+    <h1>Efemérides</h1>
+    <ul class="actions">
+        <li>
+            <button class="button icon fa-solid fa-cloud-download" onclick="updateEphemeris()">
+                <span data-i18n="eph_update_bsp">Atualizar Dados (.bsp)</span>
+            </button>
+        </li>
+    </ul>
+</header>
 
 <div class="row">
-  <div class="col-md-5">
-    <div class="card bg-dark border-secondary">
-      <div class="card-body p-4">
-        <h5 class="card-title mb-3" data-i18n="eph_search">Pesquisa de Objeto</h5>
+    <section class="col-6">
+        <header class="major">
+            <h2 data-i18n="eph_search">Pesquisa de Objeto</h2>
+        </header>
         <form id="ephemerisForm">
-          <div class="mb-3">
-            <label class="form-label" data-i18n="eph_target">Objeto Alvo</label>
-            <input type="text" id="target" class="form-control" placeholder="e.g. Mars, M42, NGC 224" required>
-          </div>
-          <div class="row g-2 mb-3">
-            <div class="col">
-              <label class="form-label" data-i18n="eph_lat">Latitude</label>
-              <input type="number" id="lat" class="form-control" step="0.0001" placeholder="38.7169">
+            <div class="row">
+                <div class="col-6">
+                    <label data-i18n="eph_target">Objeto Alvo</label>
+                    <input type="text" id="target" placeholder="e.g. Mars, M42" required>
+                </div>
             </div>
-            <div class="col">
-              <label class="form-label" data-i18n="eph_lon">Longitude</label>
-              <input type="number" id="lon" class="form-control" step="0.0001" placeholder="-9.1395">
+            <div class="row" style="margin-top: 1em;">
+                <div class="col-6">
+                    <label data-i18n="eph_lat">Latitude</label>
+                    <input type="number" id="lat" step="0.0001" placeholder="38.7169">
+                </div>
+                <div class="col-6">
+                    <label data-i18n="eph_lon">Longitude</label>
+                    <input type="number" id="lon" step="0.0001" placeholder="-9.1395">
+                </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" data-i18n="eph_elevation">Altitude (m)</label>
-            <input type="number" id="elevation" class="form-control" value="0">
-          </div>
-          <div class="mb-3">
-            <label class="form-label" data-i18n="eph_date">Data</label>
-            <input type="date" id="date" class="form-control">
-          </div>
-          <button type="submit" class="btn btn-primary w-100" data-i18n="eph_calculate">Calcular</button>
+            <div class="row" style="margin-top: 1em;">
+                <div class="col-6">
+                    <label data-i18n="eph_elevation">Altitude (m)</label>
+                    <input type="number" id="elevation" value="0">
+                </div>
+                <div class="col-6">
+                    <label data-i18n="eph_date">Data</label>
+                    <input type="date" id="date">
+                </div>
+            </div>
+            <ul class="actions" style="margin-top: 2em;">
+                <li><button type="submit" class="button primary" data-i18n="eph_calculate">Calcular</button></li>
+            </ul>
         </form>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-7">
-    <div id="results" class="mt-4 mt-md-0">
-      <div class="text-center py-5 text-muted">
-        <i class="bi bi-stars display-3"></i>
-        <p class="mt-3" data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
-        <p class="small text-warning">
-          <i class="bi bi-exclamation-triangle"></i>
-          <span data-i18n="eph_not_implemented">Motor de cálculo ainda não implementado.</span>
-        </p>
-      </div>
-    </div>
-  </div>
+    </section>
+    <section class="col-6">
+        <header class="major">
+            <h2 data-i18n="eph_results">Resultados</h2>
+        </header>
+        <div id="results">
+            <p data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
+        </div>
+    </section>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.getElementById('date').valueAsDate = new Date();
+
+async function updateEphemeris() {
+    const btn = event.target;
+    btn.disabled = true;
+    try {
+        const res = await fetch('{{ url_for("ephemeris.update_ephemeris") }}', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message);
+    } catch (e) {
+        alert('Erro ao atualizar efemérides.');
+    } finally {
+        btn.disabled = false;
+    }
+}
 
 document.getElementById('ephemerisForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -72,10 +95,7 @@ document.getElementById('ephemerisForm').addEventListener('submit', async (e) =>
     body: JSON.stringify(body),
   });
   const data = await res.json();
-  document.getElementById('results').innerHTML =
-    `<div class="card bg-dark border-warning"><div class="card-body">
-      <pre class="text-warning mb-0">${JSON.stringify(data, null, 2)}</pre>
-    </div></div>`;
+  document.getElementById('results').innerHTML = `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
 });
 </script>
 {% endblock %}

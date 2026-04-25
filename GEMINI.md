@@ -12,9 +12,9 @@ The project is currently in the **scaffolding stage**. The directory structure a
 
 ## Architecture & Tech Stack
 - **Framework:** Flask (Application Factory pattern in `create_app()`).
-- **Database:** SQLAlchemy with Flask-Migrate (shared models in `app/models.py`).
+- **Database:** SQLAlchemy with Flask-Migrate (shared models in `app/models.py`). sqlite 
 - **Auth:** Flask-Login for user authentication.
-- **Frontend:** Jinja2 templates, Vanilla CSS, and JavaScript.
+- **Frontend:** template html5 up editorial, Jinja2 templates, Vanilla CSS, and JavaScript.
 - **External Integrations:**
   - **Astrometry:** Integration with `nova.astrometry.net` API (or local `solve-field` if available on Pi).
   - **Ephemeris:** Calculations via `skyfield` Python library.
@@ -57,3 +57,32 @@ The project is currently in the **scaffolding stage**. The directory structure a
 ### Testing & Quality
 - **Run tests:** `pytest`.
 - **Linting:** `flake8 app/`.
+
+## Plano de Implementação (Próximos Passos)
+
+### 1. Base de Dados (SQLite)
+- [x] Garantir que a pasta `instance/` existe e é ignorada pelo Git.
+- [x] Inicializar Flask-Migrate se necessário: `flask db init`.
+- [x] Criar a migração inicial: `flask db migrate -m "Initial migration"`.
+- [x] Aplicar a migração: `flask db upgrade`.
+- [x] Verificar a integridade dos modelos em `app/models.py`.
+
+### 2. Frontend (HTML5 UP Editorial)
+- [x] Integrar assets do template HTML5 UP Editorial em `app/static/`:
+    - [x] CSS: `main.css` e sub-assets.
+    - [x] JS: `main.js`, `util.js`, `breakpoints.min.js`, `browser.min.js`.
+    - [x] Fonts: FontAwesome (ícones).
+- [x] Refatorar `app/templates/base.html` para seguir a estrutura do Editorial:
+    - [x] Implementar Sidebar (Menu lateral).
+    - [x] Implementar Header/Banner.
+    - [x] Adaptar o bloco `content` para a secção principal.
+- [x] Atualizar todos os templates de módulos para o novo estilo:
+    - [x] `dashboard/index.html`
+    - [x] `gallery/index.html` e `upload.html`
+    - [x] `auth/login.html` e `register.html`
+    - [x] `astrometry/index.html`
+    - [x] `ephemeris/index.html` e `iss.html`
+    - [x] `telescopius/index.html`
+    - [x] `backup/index.html`
+- [x] Integrar a lógica de tradução existente (`js/translations.js`) no novo layout.
+- [x] Validar a responsividade e o comportamento em dispositivos móveis.

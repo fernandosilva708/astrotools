@@ -40,10 +40,22 @@
   document.addEventListener('DOMContentLoaded', function () {
     const saved = localStorage.getItem('ui-lang') || 'pt';
     setLang(saved);
+    
+    // Suporte para o novo selector (Editorial Sidebar)
+    const langSelector = document.getElementById('lang-selector');
+    if (langSelector) {
+        langSelector.value = saved;
+        langSelector.addEventListener('change', function() {
+            setLang(this.value);
+        });
+    }
+
+    // Mantém compatibilidade com links antigos (se houver)
     document.querySelectorAll('.lang-option').forEach(el => {
       el.addEventListener('click', function (e) {
         e.preventDefault();
         setLang(this.dataset.lang);
+        if (langSelector) langSelector.value = this.dataset.lang;
       });
     });
   });

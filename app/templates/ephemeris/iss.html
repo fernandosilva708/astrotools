@@ -1,0 +1,48 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Efemérides da ISS — AstroTools{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2><i class="bi bi-rocket-takeoff"></i> Efemérides da ISS</h2>
+    <p>Cálculo da distância relativa entre a ISS e objetos do sistema solar.</p>
+</div>
+
+<div class="card bg-dark border-secondary p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Corpo Celeste</label>
+            <select id="target" class="form-select">
+                <option value="sun">Sol</option>
+                <option value="moon">Lua</option>
+                <option value="mars">Marte</option>
+                <option value="jupiter">Júpiter</option>
+                <option value="saturn">Saturno</option>
+            </select>
+        </div>
+        <div class="col-md-6 align-self-end">
+            <button class="btn btn-primary w-100" onclick="calcISS()">Calcular Distância</button>
+        </div>
+    </div>
+    <div id="results" class="mt-4 p-3 border rounded bg-secondary">
+        Aguardando cálculo...
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function calcISS() {
+    const target = document.getElementById('target').value;
+    const res = await fetch('{{ url_for("ephemeris.calculate_iss") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ target })
+    });
+    const data = await res.json();
+    document.getElementById('results').innerHTML = data.status === 'success' 
+        ? `Distância: ${data.distance_au} AU` 
+        : `Erro: ${data.message}`;
+}
+</script>
+{% endblock %}

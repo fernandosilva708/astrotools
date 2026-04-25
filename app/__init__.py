@@ -33,6 +33,7 @@ def create_app():
     app.config['RCLONE_PATH'] = os.getenv('RCLONE_PATH', '')
 
     db.init_app(app)
+    from app import models
     migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
