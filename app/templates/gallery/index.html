@@ -3,48 +3,34 @@
 {% block title %}Galeria — AstroTools{% endblock %}
 
 {% block content %}
-<header class="main">
+<section>
     <h1>Galeria</h1>
-    <ul class="actions">
-        <li>
-            <form method="post" action="{{ url_for('gallery.ingest') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="button icon fa-solid fa-folder-open">
-                    <span data-i18n="gallery_import_seestar">Importar do Seestar</span>
-                </button>
-            </form>
-        </li>
-        <li>
-            <a href="{{ url_for('gallery.upload') }}" class="button primary icon fa-solid fa-upload">
-                <span data-i18n="gallery_upload_short">Carregar</span>
-            </a>
-        </li>
-    </ul>
-</header>
+    <div class="grid">
+        <form method="post" action="{{ url_for('gallery.ingest') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="secondary">Importar do Seestar</button>
+        </form>
+        <a href="{{ url_for('gallery.upload') }}" role="button">Carregar Imagem</a>
+    </div>
+</section>
 
 {% if images %}
-<div class="posts">
+<div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
     {% for img in images|sort(attribute='created_at', reverse=True) %}
-    <article style="border: {% if not img.backup_status %}2px solid red{% else %}none{% endif %}; padding: 1em;">
-        <div class="image">
-            <a href="{{ url_for('gallery.serve_image', filename=img.filename) }}" target="_blank">
-                <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.filename }}" style="width: 100%; height: 200px; object-fit: cover;">
-            </a>
-        </div>
-        <p>
-            {{ img.created_at.strftime('%Y-%m-%d') }}
-        </p>
+    <article style="border: {% if not img.backup_status %}2px solid var(--pico-del-color){% else %}none{% endif %};">
+        <a href="{{ url_for('gallery.serve_image', filename=img.filename) }}" target="_blank">
+            <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.filename }}" style="width: 100%; height: 200px; object-fit: cover;">
+        </a>
+        <p>{{ img.created_at.strftime('%Y-%m-%d') }}</p>
         {% if img.plate_solved %}
-            <span class="button small disabled" style="background: var(--accent); color: white; border: none; margin-bottom: 1em;">
-                <i class="fa-solid fa-crosshairs"></i> <span data-i18n="gallery_solved_badge">Resolvido</span>
-            </span>
+            <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Resolvido</span>
         {% endif %}
     </article>
     {% endfor %}
 </div>
 {% else %}
 <section>
-    <p data-i18n="gallery_no_images">Sem imagens. Carregue uma ou importe do Seestar.</p>
+    <p>Sem imagens. Carregue uma ou importe do Seestar.</p>
 </section>
 {% endif %}
 {% endblock %}

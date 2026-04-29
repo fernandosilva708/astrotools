@@ -3,31 +3,26 @@
 {% block title %}Efemérides da ISS — AstroTools{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h2><i class="bi bi-rocket-takeoff"></i> Efemérides da ISS</h2>
-    <p>Cálculo da distância relativa entre a ISS e objetos do sistema solar.</p>
-</div>
+<h1>Efemérides da ISS</h1>
+<p>Cálculo da distância relativa entre a ISS e objetos do sistema solar.</p>
 
-<div class="card bg-dark border-secondary p-4">
-    <div class="row">
-        <div class="col-md-6">
-            <label class="form-label">Corpo Celeste</label>
-            <select id="target" class="form-select">
+<article>
+    <div class="grid">
+        <label>Corpo Celeste
+            <select id="target">
                 <option value="sun">Sol</option>
                 <option value="moon">Lua</option>
                 <option value="mars">Marte</option>
                 <option value="jupiter">Júpiter</option>
                 <option value="saturn">Saturno</option>
             </select>
-        </div>
-        <div class="col-md-6 align-self-end">
-            <button class="btn btn-primary w-100" onclick="calcISS()">Calcular Distância</button>
-        </div>
+        </label>
+        <button onclick="calcISS()">Calcular Distância</button>
     </div>
-    <div id="results" class="mt-4 p-3 border rounded bg-secondary">
+    <div id="results">
         Aguardando cálculo...
     </div>
-</div>
+</article>
 {% endblock %}
 
 {% block scripts %}
@@ -36,7 +31,7 @@ async function calcISS() {
     const target = document.getElementById('target').value;
     const res = await fetch('{{ url_for("ephemeris.calculate_iss") }}', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}'},
         body: JSON.stringify({ target })
     });
     const data = await res.json();

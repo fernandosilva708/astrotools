@@ -3,62 +3,42 @@
 {% block title %}Efemérides — AstroTools{% endblock %}
 
 {% block content %}
-<header class="main">
-    <h1>Efemérides</h1>
-    <ul class="actions">
-        <li>
-            <button class="button icon fa-solid fa-cloud-download" onclick="updateEphemeris()">
-                <span data-i18n="eph_update_bsp">Atualizar Dados (.bsp)</span>
-            </button>
-        </li>
-    </ul>
-</header>
+<h1>Efemérides</h1>
 
-<div class="row">
-    <section class="col-6">
-        <header class="major">
-            <h2 data-i18n="eph_search">Pesquisa de Objeto</h2>
-        </header>
+<div class="grid">
+    <article>
+        <h2>Pesquisa de Objeto</h2>
         <form id="ephemerisForm">
-            <div class="row">
-                <div class="col-6">
-                    <label data-i18n="eph_target">Objeto Alvo</label>
-                    <input type="text" id="target" placeholder="e.g. Mars, M42" required>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 1em;">
-                <div class="col-6">
-                    <label data-i18n="eph_lat">Latitude</label>
+            <label>Objeto Alvo
+                <input type="text" id="target" placeholder="e.g. Mars, M42" required>
+            </label>
+            <div class="grid">
+                <label>Latitude
                     <input type="number" id="lat" step="0.0001" placeholder="38.7169">
-                </div>
-                <div class="col-6">
-                    <label data-i18n="eph_lon">Longitude</label>
+                </label>
+                <label>Longitude
                     <input type="number" id="lon" step="0.0001" placeholder="-9.1395">
-                </div>
+                </label>
             </div>
-            <div class="row" style="margin-top: 1em;">
-                <div class="col-6">
-                    <label data-i18n="eph_elevation">Altitude (m)</label>
+            <div class="grid">
+                <label>Altitude (m)
                     <input type="number" id="elevation" value="0">
-                </div>
-                <div class="col-6">
-                    <label data-i18n="eph_date">Data</label>
+                </label>
+                <label>Data
                     <input type="date" id="date">
-                </div>
+                </label>
             </div>
-            <ul class="actions" style="margin-top: 2em;">
-                <li><button type="submit" class="button primary" data-i18n="eph_calculate">Calcular</button></li>
-            </ul>
+            <button type="submit">Calcular</button>
         </form>
-    </section>
-    <section class="col-6">
-        <header class="major">
-            <h2 data-i18n="eph_results">Resultados</h2>
-        </header>
+        <button type="button" class="secondary outline" onclick="updateEphemeris()">Atualizar Dados (.bsp)</button>
+    </article>
+
+    <article>
+        <h2>Resultados</h2>
         <div id="results">
-            <p data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
+            <p>Introduza um objeto e localização para calcular as efemérides.</p>
         </div>
-    </section>
+    </article>
 </div>
 {% endblock %}
 
@@ -73,9 +53,7 @@ async function updateEphemeris() {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const res = await fetch('{{ url_for("ephemeris.update_ephemeris") }}', {
             method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
+            headers: { 'X-CSRFToken': csrfToken }
         });
         const data = await res.json();
         alert(data.message);

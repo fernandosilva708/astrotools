@@ -1,99 +1,44 @@
 <!-- SPDX-License-Identifier: GPL-2.0-only -->
-<!DOCTYPE HTML>
-<html lang="pt">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-    <title>{% block title %}AstroTools{% endblock %}</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AstroTools{% endblock %}</title>
+    <!-- Pico.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.custom.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {% block head %}{% endblock %}
 </head>
-<body class="is-preload">
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('dashboard.index') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AstroTools" style="height: 50px;"></a></li>
+            </ul>
+            <ul>
+                <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('gallery.index') }}">Galeria</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
+                {% endif %}
+            </ul>
+        </nav>
 
-    <!-- Wrapper -->
-    <div id="wrapper">
+        <section>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
 
-        <!-- Main -->
-        <div id="main">
-            <div class="inner">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
 
-                <!-- Header -->
-                <header id="header">
-                    <button id="sidebar-toggle" style="background: none; border: none; margin-right: 1em; cursor: pointer;">
-                        <i class="fa fa-bars" style="font-size: 1.5em;"></i>
-                    </button>
-                    <a href="{{ url_for('dashboard.index') }}" class="logo"><strong>Astro</strong>Tools</a>
-                    <ul class="icons">
-                        {% if current_user.is_authenticated %}
-                        <li><span class="label"><i class="fa fa-user"></i> {{ current_user.username }}</span></li>
-                        <li><a href="{{ url_for('auth.logout') }}" class="icon fa-solid fa-right-from-bracket"><span class="label">Sair</span></a></li>
-                        {% else %}
-                        <li><a href="{{ url_for('auth.login') }}" class="icon fa-solid fa-sign-in-alt"><span class="label">Entrar</span></a></li>
-                        {% endif %}
-                    </ul>
-                </header>
-
-                <!-- Content -->
-                <section>
-                    <div class="flash-messages">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
-                            {% endfor %}
-                        {% endwith %}
-                    </div>
-
-                    {% block content %}{% endblock %}
-                </section>
-
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div id="sidebar" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 250px; background: #333; z-index: 1000; overflow-y: auto;">
-            <div class="inner" style="padding: 2em; color: white;">
-
-                <!-- Sidebar Close -->
-                <button id="sidebar-close" style="background: none; border: none; color: white; cursor: pointer; float: right;">
-                    <i class="fa fa-times" style="font-size: 1.5em;"></i>
-                </button>
-
-                <!-- Menu -->
-                <nav id="menu" style="margin-top: 3em;">
-                    <header class="major">
-                        <h2>Menu</h2>
-                    </header>
-                    <ul style="list-style: none; padding: 0;">
-                        <li><a href="{{ url_for('dashboard.index') }}" style="color: white;">Dashboard</a></li>
-                        <li><a href="{{ url_for('gallery.index') }}" style="color: white;">Galeria</a></li>
-                        <li><a href="{{ url_for('astrometry.index') }}" style="color: white;">Plate Solve</a></li>
-                        <li><a href="{{ url_for('ephemeris.index') }}" style="color: white;">Efemérides</a></li>
-                        <li><a href="{{ url_for('telescopius.index') }}" style="color: white;">Telescopius</a></li>
-                        <li><a href="{{ url_for('backup.index') }}" style="color: white;">Backup</a></li>
-                        <li><a href="{{ url_for('config.index') }}" style="color: white;">Configuração</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Scripts -->
-    <script>
-        document.getElementById('sidebar-toggle').addEventListener('click', () => {
-            document.getElementById('sidebar').style.display = 'block';
-        });
-        document.getElementById('sidebar-close').addEventListener('click', () => {
-            document.getElementById('sidebar').style.display = 'none';
-        });
-    </script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     {% block scripts %}{% endblock %}
-
 </body>
 </html>

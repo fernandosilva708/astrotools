@@ -3,45 +3,29 @@
 {% block title %}Backup — AstroTools{% endblock %}
 
 {% block content %}
-<header class="main">
-    <h1>Backup</h1>
-</header>
+<h1>Backup</h1>
 
-<div class="row">
-    <section class="col-6">
-        <header class="major">
-            <h2>Estado do Sistema</h2>
-        </header>
-        <div class="box">
-            <p>
-                <strong>Status:</strong> {{ 'Em curso...' if status.running else 'Parado' }}<br>
-                <strong>Último resultado:</strong> {{ status.last_result }}<br>
-                <strong>Última execução:</strong> {{ status.last_run or 'Nunca' }}
-            </p>
-            <ul class="actions">
-                <li>
-                    <form method="post" action="{{ url_for('backup.run_backup') }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="button primary" {% if status.running %}disabled{% endif %}>
-                            Executar Backup
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </section>
+<div class="grid">
+    <article>
+        <h2>Estado do Sistema</h2>
+        <p>
+            <strong>Status:</strong> {{ 'Em curso...' if status.running else 'Parado' }}<br>
+            <strong>Último resultado:</strong> {{ status.last_result }}<br>
+            <strong>Última execução:</strong> {{ status.last_run or 'Nunca' }}
+        </p>
+        <form method="post" action="{{ url_for('backup.run_backup') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" {% if status.running %}disabled{% endif %}>Executar Backup</button>
+        </form>
+    </article>
 
-    <section class="col-6">
-        <header class="major">
-            <h2>Configuração</h2>
-        </header>
-        <div class="box">
-            <p>Edite o ficheiro <code>.env</code> para configurar as definições do rclone.</p>
-            <ul>
-                <li><strong>Remote:</strong> <code>{{ config.get('RCLONE_REMOTE') or 'Não definido' }}</code></li>
-                <li><strong>Path:</strong> <code>{{ config.get('RCLONE_PATH') or 'Não definido' }}</code></li>
-            </ul>
-        </div>
-    </section>
+    <article>
+        <h2>Configuração</h2>
+        <p>Edite o ficheiro <code>.env</code> para configurar as definições do rclone.</p>
+        <ul>
+            <li><strong>Remote:</strong> <code>{{ config.get('RCLONE_REMOTE') or 'Não definido' }}</code></li>
+            <li><strong>Path:</strong> <code>{{ config.get('RCLONE_PATH') or 'Não definido' }}</code></li>
+        </ul>
+    </article>
 </div>
 {% endblock %}
