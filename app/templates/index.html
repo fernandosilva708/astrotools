@@ -1,0 +1,28 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AstroTools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.custom.css') }}">
+</head>
+<body>
+    <main class="container" style="text-align: center; padding-top: 5rem;">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="AstroTools" style="max-width: 300px; margin-bottom: 2rem;">
+        
+        <div class="grid" style="max-width: 200px; margin: 0 auto 2rem auto;">
+            <!-- Placeholder para o símbolo do ISEC Lisboa -->
+            <div style="border: 1px solid var(--pico-muted-border-color); padding: 1rem; border-radius: var(--pico-border-radius);">
+                ISTEC LISBOA - Instituto Superior de Tecnologias Avançadas - Lisboa
+            </div>
+        </div>
+
+        <div class="grid" style="max-width: 400px; margin: 0 auto;">
+            <a href="{{ url_for('auth.login') }}" role="button">Entrar</a>
+            <a href="{{ url_for('auth.register') }}" role="button" class="secondary">Criar Conta</a>
+        </div>
+    </main>
+</body>
+</html>
