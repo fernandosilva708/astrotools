@@ -9,7 +9,7 @@ config_bp = Blueprint('config', __name__)
 @login_required
 def index():
     if request.method == 'POST':
-        # TODO: Implementar lógica de salvamento para perfil, senha, APIs, backup
+        # TODO: Implementar lógica de salvamento para perfil, palavra-passe, APIs, backup
         flash('Configurações atualizadas (simulado).', 'success')
         return redirect(url_for('config.index'))
     return render_template('config/index.html')

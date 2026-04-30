@@ -1,3 +1,35 @@
 :root {
   --pico-primary: #007bff;
 }
+
+/* Alertas customizados baseados nas cores do Pico */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--pico-border-radius);
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    color: var(--pico-ins-color);
+    background-color: rgba(56, 142, 60, 0.1);
+    border-color: var(--pico-ins-color);
+}
+
+.alert-danger, .alert-error {
+    color: var(--pico-del-color);
+    background-color: rgba(211, 47, 47, 0.1);
+    border-color: var(--pico-del-color);
+}
+
+.alert-warning {
+    color: #f57c00;
+    background-color: rgba(245, 124, 0, 0.1);
+    border-color: #f57c00;
+}
+
+.alert-info {
+    color: var(--pico-primary);
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: var(--pico-primary);
+}

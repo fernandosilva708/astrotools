@@ -4,13 +4,13 @@
 
 {% block content %}
 <section>
-    <h1>Galeria</h1>
+    <h1 data-i18n="gallery_title_page">Galeria</h1>
     <div class="grid">
         <form method="post" action="{{ url_for('gallery.ingest') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="secondary">Importar do Seestar</button>
+            <button type="submit" class="secondary" data-i18n="gallery_import_seestar">Importar do Seestar</button>
         </form>
-        <a href="{{ url_for('gallery.upload') }}" role="button">Carregar Imagem</a>
+        <a href="{{ url_for('gallery.upload') }}" role="button" data-i18n="gallery_upload">Carregar Imagem</a>
     </div>
 </section>
 
@@ -23,14 +23,14 @@
         </a>
         <p>{{ img.created_at.strftime('%Y-%m-%d') }}</p>
         {% if img.plate_solved %}
-            <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Resolvido</span>
+            <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="gallery_solved_badge">Resolvido</span>
         {% endif %}
     </article>
     {% endfor %}
 </div>
 {% else %}
 <section>
-    <p>Sem imagens. Carregue uma ou importe do Seestar.</p>
+    <p data-i18n="gallery_no_images">Sem imagens. Carregue uma ou importe do Seestar.</p>
 </section>
 {% endif %}
 {% endblock %}

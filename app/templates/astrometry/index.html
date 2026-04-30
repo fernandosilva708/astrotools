@@ -3,18 +3,18 @@
 {% block title %}Plate Solve — AstroTools{% endblock %}
 
 {% block content %}
-<h1>Plate Solving</h1>
+<h1 data-i18n="astrometry_title">Plate Solving</h1>
 
 <section>
-    <h2>A aguardar plate-solve</h2>
+    <h2 data-i18n="astrometry_pending">A aguardar plate-solve</h2>
     {% if unsolved %}
     <figure>
         <table>
             <thead>
                 <tr>
-                    <th>Ficheiro</th>
-                    <th>Carregado</th>
-                    <th>Ação</th>
+                    <th data-i18n="astrometry_file">Ficheiro</th>
+                    <th data-i18n="astrometry_uploaded">Carregado</th>
+                    <th data-i18n="astrometry_action">Ação</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,12 +26,12 @@
                         <div class="grid">
                             <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='offline') }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="outline">Resolver Offline</button>
+                                <button type="submit" class="outline" data-i18n="astrometry_submit">Resolver Offline</button>
                             </form>
                             {% if config.get('ASTROMETRY_API_KEY') %}
                             <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='online') }}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="outline secondary">Resolver Online</button>
+                                <button type="submit" class="outline secondary" data-i18n="astrometry_submit">Resolver Online</button>
                             </form>
                             {% endif %}
                         </div>
@@ -42,18 +42,18 @@
         </table>
     </figure>
     {% else %}
-        <p>Sem imagens a aguardar plate-solving.</p>
+        <p data-i18n="astrometry_none_pending">Sem imagens a aguardar plate-solving.</p>
     {% endif %}
 </section>
 
 <section>
-    <h2>Resolvidas</h2>
+    <h2 data-i18n="astrometry_solved_section">Resolvidas</h2>
     {% if solved %}
     <figure>
         <table>
             <thead>
                 <tr>
-                    <th>Ficheiro</th>
+                    <th data-i18n="astrometry_file">Ficheiro</th>
                     <th>RA</th>
                     <th>Dec</th>
                 </tr>
@@ -70,7 +70,7 @@
         </table>
     </figure>
     {% else %}
-        <p>Sem imagens resolvidas.</p>
+        <p data-i18n="astrometry_no_images">Sem imagens resolvidas.</p>
     {% endif %}
 </section>
 {% endblock %}

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pico.custom.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -18,20 +20,34 @@
                 <li><a href="{{ url_for('dashboard.index') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AstroTools" style="height: 50px;"></a></li>
             </ul>
             <ul>
-                <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('gallery.index') }}">Galeria</a></li>
+                <li><a href="{{ url_for('dashboard.index') }}" data-i18n="nav_dashboard">Dashboard</a></li>
+                <li><a href="{{ url_for('gallery.index') }}" data-i18n="nav_gallery">Galeria</a></li>
+                <li><a href="{{ url_for('astrometry.index') }}" data-i18n="nav_platesolve">Plate Solve</a></li>
+                <li><a href="{{ url_for('ephemeris.index') }}" data-i18n="nav_ephemeris">Efemérides</a></li>
+                <li><a href="{{ url_for('backup.index') }}" data-i18n="nav_backup">Backup</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                <li><a href="{{ url_for('config.index') }}" data-i18n="nav_config">Configurações</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" data-i18n="nav_logout">Sair</a></li>
                 {% else %}
-                <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
+                <li><a href="{{ url_for('auth.login') }}" data-i18n="auth_login">Entrar</a></li>
                 {% endif %}
+                <li>
+                    <details class="dropdown">
+                      <summary aria-haspopup="listbox" role="link" class="secondary" style="padding: 0.5rem;">🌐</summary>
+                      <ul role="listbox">
+                        <li><a href="#" onclick="setLanguage('pt')">Português</a></li>
+                        <li><a href="#" onclick="setLanguage('en')">English</a></li>
+                      </ul>
+                    </details>
+                </li>
             </ul>
         </nav>
 
         <section>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% set cat = 'danger' if category in ['error', 'danger'] else category %}
+                    <div class="alert alert-{{ cat }}">{{ message }}</div>
                 {% endfor %}
             {% endwith %}
 

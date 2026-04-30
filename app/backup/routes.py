@@ -16,7 +16,7 @@ backup_status = {
 
 
 def run_rclone_task(app_context, remote, path):
-    """Tarefa de background para executar o rclone de forma eficiente."""
+    """Tarefa em segundo plano para executar o rclone de forma eficiente."""
     global backup_status
     with app_context:
         try:

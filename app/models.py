@@ -46,16 +46,20 @@ class GalleryImage(db.Model):
     thumb_path = db.Column(db.String(512))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    # Dados do plate-solve
-    ra = db.Column(db.Float)
-    dec = db.Column(db.Float)
-    plate_solved = db.Column(db.Boolean, default=False)
-    astrometry_job_id = db.Column(db.String(64))
-    # Metadados do Seestar
-    target_name = db.Column(db.String(128))
-    exposure_time = db.Column(db.Float)
-    gain = db.Column(db.Integer)
-    captured_at = db.Column(db.DateTime)
+    
+    # Dados de resolução astrométrica (Plate Solve)
+    ra = db.Column(db.Float)  # Ascensão Reta em graus
+    dec = db.Column(db.Float)  # Declinação em graus
+    plate_solved = db.Column(db.Boolean, default=False)  # Indica se a imagem foi resolvida astrometricamente
+    astrometry_job_id = db.Column(db.String(64))  # ID da tarefa no astrometry.net (se aplicável)
+    
+    # Metadados específicos do Seestar ou ficheiros FITS
+    target_name = db.Column(db.String(128))  # Nome do objeto alvo (ex: M42)
+    exposure_time = db.Column(db.Float)  # Tempo de exposição em segundos
+    gain = db.Column(db.Integer)  # Ganho utilizado na captura
+    captured_at = db.Column(db.DateTime)  # Data e hora reais da captura da imagem
+    
+    # Estado de sincronização/backup externa (ex: rclone)
     backup_status = db.Column(db.Boolean, default=False)
 
     def __repr__(self):

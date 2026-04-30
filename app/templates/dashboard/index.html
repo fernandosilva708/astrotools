@@ -8,25 +8,25 @@
 <section>
     <div class="grid">
         <article>
-            <h3>Imagens</h3>
+            <h3 data-i18n="dash_images">Imagens</h3>
             <p style="font-size: 2em; font-weight: 800; margin: 0;">{{ image_count }}</p>
         </article>
         <article>
-            <h3>Imagens sem Backup</h3>
+            <h3 data-i18n="dash_images_no_backup">Imagens sem Backup</h3>
             <p style="font-size: 2em; font-weight: 800; margin: 0; color: var(--pico-del-color);">{{ images_no_backup|length }}</p>
         </article>
     </div>
 </section>
 
 <section>
-    <h2>Imagens sem Backup</h2>
+    <h2 data-i18n="dash_images_no_backup">Imagens sem Backup</h2>
     {% if images_no_backup %}
     <figure>
         <table>
             <thead>
                 <tr>
-                    <th>Ficheiro</th>
-                    <th>Data</th>
+                    <th data-i18n="astrometry_file">Ficheiro</th>
+                    <th data-i18n="eph_date">Data</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,33 +40,33 @@
         </table>
     </figure>
     {% else %}
-    <p>Todas as imagens têm backup.</p>
+    <p data-i18n="backup_all_safe">Todas as imagens têm backup.</p>
     {% endif %}
 </section>
 
 <section>
-    <h2>Imagens Recentes</h2>
+    <h2 data-i18n="dash_recent_images">Imagens Recentes</h2>
     {% if recent_images %}
     <div class="grid">
         {% for img in recent_images %}
         <article>
             <h3>{{ img.title or img.filename }}</h3>
             <p>{{ img.description or '' }}</p>
-            <a href="#" role="button" class="outline">Ver Detalhes</a>
+            <a href="#" role="button" class="outline" data-i18n="gallery_view_details">Ver Detalhes</a>
         </article>
         {% endfor %}
     </div>
     {% else %}
-    <p>Sem imagens recentes. <a href="{{ url_for('gallery.upload') }}">Carregar Imagem</a></p>
+    <p><span data-i18n="dash_no_images">Sem imagens recentes.</span> <a href="{{ url_for('gallery.upload') }}" data-i18n="dash_upload_image">Carregar Imagem</a></p>
     {% endif %}
 </section>
 
 <section>
-    <h2>Ações Rápidas</h2>
+    <h2 data-i18n="dash_quick_actions">Ações Rápidas</h2>
     <div class="grid">
-        <a href="{{ url_for('gallery.upload') }}" role="button">Carregar Imagem</a>
-        <a href="{{ url_for('ephemeris.index') }}" role="button" class="secondary">Efemérides</a>
-        <a href="{{ url_for('backup.index') }}" role="button" class="contrast">Backup</a>
+        <a href="{{ url_for('gallery.upload') }}" role="button" data-i18n="dash_upload_image">Carregar Imagem</a>
+        <a href="{{ url_for('ephemeris.index') }}" role="button" class="secondary" data-i18n="nav_ephemeris">Efemérides</a>
+        <a href="{{ url_for('backup.index') }}" role="button" class="contrast" data-i18n="nav_backup">Backup</a>
     </div>
 </section>
 {% endblock %}

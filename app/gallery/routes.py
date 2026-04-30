@@ -17,7 +17,7 @@ ingest_status = {"running": False, "last_count": 0}
 
 
 def run_ingest_task(app_context, path, user_id):
-    """Tarefa de background para importar imagens do Seestar."""
+    """Tarefa em segundo plano para importar imagens do Seestar."""
     global ingest_status
     with app_context:
         try:
@@ -90,7 +90,7 @@ def ingest():
     ingest_status["running"] = True
     ingest_status["last_count"] = 0
     
-    # Iniciar thread de background
+    # Iniciar tarefa em segundo plano
     thread = threading.Thread(
         target=run_ingest_task,
         args=(current_app.app_context(), seestar_path, current_user.id)

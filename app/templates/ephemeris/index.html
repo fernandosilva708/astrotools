@@ -3,40 +3,45 @@
 {% block title %}Efemérides — AstroTools{% endblock %}
 
 {% block content %}
-<h1>Efemérides</h1>
+<h1 data-i18n="nav_ephemeris">Efemérides</h1>
 
 <div class="grid">
     <article>
-        <h2>Pesquisa de Objeto</h2>
+        <h2 data-i18n="eph_search">Pesquisa de Objeto</h2>
         <form id="ephemerisForm">
-            <label>Objeto Alvo
+            <label>
+                <span data-i18n="eph_target">Objeto Alvo</span>
                 <input type="text" id="target" placeholder="e.g. Mars, M42" required>
             </label>
             <div class="grid">
-                <label>Latitude
+                <label>
+                    <span data-i18n="eph_lat">Latitude</span>
                     <input type="number" id="lat" step="0.0001" placeholder="38.7169">
                 </label>
-                <label>Longitude
+                <label>
+                    <span data-i18n="eph_lon">Longitude</span>
                     <input type="number" id="lon" step="0.0001" placeholder="-9.1395">
                 </label>
             </div>
             <div class="grid">
-                <label>Altitude (m)
+                <label>
+                    <span data-i18n="eph_elevation">Altitude (m)</span>
                     <input type="number" id="elevation" value="0">
                 </label>
-                <label>Data
+                <label>
+                    <span data-i18n="eph_date">Data</span>
                     <input type="date" id="date">
                 </label>
             </div>
-            <button type="submit">Calcular</button>
+            <button type="submit" data-i18n="eph_calculate">Calcular</button>
         </form>
-        <button type="button" class="secondary outline" onclick="updateEphemeris()">Atualizar Dados (.bsp)</button>
+        <button type="button" class="secondary outline" onclick="updateEphemeris()" data-i18n="eph_update_bsp">Atualizar Dados (.bsp)</button>
     </article>
 
     <article>
-        <h2>Resultados</h2>
+        <h2 data-i18n="eph_results">Resultados</h2>
         <div id="results">
-            <p>Introduza um objeto e localização para calcular as efemérides.</p>
+            <p data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
         </div>
     </article>
 </div>

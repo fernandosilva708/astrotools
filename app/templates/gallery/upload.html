@@ -3,21 +3,24 @@
 {% block title %}Carregar Imagem — AstroTools{% endblock %}
 
 {% block content %}
-<h1>Carregar Imagem</h1>
+<h1 data-i18n="gallery_upload">Carregar Imagem</h1>
 <article>
     <form method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Ficheiro de Imagem
+        <label>
+            <span data-i18n="gallery_image_file">Ficheiro de Imagem</span>
             <input type="file" name="image" required accept="image/*">
         </label>
-        <label>Título (opcional)
-            <input type="text" name="title" placeholder="Título da imagem">
+        <label>
+            <span data-i18n="gallery_title">Título</span> <span data-i18n="optional">(opcional)</span>
+            <input type="text" name="title" data-i18n="gallery_title_placeholder" placeholder="Título da imagem">
         </label>
-        <label>Descrição (opcional)
+        <label>
+            <span data-i18n="gallery_description">Descrição</span> <span data-i18n="optional">(opcional)</span>
             <textarea name="description" rows="3"></textarea>
         </label>
-        <button type="submit">Carregar</button>
-        <a href="{{ url_for('gallery.index') }}" role="button" class="secondary outline">Cancelar</a>
+        <button type="submit" data-i18n="gallery_upload_short">Carregar</button>
+        <a href="{{ url_for('gallery.index') }}" role="button" class="secondary outline" data-i18n="cancel">Cancelar</a>
     </form>
 </article>
 {% endblock %}

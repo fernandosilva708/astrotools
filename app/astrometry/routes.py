@@ -20,7 +20,7 @@ def index():
 @astrometry_bp.route('/submit/<int:image_id>', methods=['POST'])
 @login_required
 def submit(image_id):
-    """Submete uma imagem para plate-solving (offline ou online)."""
+    """Submete uma imagem para resolução astrométrica (offline ou online)."""
     image = GalleryImage.query.get_or_404(image_id)
     mode = request.args.get('mode', 'offline')
     
@@ -29,11 +29,11 @@ def submit(image_id):
         if not api_key:
             flash('ASTROMETRY_API_KEY não está configurado.', 'danger')
             return redirect(url_for('astrometry.index'))
-        flash('Plate-solve Online via Astrometry.net iniciado.', 'info')
+        flash('Resolução astrométrica Online via Astrometry.net iniciada.', 'info')
         # TODO: Implementar lógica de API online
         return redirect(url_for('astrometry.index'))
 
-    # Offline ASTAP
+    # ASTAP Offline
     if not os.path.exists(image.filepath):
         flash('Ficheiro de imagem não encontrado.', 'danger')
         return redirect(url_for('astrometry.index'))
@@ -48,9 +48,9 @@ def submit(image_id):
         if result.returncode == 0:
             image.plate_solved = True
             db.session.commit()
-            flash(f'Plate-solve offline concluído para "{image.filename}".', 'success')
+            flash(f'Resolução astrométrica offline concluída para "{image.filename}".', 'success')
         else:
-            flash(f'Falha no plate-solve: {result.stderr}', 'danger')
+            flash(f'Falha na resolução astrométrica: {result.stderr}', 'danger')
     except Exception as e:
         flash(f'Erro ao executar ASTAP: {str(e)}', 'danger')
         

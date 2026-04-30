@@ -1,26 +1,30 @@
 {% extends 'base.html' %}
 {% block title %}Configurações — AstroTools{% endblock %}
 {% block content %}
-<h1>Configurações</h1>
+<h1 data-i18n="nav_config">Configurações</h1>
 <article>
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <h3>Perfil</h3>
-        <label>Username
+        <h3 data-i18n="config_profile">Perfil</h3>
+        <label>
+            <span data-i18n="auth_username">Username</span>
             <input type="text" name="username" value="{{ current_user.username }}">
         </label>
-        <h3>Alterar Password</h3>
-        <label>Nova Password
+        <h3 data-i18n="config_change_password">Alterar Password</h3>
+        <label>
+            <span data-i18n="config_new_password">Nova Password</span>
             <input type="password" name="new_password" placeholder="Nova Password">
         </label>
-        <h3>APIs & Backup</h3>
-        <label>Astrometry.net API Key
+        <h3 data-i18n="config_apis_backup">APIs & Backup</h3>
+        <label>
+            <span>Astrometry.net API Key</span>
             <input type="text" name="astrometry_key" placeholder="Astrometry.net API Key">
         </label>
-        <label>Telescopius Base URL
+        <label>
+            <span>Telescopius Base URL</span>
             <input type="text" name="telescopius_url" placeholder="Telescopius Base URL">
         </label>
-        <button type="submit">Guardar</button>
+        <button type="submit" data-i18n="config_save">Guardar</button>
     </form>
 </article>
 {% endblock %}

@@ -1,61 +1,61 @@
 # GEMINI.md
 
-This file provides foundational mandates and project context for Gemini CLI when working in this repository.
+Este ficheiro fornece mandatos fundamentais e contexto do projeto para o Gemini CLI ao trabalhar neste repositório.
 
-## Project Overview
-**AstroTools** is a Python Flask web application providing a suite of tools for amateur astronomers, including authentication, an image gallery with Seestar ingest, plate-solving (astrometry), ephemeris calculations, a Telescopius proxy, and rclone backup functionality.
+## Visão Geral do Projeto
+**AstroTools** é uma aplicação web Python Flask que fornece um conjunto de ferramentas para astrónomos amadores, incluindo autenticação, uma galeria de imagens com importação do Seestar, plate-solving (astrometria), cálculos de efemérides, um proxy para o Telescopius e funcionalidade de backup via rclone.
 
-**Target Environment:** This project is specifically designed to run on a **Raspberry Pi** running a **Linux** distribution. Development and deployment considerations should account for Raspberry Pi performance characteristics and ARM architecture.
+**Ambiente Alvo:** Este projeto foi especificamente desenhado para correr num **Raspberry Pi** com uma distribuição **Linux**. As considerações de desenvolvimento e implementação devem ter em conta as características de desempenho do Raspberry Pi e a arquitetura ARM.
 
-## Status
-The project is currently in the **scaffolding stage**. The directory structure and initial module files have been created, but many core implementation details are pending.
+## Estado
+O projeto encontra-se atualmente na **fase de scaffolding**. A estrutura de diretórios e os ficheiros iniciais dos módulos foram criados, mas muitos detalhes de implementação core estão pendentes.
 
-## Architecture & Tech Stack
-- **Framework:** Flask (Application Factory pattern in `create_app()`).
-- **Database:** SQLAlchemy with Flask-Migrate (shared models in `app/models.py`). sqlite 
-- **Auth:** Flask-Login for user authentication.
-- **Frontend:** Jinja2 templates, Pico.css (Vanilla CSS minimalista).
-- **External Integrations:**
-  - **Astrometry:** Integration with `nova.astrometry.net` API (or local `solve-field` if available on Pi).
-  - **Ephemeris:** Calculations via `skyfield` Python library.
-  - **Backup:** External integration with `rclone` (system-level dependency).
-  - **Telescopius:** Proxy for external astronomy services.
-- **Project Structure:**
-  - `app/`: Main application logic organized by blueprints.
-    - `auth/`: User authentication (routes, forms).
-    - `gallery/`: Image gallery with Seestar import logic (`ingest.py`).
-    - `astrometry/`: Plate-solving integration.
-    - `ephemeris/`: Astronomical calculations.
-    - `telescopius/`: Proxy services.
-    - `backup/`: rclone-based backup management.
-    - `dashboard/`: Main user dashboard.
-    - `static/`: Assets (CSS, JS, images).
-    - `templates/`: Jinja2 templates, mirrored by module.
-  - `migrations/`: Alembic database migrations.
-  - `tests/`: Test suite using `pytest`.
-  - `run.py`: Application entry point.
+## Arquitetura e Stack Tecnológica
+- **Framework:** Flask (padrão Application Factory em `create_app()`).
+- **Base de Dados:** SQLAlchemy com Flask-Migrate (modelos partilhados em `app/models.py`). SQLite.
+- **Autenticação:** Flask-Login para autenticação de utilizadores.
+- **Frontend:** Templates Jinja2, Pico.css (CSS Vanilla minimalista).
+- **Integrações Externas:**
+  - **Astrometria:** Integração com a API do `nova.astrometry.net` (ou `solve-field` local se disponível no Pi).
+  - **Efemérides:** Cálculos através da biblioteca Python `skyfield`.
+  - **Backup:** Integração externa com `rclone` (dependência ao nível do sistema).
+  - **Telescopius:** Proxy para serviços astronómicos externos.
+- **Estrutura do Projeto:**
+  - `app/`: Lógica principal da aplicação organizada por blueprints.
+    - `auth/`: Autenticação de utilizadores (rotas, formulários).
+    - `gallery/`: Galeria de imagens com lógica de importação do Seestar (`ingest.py`).
+    - `astrometry/`: Integração de plate-solving.
+    - `ephemeris/`: Cálculos astronómicos.
+    - `telescopius/`: Serviços de proxy.
+    - `backup/`: Gestão de backups baseada em rclone.
+    - `dashboard/`: Dashboard principal do utilizador.
+    - `static/`: Assets (CSS, JS, imagens).
+    - `templates/`: Templates Jinja2, espelhados por módulo.
+  - `migrations/`: Migrações da base de dados Alembic.
+  - `tests/`: Suite de testes usando `pytest`.
+  - `run.py`: Ponto de entrada da aplicação.
 
-## Development Mandates & Conventions
-- **Blueprints:** Each module must be registered as a Flask Blueprint in `app/__init__.py`.
-- **Models:** All SQLAlchemy models must reside in `app/models.py`.
-- **Templates:** Follow the `app/templates/<module>/` structure, ensuring the directory name matches the blueprint name.
-- **Environment:** Use `.env` for local configuration. Never commit the `.env` file; use `.env.example` as a template.
-- **Pi-Specific Considerations:**
-  - Code must be compatible with ARM architecture (Raspberry Pi).
-  - Minimize resource-heavy operations in the main Flask thread; use background processes where necessary.
-  - Ensure compatibility with Linux-specific paths and system tools (`rclone`, etc.).
-- **Standards:** Adhere to PEP 8 for Python code and maintain clear, documented route handlers.
+## Mandatos e Convenções de Desenvolvimento
+- **Blueprints:** Cada módulo deve ser registado como um Blueprint do Flask em `app/__init__.py`.
+- **Modelos:** Todos os modelos SQLAlchemy devem residir em `app/models.py`.
+- **Templates:** Seguir a estrutura `app/templates/<modulo>/`, garantindo que o nome do diretório corresponde ao nome do blueprint.
+- **Ambiente:** Usar `.env` para configuração local. Nunca submeter o ficheiro `.env`; usar `.env.example` como modelo.
+- **Considerações Específicas para o Pi:**
+  - O código deve ser compatível com a arquitetura ARM (Raspberry Pi).
+  - Minimizar operações pesadas na thread principal do Flask; usar processos em background quando necessário.
+  - Garantir compatibilidade com caminhos específicos de Linux e ferramentas do sistema (`rclone`, etc.).
+- **Normas:** Aderir ao PEP 8 para código Python e manter manipuladores de rotas claros e documentados.
 
-## Common Commands
-### Setup & Development (Linux/Pi)
-- **Install system dependencies:** `sudo apt update && sudo apt install rclone astrometry.net` (as needed).
-- **Install Python dependencies:** `pip install -r requirements.txt`.
-- **Configure environment:** `cp .env.example .env` (then edit as needed).
-- **Initialize/Update Database:** `flask db upgrade`.
-- **Run Development Server:** `python run.py`.
+## Comandos Comuns
+### Configuração e Desenvolvimento (Linux/Pi)
+- **Instalar dependências do sistema:** `sudo apt update && sudo apt install rclone astrometry.net` (conforme necessário).
+- **Instalar dependências Python:** `pip install -r requirements.txt`.
+- **Configurar ambiente:** `cp .env.example .env` (e depois editar conforme necessário).
+- **Inicializar/Atualizar Base de Dados:** `flask db upgrade`.
+- **Executar Servidor de Desenvolvimento:** `python run.py`.
 
-### Testing & Quality
-- **Run tests:** `pytest`.
+### Testes e Qualidade
+- **Executar testes:** `pytest`.
 - **Linting:** `flake8 app/`.
 
 ## Plano de Implementação (Próximos Passos)
@@ -71,4 +71,6 @@ The project is currently in the **scaffolding stage**. The directory structure a
 - [x] Remover assets do template Editorial (JS/CSS antigos).
 - [x] Integrar Pico.css v2.1.1 em `app/static/css/`.
 - [x] Refatorar `app/templates/base.html` para estrutura semântica Pico.css.
-- [ ] Atualizar todos os templates de módulos para usar classes/semântica do Pico.css.
+- [x] Atualizar todos os templates de módulos para usar classes/semântica do Pico.css.
+- [x] Implementar sistema de internacionalização (PT-PT/EN).
+- [x] Estilizar mensagens Flash com cores do Pico.css.

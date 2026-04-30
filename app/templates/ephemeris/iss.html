@@ -3,23 +3,24 @@
 {% block title %}Efemérides da ISS — AstroTools{% endblock %}
 
 {% block content %}
-<h1>Efemérides da ISS</h1>
-<p>Cálculo da distância relativa entre a ISS e objetos do sistema solar.</p>
+<h1 data-i18n="nav_ephemeris_iss">Efemérides da ISS</h1>
+<p data-i18n="eph_iss_desc">Cálculo da distância relativa entre a ISS e objetos do sistema solar.</p>
 
 <article>
     <div class="grid">
-        <label>Corpo Celeste
+        <label>
+            <span data-i18n="eph_celestial_body">Corpo Celeste</span>
             <select id="target">
-                <option value="sun">Sol</option>
-                <option value="moon">Lua</option>
-                <option value="mars">Marte</option>
-                <option value="jupiter">Júpiter</option>
-                <option value="saturn">Saturno</option>
+                <option value="sun" data-i18n="eph_sun">Sol</option>
+                <option value="moon" data-i18n="eph_moon">Lua</option>
+                <option value="mars" data-i18n="eph_mars">Marte</option>
+                <option value="jupiter" data-i18n="eph_jupiter">Júpiter</option>
+                <option value="saturn" data-i18n="eph_saturn">Saturno</option>
             </select>
         </label>
-        <button onclick="calcISS()">Calcular Distância</button>
+        <button onclick="calcISS()" data-i18n="eph_calculate">Calcular Distância</button>
     </div>
-    <div id="results">
+    <div id="results" data-i18n="eph_waiting">
         Aguardando cálculo...
     </div>
 </article>
