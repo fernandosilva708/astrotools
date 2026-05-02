@@ -15,13 +15,29 @@ def index():
 @telescopius_bp.route('/proxy')
 @login_required
 def proxy():
-    """Encaminha pedidos para o Telescopius.
-
-    TODO: Encaminhar pedidos autenticados com cookie de sessão / token.
-    TODO: Mapear caminhos locais para os endpoints da API do Telescopius.
-    TODO: Tratar CORS e negociação de content-type.
-    """
+    """Encaminha pedidos para o Telescopius, permitindo o uso da API/Dados sem problemas de CORS ou bloqueios."""
     base_url = current_app.config.get('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
-    path = request.args.get('path', '/')
-    flash('O proxy do Telescopius ainda não está implementado.', 'info')
-    return redirect(url_for('telescopius.index'))
+    path = request.args.get('path', '')
+    
+    if not path.startswith('/'):
+        path = '/' + path
+        
+    url = f"{base_url}{path}"
+    
+    # Filtrar argumentos para não incluir o 'path' do proxy
+    params = {k: v for k, v in request.args.items() if k != 'path'}
+    
+    try:
+        # Executar o pedido ao Telescopius
+        resp = http.get(url, params=params, timeout=10)
+        
+        # Criar a resposta do Flask baseada na resposta do Telescopius
+        excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+        headers = [(name, value) for (name, value) in resp.raw.headers.items()
+                   if name.lower() not in excluded_headers]
+        
+        return Response(resp.content, resp.status_code, headers)
+        
+    except Exception as e:
+        flash(f'Erro ao contactar o Telescopius: {str(e)}', 'danger')
+        return redirect(url_for('telescopius.index'))

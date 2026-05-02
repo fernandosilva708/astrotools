@@ -24,12 +24,12 @@
                     <td>{{ img.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                     <td>
                         <div class="grid">
-                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='offline') }}">
+                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='offline') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="outline" data-i18n="astrometry_submit">Resolver Offline</button>
                             </form>
                             {% if config.get('ASTROMETRY_API_KEY') %}
-                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='online') }}">
+                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='online') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="outline secondary" data-i18n="astrometry_submit">Resolver Online</button>
                             </form>

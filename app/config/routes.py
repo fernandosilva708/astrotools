@@ -9,7 +9,19 @@ config_bp = Blueprint('config', __name__)
 @login_required
 def index():
     if request.method == 'POST':
-        # TODO: Implementar lógica de salvamento para perfil, palavra-passe, APIs, backup
-        flash('Configurações atualizadas (simulado).', 'success')
+        # Atualizar Perfil
+        current_user.username = request.form.get('username', current_user.username)
+        
+        # Atualizar Password se fornecida
+        new_password = request.form.get('new_password')
+        if new_password:
+            current_user.set_password(new_password)
+            
+        # Atualizar APIs
+        current_user.astrometry_api_key = request.form.get('astrometry_key', current_user.astrometry_api_key)
+        current_user.telescopius_base_url = request.form.get('telescopius_url', current_user.telescopius_base_url)
+        
+        db.session.commit()
+        flash('Configurações atualizadas com sucesso.', 'success')
         return redirect(url_for('config.index'))
     return render_template('config/index.html')

@@ -6,7 +6,7 @@
 <section>
     <h1 data-i18n="gallery_title_page">Galeria</h1>
     <div class="grid">
-        <form method="post" action="{{ url_for('gallery.ingest') }}">
+        <form method="post" action="{{ url_for('gallery.ingest') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="secondary" data-i18n="gallery_import_seestar">Importar do Seestar</button>
         </form>
@@ -17,14 +17,17 @@
 {% if images %}
 <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
     {% for img in images|sort(attribute='created_at', reverse=True) %}
-    <article style="border: {% if not img.backup_status %}2px solid var(--pico-del-color){% else %}none{% endif %};">
-        <a href="{{ url_for('gallery.serve_image', filename=img.filename) }}" target="_blank">
-            <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.filename }}" style="width: 100%; height: 200px; object-fit: cover;">
+    <article style="border: {% if not img.backup_status %}2px solid var(--pico-del-color){% else %}none{% endif %}; padding: 0;">
+        <a href="{{ url_for('gallery.details', image_id=img.id) }}">
+            <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.filename }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;">
         </a>
-        <p>{{ img.created_at.strftime('%Y-%m-%d') }}</p>
-        {% if img.plate_solved %}
-            <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="gallery_solved_badge">Resolvido</span>
-        {% endif %}
+        <div style="padding: 1rem;">
+            <p style="margin-bottom: 0.5rem;"><strong>{{ img.title or img.filename }}</strong></p>
+            <p style="font-size: 0.8rem; margin-bottom: 0.5rem;">{{ img.created_at.strftime('%Y-%m-%d') }}</p>
+            {% if img.plate_solved %}
+                <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" data-i18n="gallery_solved_badge">Resolvido</span>
+            {% endif %}
+        </div>
     </article>
     {% endfor %}
 </div>

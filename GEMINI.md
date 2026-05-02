@@ -74,3 +74,9 @@ O projeto encontra-se atualmente na **fase de scaffolding**. A estrutura de dire
 - [x] Atualizar todos os templates de módulos para usar classes/semântica do Pico.css.
 - [x] Implementar sistema de internacionalização (PT-PT/EN).
 - [x] Estilizar mensagens Flash com cores do Pico.css.
+
+### 3. Integrações e Refinamento
+- [ ] Implementar o Proxy do Telescopius em `app/telescopius/routes.py`.
+- [ ] Refinar a página de Configurações para carregar e guardar chaves de API.
+- [ ] Adicionar página de detalhes da imagem na Galeria (Concluído).
+- [ ] Melhorar o feedback visual com `aria-busy` (Concluído).

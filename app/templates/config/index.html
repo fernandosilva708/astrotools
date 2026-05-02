@@ -18,11 +18,11 @@
         <h3 data-i18n="config_apis_backup">APIs & Backup</h3>
         <label>
             <span>Astrometry.net API Key</span>
-            <input type="text" name="astrometry_key" placeholder="Astrometry.net API Key">
+            <input type="text" name="astrometry_key" placeholder="Astrometry.net API Key" value="{{ current_user.astrometry_api_key or '' }}">
         </label>
         <label>
             <span>Telescopius Base URL</span>
-            <input type="text" name="telescopius_url" placeholder="Telescopius Base URL">
+            <input type="text" name="telescopius_url" placeholder="Telescopius Base URL" value="{{ current_user.telescopius_base_url or '' }}">
         </label>
         <button type="submit" data-i18n="config_save">Guardar</button>
     </form>

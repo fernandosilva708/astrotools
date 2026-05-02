@@ -101,11 +101,34 @@ def ingest():
     return redirect(url_for('gallery.index'))
 
 
+@gallery_bp.route('/details/<int:image_id>', methods=['GET', 'POST'])
+@login_required
+def details(image_id):
+    """Exibe e edita os detalhes de uma imagem."""
+    image = GalleryImage.query.get_or_404(image_id)
+    if request.method == 'POST':
+        image.title = request.form.get('title', image.title)
+        image.description = request.form.get('description', image.description)
+        image.target_name = request.form.get('target_name', image.target_name)
+        db.session.commit()
+        flash('Detalhes atualizados com sucesso.', 'success')
+        return redirect(url_for('gallery.details', image_id=image.id))
+    return render_template('gallery/details.html', image=image)
+
+
 @gallery_bp.route('/delete/<int:image_id>', methods=['POST'])
 @login_required
 def delete(image_id):
+    """Elimina uma imagem da base de dados e do sistema de ficheiros."""
     image = GalleryImage.query.get_or_404(image_id)
+    # Tentar apagar o ficheiro físico
+    try:
+        if os.path.exists(image.filepath):
+            os.remove(image.filepath)
+    except Exception:
+        pass
+    
     db.session.delete(image)
     db.session.commit()
-    flash('Imagem eliminada.', 'success')
+    flash('Imagem eliminada com sucesso.', 'success')
     return redirect(url_for('gallery.index'))

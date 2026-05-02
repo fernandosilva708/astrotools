@@ -25,9 +25,9 @@ def submit(image_id):
     mode = request.args.get('mode', 'offline')
     
     if mode == 'online':
-        api_key = current_app.config.get('ASTROMETRY_API_KEY', '')
+        api_key = current_user.astrometry_api_key or current_app.config.get('ASTROMETRY_API_KEY', '')
         if not api_key:
-            flash('ASTROMETRY_API_KEY não está configurado.', 'danger')
+            flash('A chave de API da Astrometry.net não está configurada (verifique as Configurações).', 'danger')
             return redirect(url_for('astrometry.index'))
         flash('Resolução astrométrica Online via Astrometry.net iniciada.', 'info')
         # TODO: Implementar lógica de API online

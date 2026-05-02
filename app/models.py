@@ -19,6 +19,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Definições personalizadas do utilizador
+    astrometry_api_key = db.Column(db.String(128))
+    telescopius_base_url = db.Column(db.String(256), default='https://telescopius.com')
+
     # Relações: um utilizador pode ter várias imagens e observações
     images = db.relationship('GalleryImage', backref='author', lazy='dynamic')
     observations = db.relationship('Observation', backref='observer', lazy='dynamic')
