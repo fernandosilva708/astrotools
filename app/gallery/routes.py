@@ -32,8 +32,31 @@ def run_ingest_task(app_context, path, user_id):
 @gallery_bp.route('/')
 @login_required
 def index():
-    images = GalleryImage.query.order_by(GalleryImage.created_at.desc()).all()
-    return render_template('gallery/index.html', images=images, ingest_status=ingest_status)
+    page = request.args.get('page', 1, type=int)
+    query = request.args.get('q', '').strip()
+    per_page = 12
+    
+    base_query = GalleryImage.query.filter_by(user_id=current_user.id)
+    
+    if query:
+        # Filtrar por título, nome do ficheiro ou alvo
+        search = f"%{query}%"
+        base_query = base_query.filter(
+            (GalleryImage.title.ilike(search)) | 
+            (GalleryImage.filename.ilike(search)) |
+            (GalleryImage.target_name.ilike(search))
+        )
+    
+    pagination = base_query.order_by(GalleryImage.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    images = pagination.items
+    
+    return render_template('gallery/index.html', 
+                           images=images, 
+                           pagination=pagination,
+                           search_query=query,
+                           ingest_status=ingest_status)
 
 
 @gallery_bp.route('/image/<path:filename>')

@@ -35,9 +35,12 @@
         {% if visible_now %}
             <ul style="margin: 0; font-size: 0.9rem;">
                 {% for obj in visible_now[:3] %}
-                    <li>{{ obj.name }} ({{ obj.alt }})</li>
+                    <li><strong>{{ obj.name }}</strong> (Alt: {{ obj.alt }})</li>
                 {% endfor %}
             </ul>
+            <footer style="margin-top: 0.5rem; padding: 0.5rem 0 0 0;">
+                <a href="{{ url_for('planner.index') }}" style="font-size: 0.8rem;" data-i18n="nav_planner">Ver Planeador Completo</a>
+            </footer>
         {% else %}
             <small data-i18n="dash_no_objects">Nenhum objeto brilhante acima de 10°</small>
         {% endif %}
