@@ -5,48 +5,57 @@
 {% block content %}
 <section>
     <h1 data-i18n="nav_weather">Meteorologia</h1>
-    <p><span data-i18n="weather_forecast_for">Previsão para</span>: <strong>Lisboa</strong> ({{ lat }}, {{ lon }})</p>
+    <p><span data-i18n="weather_forecast_for">Previsão para</span>: <strong>Lisboa</strong></p>
 </section>
 
-<section>
-    {% if forecast %}
-    <figure>
+<section id="weather-section">
+    <div id="weather-loading" aria-busy="true">Carregando dados...</div>
+    <figure id="weather-content" style="display:none;">
         <table role="grid">
             <thead>
                 <tr>
                     <th data-i18n="eph_time">Hora</th>
                     <th data-i18n="weather_clouds">Nuvens</th>
                     <th data-i18n="weather_temp">Temp.</th>
-                    <th data-i18n="weather_humidity">Humidade</th>
                     <th data-i18n="weather_status">Estado</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for f in forecast %}
-                <tr>
-                    <td>{{ f.time }}</td>
-                    <td>
-                        <progress value="{{ f.clouds }}" max="100" style="margin-bottom: 0;"></progress>
-                        <small>{{ f.clouds }}%</small>
-                    </td>
-                    <td>{{ f.temp }}</td>
-                    <td>{{ f.humidity }}</td>
-                    <td>
-                        {% if f.clouds < 20 %}
-                            <mark style="background-color: var(--pico-ins-color); color: white;" data-i18n="weather_clear">Céu Limpo</mark>
-                        {% elif f.clouds < 60 %}
-                            <mark style="background-color: var(--pico-secondary); color: white;" data-i18n="weather_partly">Parcial. Limpo</mark>
-                        {% else %}
-                            <mark style="background-color: var(--pico-del-color); color: white;" data-i18n="weather_cloudy">Muito Nublado</mark>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            <tbody id="weather-tbody"></tbody>
         </table>
     </figure>
-    {% else %}
-    <p data-i18n="weather_no_data">Não foi possível carregar os dados meteorológicos.</p>
-    {% endif %}
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch("{{ url_for('weather.api_data') }}")
+        .then(response => response.json())
+        .then(data => {
+            const loading = document.getElementById('weather-loading');
+            const content = document.getElementById('weather-content');
+            const tbody = document.getElementById('weather-tbody');
+
+            if (data.error) {
+                loading.textContent = "Erro: " + data.error;
+                loading.setAttribute('aria-busy', 'false');
+                return;
+            }
+
+            loading.style.display = 'none';
+            content.style.display = 'block';
+
+            data.forecast.forEach(f => {
+                const row = `<tr>
+                    <td>${f.time}</td>
+                    <td><progress value="${f.clouds}" max="100"></progress> ${f.clouds}%</td>
+                    <td>${f.temp}</td>
+                    <td>${f.status}</td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        })
+        .catch(err => {
+            document.getElementById('weather-loading').textContent = "Erro ao carregar dados.";
+        });
+});
+</script>
 {% endblock %}
