@@ -65,6 +65,9 @@ class GalleryImage(db.Model):
     
     # Estado de sincronização/backup externa (ex: rclone)
     backup_status = db.Column(db.Boolean, default=False)
+    
+    # Relação com Observação: uma imagem pode pertencer a uma observação específica
+    observation_id = db.Column(db.Integer, db.ForeignKey('observations.id'), nullable=True)
 
     def __repr__(self):
         return f'<GalleryImage {self.filename}>'
@@ -81,6 +84,9 @@ class Observation(db.Model):
     dec = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relação: uma observação pode ter várias imagens associadas
+    images = db.relationship('GalleryImage', backref='observation', lazy='dynamic')
 
     def __repr__(self):
         return f'<Observation {self.target}>'

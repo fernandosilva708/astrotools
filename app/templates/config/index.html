@@ -3,7 +3,7 @@
 {% block content %}
 <h1 data-i18n="nav_config">Configurações</h1>
 <article>
-    <form method="post">
+    <form method="post" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <h3 data-i18n="config_profile">Perfil</h3>
         <label>

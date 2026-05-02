@@ -46,6 +46,8 @@ def create_app():
     from app.backup.routes import backup_bp
     from app.dashboard.routes import dashboard_bp
     from app.config.routes import config_bp
+    from app.observations.routes import observations_bp
+    from app.planner.routes import planner_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(gallery_bp, url_prefix='/gallery')
@@ -53,7 +55,9 @@ def create_app():
     app.register_blueprint(ephemeris_bp, url_prefix='/ephemeris')
     app.register_blueprint(telescopius_bp, url_prefix='/telescopius')
     app.register_blueprint(backup_bp, url_prefix='/backup')
-    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(dashboard_bp, url_prefix='/')
     app.register_blueprint(config_bp, url_prefix='/config')
+    app.register_blueprint(observations_bp, url_prefix='/observations')
+    app.register_blueprint(planner_bp, url_prefix='/planner')
 
     return app

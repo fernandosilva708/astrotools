@@ -3,80 +3,52 @@
 Este ficheiro fornece mandatos fundamentais e contexto do projeto para o Gemini CLI ao trabalhar neste repositório.
 
 ## Visão Geral do Projeto
-**AstroTools** é uma aplicação web Python Flask que fornece um conjunto de ferramentas para astrónomos amadores, incluindo autenticação, uma galeria de imagens com importação do Seestar, plate-solving (astrometria), cálculos de efemérides, um proxy para o Telescopius e funcionalidade de backup via rclone.
+**AstroTools** é uma aplicação web Python Flask que fornece um conjunto de ferramentas para astrónomos amadores, incluindo autenticação, uma galeria de imagens com importação do Seestar, resolução astrométrica (plate-solving), cálculos de efemérides, um proxy para o Telescopius, diário de observações, planeador de sessão e funcionalidade de backup via rclone.
 
-**Ambiente Alvo:** Este projeto foi especificamente desenhado para correr num **Raspberry Pi** com uma distribuição **Linux**. As considerações de desenvolvimento e implementação devem ter em conta as características de desempenho do Raspberry Pi e a arquitetura ARM.
+**Ambiente Alvo:** Este projeto foi especificamente desenhado para correr num **Raspberry Pi** com uma distribuição **Linux**. As considerações de desenvolvimento e implementação devem ter em conta as características de desempenho do Raspberry Pi (especialmente modelos com menos RAM) e a arquitetura ARM.
 
-## Estado
-O projeto encontra-se atualmente na **fase de scaffolding**. A estrutura de diretórios e os ficheiros iniciais dos módulos foram criados, mas muitos detalhes de implementação core estão pendentes.
+## Estado Atual
+O projeto encontra-se na fase de **conclusão das funcionalidades core**. A interface está localizada (PT-PT/EN) e o dashboard fornece um resumo funcional do sistema.
 
 ## Arquitetura e Stack Tecnológica
 - **Framework:** Flask (padrão Application Factory em `create_app()`).
-- **Base de Dados:** SQLAlchemy com Flask-Migrate (modelos partilhados em `app/models.py`). SQLite.
-- **Autenticação:** Flask-Login para autenticação de utilizadores.
-- **Frontend:** Templates Jinja2, Pico.css (CSS Vanilla minimalista).
+- **Base de Dados:** SQLAlchemy com Flask-Migrate. SQLite.
+- **Autenticação:** Flask-Login.
+- **Frontend:** Templates Jinja2, Pico.css, Vanilla JS para i18n.
 - **Integrações Externas:**
-  - **Astrometria:** Integração com a API do `nova.astrometry.net` (ou `solve-field` local se disponível no Pi).
-  - **Efemérides:** Cálculos através da biblioteca Python `skyfield`.
-  - **Backup:** Integração externa com `rclone` (dependência ao nível do sistema).
-  - **Telescopius:** Proxy para serviços astronómicos externos.
-- **Estrutura do Projeto:**
-  - `app/`: Lógica principal da aplicação organizada por blueprints.
-    - `auth/`: Autenticação de utilizadores (rotas, formulários).
-    - `gallery/`: Galeria de imagens com lógica de importação do Seestar (`ingest.py`).
-    - `astrometry/`: Integração de plate-solving.
-    - `ephemeris/`: Cálculos astronómicos.
-    - `telescopius/`: Serviços de proxy.
-    - `backup/`: Gestão de backups baseada em rclone.
-    - `dashboard/`: Dashboard principal do utilizador.
-    - `static/`: Assets (CSS, JS, imagens).
-    - `templates/`: Templates Jinja2, espelhados por módulo.
-  - `migrations/`: Migrações da base de dados Alembic.
-  - `tests/`: Suite de testes usando `pytest`.
-  - `run.py`: Ponto de entrada da aplicação.
+  - **Astrometria:** ASTAP (local) e API do `nova.astrometry.net`.
+  - **Cálculos:** Biblioteca `skyfield`.
+  - **Backup:** `rclone`.
+  - **Telescopius:** Proxy para evitar CORS.
 
 ## Mandatos e Convenções de Desenvolvimento
-- **Blueprints:** Cada módulo deve ser registado como um Blueprint do Flask em `app/__init__.py`.
-- **Modelos:** Todos os modelos SQLAlchemy devem residir em `app/models.py`.
-- **Templates:** Seguir a estrutura `app/templates/<modulo>/`, garantindo que o nome do diretório corresponde ao nome do blueprint.
-- **Ambiente:** Usar `.env` para configuração local. Nunca submeter o ficheiro `.env`; usar `.env.example` como modelo.
-- **Considerações Específicas para o Pi:**
-  - O código deve ser compatível com a arquitetura ARM (Raspberry Pi).
-  - Minimizar operações pesadas na thread principal do Flask; usar processos em background quando necessário.
-  - Garantir compatibilidade com caminhos específicos de Linux e ferramentas do sistema (`rclone`, etc.).
-- **Normas:** Aderir ao PEP 8 para código Python e manter manipuladores de rotas claros e documentados.
+- **Comentários:** Devem ser sempre em **Português Europeu (PT-PT)**.
+- **Traduções:** Novas funcionalidades devem incluir chaves em `app/static/js/translations.js` para PT e EN.
+- **UI:** Usar componentes semânticos do Pico.css. Botões que executam ações lentas devem ter `onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')"`.
+- **Modelos:** Relações devem ser explícitas (ex: Imagens ligadas a Observações).
 
-## Comandos Comuns
-### Configuração e Desenvolvimento (Linux/Pi)
-- **Instalar dependências do sistema:** `sudo apt update && sudo apt install rclone astrometry.net` (conforme necessário).
-- **Instalar dependências Python:** `pip install -r requirements.txt`.
-- **Configurar ambiente:** `cp .env.example .env` (e depois editar conforme necessário).
-- **Inicializar/Atualizar Base de Dados:** `flask db upgrade`.
-- **Executar Servidor de Desenvolvimento:** `python run.py`.
+## Plano de Implementação (Estado do Projeto)
 
-### Testes e Qualidade
-- **Executar testes:** `pytest`.
-- **Linting:** `flake8 app/`.
+### 1. Base de Dados e Modelos
+- [x] Migrar modelos para incluir definições de utilizador (API keys).
+- [x] Ligar o modelo `Observation` ao modelo `GalleryImage`.
+- [x] Garantir migrações consistentes com SQLite (nomes de restrições).
 
-## Plano de Implementação (Próximos Passos)
+### 2. Frontend e Localização
+- [x] Sistema de i18n funcional no lado do cliente.
+- [x] Estilização de alertas (Flash Messages) integrada com Pico.css.
+- [x] Refatoração do Dashboard para estado "5 Estrelas" (Resumo funcional).
+- [x] Termos de sessão: "Iniciar Sessão" e "Terminar Sessão".
 
-### 1. Base de Dados (SQLite)
-- [x] Garantir que a pasta `instance/` existe e é ignorada pelo Git.
-- [x] Inicializar Flask-Migrate se necessário: `flask db init`.
-- [x] Criar a migração inicial: `flask db migrate -m "Initial migration"`.
-- [x] Aplicar a migração: `flask db upgrade`.
-- [x] Verificar a integridade dos modelos em `app/models.py`.
+### 3. Módulos e Integrações
+- [x] Proxy Telescopius funcional.
+- [x] Diário de Observações (Módulo 1).
+- [x] Planeador de Sessão (Módulo 2).
+- [x] Página de detalhes da imagem com edição e eliminação.
 
-### 2. Frontend (Pico.css)
-- [x] Remover assets do template Editorial (JS/CSS antigos).
-- [x] Integrar Pico.css v2.1.1 em `app/static/css/`.
-- [x] Refatorar `app/templates/base.html` para estrutura semântica Pico.css.
-- [x] Atualizar todos os templates de módulos para usar classes/semântica do Pico.css.
-- [x] Implementar sistema de internacionalização (PT-PT/EN).
-- [x] Estilizar mensagens Flash com cores do Pico.css.
+### 4. Próximos Passos
+- [ ] **Módulo de Meteorologia:** Previsões específicas para astronomia.
+- [ ] Melhorar a UI da Galeria (filtros, paginação).
+- [ ] Gráficos de visibilidade no Planeador.
 
-### 3. Integrações e Refinamento
-- [ ] Implementar o Proxy do Telescopius em `app/telescopius/routes.py`.
-- [ ] Refinar a página de Configurações para carregar e guardar chaves de API.
-- [ ] Adicionar página de detalhes da imagem na Galeria (Concluído).
-- [ ] Melhorar o feedback visual com `aria-busy` (Concluído).
+Trabalho de equipa. 🚀

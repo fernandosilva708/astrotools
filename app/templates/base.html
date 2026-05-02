@@ -22,14 +22,16 @@
             <ul>
                 <li><a href="{{ url_for('dashboard.index') }}" data-i18n="nav_dashboard">Dashboard</a></li>
                 <li><a href="{{ url_for('gallery.index') }}" data-i18n="nav_gallery">Galeria</a></li>
+                <li><a href="{{ url_for('observations.index') }}" data-i18n="nav_observations">Observações</a></li>
+                <li><a href="{{ url_for('planner.index') }}" data-i18n="nav_planner">Planeador</a></li>
                 <li><a href="{{ url_for('astrometry.index') }}" data-i18n="nav_platesolve">Plate Solve</a></li>
                 <li><a href="{{ url_for('ephemeris.index') }}" data-i18n="nav_ephemeris">Efemérides</a></li>
                 <li><a href="{{ url_for('backup.index') }}" data-i18n="nav_backup">Backup</a></li>
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('config.index') }}" data-i18n="nav_config">Configurações</a></li>
-                <li><a href="{{ url_for('auth.logout') }}" data-i18n="nav_logout">Sair</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" data-i18n="nav_logout">Terminar Sessão</a></li>
                 {% else %}
-                <li><a href="{{ url_for('auth.login') }}" data-i18n="auth_login">Entrar</a></li>
+                <li><a href="{{ url_for('auth.login') }}" data-i18n="auth_login">Iniciar Sessão</a></li>
                 {% endif %}
                 <li>
                     <details class="dropdown">

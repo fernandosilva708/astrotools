@@ -40,7 +40,7 @@
     <section>
         <article>
             <h2 data-i18n="gallery_edit_title">Editar Detalhes</h2>
-            <form method="post">
+            <form method="post" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label>
                     <span data-i18n="gallery_title">Título</span>
@@ -56,15 +56,15 @@
                 </label>
                 <button type="submit" data-i18n="save">Guardar Alterações</button>
             </form>
-            
+
             <hr>
-            
+
             <h2 data-i18n="gallery_danger_zone" style="color: var(--pico-del-color);">Zona de Perigo</h2>
-            <form action="{{ url_for('gallery.delete', image_id=image.id) }}" method="post" onsubmit="return confirm('Tem a certeza que deseja eliminar esta imagem permanentemente?')">
+            <form action="{{ url_for('gallery.delete', image_id=image.id) }}" method="post" onsubmit="if(confirm(t('gallery_delete_confirm'))) { this.querySelector('button').setAttribute('aria-busy', 'true'); return true; } return false;">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="secondary outline" data-i18n="delete">Eliminar Imagem</button>
             </form>
-        </section>
+        </article>
     </section>
 </div>
 {% endblock %}

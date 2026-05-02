@@ -1,0 +1,42 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Planeador de Sessão — AstroTools{% endblock %}
+
+{% block content %}
+<section>
+    <h1 data-i18n="nav_planner">Planeador de Sessão</h1>
+    <p><span data-i18n="planner_subtitle">Objetos sugeridos para a sua localização atual em</span> <strong>{{ now }}</strong></p>
+</section>
+
+<section>
+    <div class="grid">
+        {% for obj in objects %}
+        <article style="border-left: 5px solid {% if obj.visible %}var(--pico-ins-color){% else %}var(--pico-del-color){% endif %};">
+            <header>
+                <h3 style="margin: 0;">{{ obj.name }}</h3>
+            </header>
+            <div class="grid">
+                <div>
+                    <small data-i18n="eph_lat">Altitude</small><br>
+                    <strong>{{ obj.altitude }}</strong>
+                </div>
+                <div>
+                    <small data-i18n="eph_lon">Azimute</small><br>
+                    <strong>{{ obj.azimuth }}</strong>
+                </div>
+                <div style="text-align: right;">
+                    {% if obj.visible %}
+                        <ins data-i18n="planner_visible">Visível</ins>
+                    {% else %}
+                        <del data-i18n="planner_hidden">Abaixo do Horizonte</del>
+                    {% endif %}
+                </div>
+            </div>
+            <footer>
+                <a href="{{ url_for('observations.add', target=obj.name) }}" role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="planner_log_btn">Registar Observação</a>
+            </footer>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
