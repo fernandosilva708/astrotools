@@ -10,4 +10,5 @@ skyfield>=1.46
 pytest>=8.0.0
 Werkzeug>=3.0.0
 gunicorn>=21.2.0
+cryptography>=42.0.0
 astropy>=6.0.0

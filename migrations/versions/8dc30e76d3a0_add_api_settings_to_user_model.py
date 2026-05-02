@@ -19,7 +19,7 @@ depends_on = None
 def upgrade():
     # ### comandos gerados automaticamente pelo Alembic - por favor ajuste! ###
     with op.batch_alter_table('users', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('astrometry_api_key', sa.String(length=128), nullable=True))
+        batch_op.add_column(sa.Column('_astrometry_api_key', sa.String(length=256), nullable=True))
         batch_op.add_column(sa.Column('telescopius_base_url', sa.String(length=256), nullable=True))
 
     # ### fim dos comandos do Alembic ###
@@ -29,6 +29,6 @@ def downgrade():
     # ### comandos gerados automaticamente pelo Alembic - por favor ajuste! ###
     with op.batch_alter_table('users', schema=None) as batch_op:
         batch_op.drop_column('telescopius_base_url')
-        batch_op.drop_column('astrometry_api_key')
+        batch_op.drop_column('_astrometry_api_key')
 
     # ### fim dos comandos do Alembic ###

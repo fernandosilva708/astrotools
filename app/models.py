@@ -6,9 +6,19 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-# Nota: Em produção, a chave deve ser guardada de forma segura nas variáveis de ambiente
-KEY = Fernet.generate_key()
-cipher = Fernet(KEY)
+# A chave deve ser persistente. Usamos o SECRET_KEY da app como base ou uma variável específica.
+# Nota: Fernet exige uma chave de 32 bytes em base64.
+import base64
+import os
+from hashlib import sha256
+
+def get_cipher_key():
+    secret = os.getenv('FERNET_KEY') or os.getenv('SECRET_KEY', 'dev-secret-key')
+    # Garante que temos 32 bytes para o Fernet
+    key_bytes = sha256(secret.encode()).digest()
+    return base64.urlsafe_b64encode(key_bytes)
+
+cipher = Fernet(get_cipher_key())
 
 # Gestão de sessão de utilizador
 @login_manager.user_loader
