@@ -1,16 +1,21 @@
 # SPDX-License-Identifier: GPL-2.0-only
+from cryptography.fernet import Fernet
+from flask import current_app
 from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
-# Gestão de sessão de utilizador: carrega o utilizador a partir do ID guardado na sessão
+# Nota: Em produção, a chave deve ser guardada de forma segura nas variáveis de ambiente
+KEY = Fernet.generate_key()
+cipher = Fernet(KEY)
+
+# Gestão de sessão de utilizador
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 class User(UserMixin, db.Model):
-    """Modelo de utilizador para autenticação e relação com dados astronómicos."""
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -20,8 +25,18 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Definições personalizadas do utilizador
-    astrometry_api_key = db.Column(db.String(128))
+    _astrometry_api_key = db.Column(db.String(256))
     telescopius_base_url = db.Column(db.String(256), default='https://telescopius.com')
+
+    @property
+    def astrometry_api_key(self):
+        if not self._astrometry_api_key: return None
+        return cipher.decrypt(self._astrometry_api_key.encode()).decode()
+
+    @astrometry_api_key.setter
+    def astrometry_api_key(self, value):
+        if not value: self._astrometry_api_key = None
+        else: self._astrometry_api_key = cipher.encrypt(value.encode()).decode()
 
     # Relações: um utilizador pode ter várias imagens e observações
     images = db.relationship('GalleryImage', backref='author', lazy='dynamic')
