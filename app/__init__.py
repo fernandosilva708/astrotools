@@ -48,6 +48,7 @@ def create_app():
     from app.config.routes import config_bp
     from app.observations.routes import observations_bp
     from app.planner.routes import planner_bp
+    from app.weather.routes import weather_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(gallery_bp, url_prefix='/gallery')
@@ -59,5 +60,6 @@ def create_app():
     app.register_blueprint(config_bp, url_prefix='/config')
     app.register_blueprint(observations_bp, url_prefix='/observations')
     app.register_blueprint(planner_bp, url_prefix='/planner')
+    app.register_blueprint(weather_bp, url_prefix='/weather')
 
     return app

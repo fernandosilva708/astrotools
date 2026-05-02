@@ -47,8 +47,9 @@ O projeto encontra-se na fase de **conclusão das funcionalidades core**. A inte
 - [x] Página de detalhes da imagem com edição e eliminação.
 
 ### 4. Próximos Passos
-- [ ] **Módulo de Meteorologia:** Previsões específicas para astronomia.
-- [ ] Melhorar a UI da Galeria (filtros, paginação).
-- [ ] Gráficos de visibilidade no Planeador.
+- [x] **Módulo de Meteorologia:** Previsões específicas para astronomia via Open-Meteo.
+- [x] **Gráficos de visibilidade no Planeador:** Gráfico de altitude dinâmica via Chart.js.
+- [ ] Melhorar a UI da Galeria (filtros, paginação) — Filtros básicos já implementados.
+- [ ] Integração avançada entre Observações e Imagens.
 
 Trabalho de equipa. 🚀
