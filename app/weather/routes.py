@@ -1,8 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-only
 from flask import Blueprint, render_template, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 from datetime import datetime
+from app import db
 from app.utils import safe_get
+from app.models import AppConfig
 
 weather_bp = Blueprint('weather', __name__)
 
@@ -15,7 +17,10 @@ def index():
 @login_required
 def api_data():
     """Obtém previsões meteorológicas astronómicas via Open-Meteo."""
-    lat, lon = 38.7169, -9.1395
+    location = current_user.default_location
+    lat = location.latitude if location else 38.7169
+    lon = location.longitude if location else -9.1395
+    
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": lat, "longitude": lon,
@@ -26,6 +31,17 @@ def api_data():
     try:
         resp = safe_get(url, params=params)
         data = resp.json()
+        
+        # Guardar ultima atualizacao
+        last_update = datetime.now().isoformat()
+        config = AppConfig.query.filter_by(key='WEATHER_LAST_UPDATE').first()
+        if not config:
+            config = AppConfig(key='WEATHER_LAST_UPDATE', value=last_update)
+            db.session.add(config)
+        else:
+            config.value = last_update
+        db.session.commit()
+        
         hourly = data.get('hourly', {})
         times = hourly.get('time', [])
         temps = hourly.get('temperature_2m', [])
@@ -42,6 +58,10 @@ def api_data():
                     "clouds": clouds[i],
                     "status": "Céu Limpo" if clouds[i] < 20 else "Nublado"
                 })
-        return jsonify({"forecast": forecast})
+        return jsonify({
+            "forecast": forecast, 
+            "last_update": last_update,
+            "source": "Open-Meteo"
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

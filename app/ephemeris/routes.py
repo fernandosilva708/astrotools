@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-only
 from flask import Blueprint, render_template, request, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 from skyfield.api import load, Loader, Topos
 from skyfield.sgp4lib import EarthSatellite
 import os
@@ -53,9 +53,12 @@ def calculate():
     """Calcula a altitude e azimute de um corpo celeste."""
     data = request.get_json() or {}
     target_name = data.get('target', '').lower()
-    lat = data.get('lat', 0.0)
-    lon = data.get('lon', 0.0)
-    elev = data.get('elevation', 0.0)
+    
+    # Usar localização do user ou defaults
+    loc = current_user.default_location
+    lat = loc.latitude if loc else 38.7169
+    lon = loc.longitude if loc else -9.1395
+    elev = loc.elevation if loc else 0.0
     date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
 
     target_map = {

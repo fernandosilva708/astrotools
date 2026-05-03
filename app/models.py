@@ -25,6 +25,20 @@ cipher = Fernet(get_cipher_key())
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+class AppConfig(db.Model):
+    __tablename__ = 'app_configs'
+    key = db.Column(db.String(128), primary_key=True)
+    value = db.Column(db.String(512))
+
+class Location(db.Model):
+    __tablename__ = 'locations'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    elevation = db.Column(db.Float, default=0.0)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -33,10 +47,13 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    default_location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=True)
+    default_location = db.relationship('Location', foreign_keys=[default_location_id])
 
     # Definições personalizadas do utilizador
     _astrometry_api_key = db.Column(db.String(256))
     telescopius_base_url = db.Column(db.String(256), default='https://telescopius.com')
+
 
     @property
     def astrometry_api_key(self):

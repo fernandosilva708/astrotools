@@ -13,17 +13,42 @@
         <h3 data-i18n="config_change_password">Alterar Password</h3>
         <label>
             <span data-i18n="config_new_password">Nova Password</span>
-            <input type="password" name="new_password" placeholder="Nova Password">
+            <input type="password" name="new_password">
         </label>
+        
         <h3 data-i18n="config_apis_backup">APIs & Backup</h3>
         <label>
             <span>Astrometry.net API Key</span>
-            <input type="text" name="astrometry_key" placeholder="Astrometry.net API Key" value="{{ current_user.astrometry_api_key or '' }}">
+            <input type="text" name="astrometry_key" value="{{ current_user.astrometry_api_key or '' }}">
         </label>
         <label>
-            <span>Telescopius Base URL</span>
-            <input type="text" name="telescopius_url" placeholder="Telescopius Base URL" value="{{ current_user.telescopius_base_url or '' }}">
+            <span>Seestar Import Path</span>
+            <input type="text" name="seestar_path" value="{{ configs.get('SEESTAR_IMPORT_PATH', '') }}">
         </label>
+        <label>
+            <span>Rclone Remote</span>
+            <input type="text" name="rclone_remote" value="{{ configs.get('RCLONE_REMOTE', '') }}">
+        </label>
+        <label>
+            <span>Rclone Path</span>
+            <input type="text" name="rclone_path" value="{{ configs.get('RCLONE_PATH', '') }}">
+        </label>
+
+        <h3 data-i18n="config_locations">Localizações</h3>
+        <div class="grid">
+            <label>Nome
+                <input type="text" name="loc_name" placeholder="Nome do Local">
+            </label>
+            <label>Latitude
+                <input type="text" name="lat" placeholder="0.0">
+            </label>
+            <label>Longitude
+                <input type="text" name="lon" placeholder="0.0">
+            </label>
+            <label>Altitude
+                <input type="text" name="elev" placeholder="0">
+            </label>
+        </div>
         <button type="submit" data-i18n="config_save">Guardar</button>
     </form>
 </article>

@@ -21,12 +21,12 @@
   </article>
 </dialog>
 
-<section>
-    <div class="grid">
+<section style="overflow-x: auto; white-space: nowrap; padding-bottom: 1rem;">
+    <div style="display: inline-flex; gap: 1rem;">
         {% for obj in objects %}
-        <article style="border-left: 5px solid {% if obj.visible %}var(--pico-ins-color){% else %}var(--pico-del-color){% endif %};">
+        <article style="width: 300px; border-left: 5px solid {% if obj.visible %}var(--pico-ins-color){% else %}var(--pico-del-color){% endif %}; flex-shrink: 0;">
             <header>
-                <h3 style="margin: 0;">{{ obj.name }}</h3>
+                <h3 style="margin: 0; white-space: normal;">{{ obj.name }}</h3>
             </header>
             <div class="grid">
                 <div>
@@ -37,15 +37,15 @@
                     <small data-i18n="eph_lon">Azimute</small><br>
                     <strong>{{ obj.azimuth }}</strong>
                 </div>
-                <div style="text-align: right;">
-                    {% if obj.visible %}
-                        <ins data-i18n="planner_visible">Visível</ins>
-                    {% else %}
-                        <del data-i18n="planner_hidden">Abaixo do Horizonte</del>
-                    {% endif %}
-                </div>
             </div>
-            <footer>
+            <div style="margin-top: 1rem; text-align: center;">
+                {% if obj.visible %}
+                    <ins data-i18n="planner_visible">Visível</ins>
+                {% else %}
+                    <del data-i18n="planner_hidden">Abaixo do Horizonte</del>
+                {% endif %}
+            </div>
+            <footer style="margin-top: 1rem;">
                 <div class="grid">
                     <button class="outline" onclick="showChart('{{ obj.name }}')" data-i18n="planner_altitude_chart" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Gráfico</button>
                     <a href="{{ url_for('observations.add', target=obj.name) }}" role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="planner_log_btn">Registar</a>

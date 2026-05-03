@@ -18,25 +18,35 @@ login_manager.login_message = 'Por favor inicie sessão para aceder a esta pági
 login_manager.login_message_category = 'info'
 
 
+def get_config(key, default=None):
+    from app.models import AppConfig
+    config = AppConfig.query.filter_by(key=key).first()
+    return config.value if config else default
+
 def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///astrotools.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['GALLERY_UPLOAD_FOLDER'] = os.getenv('GALLERY_UPLOAD_FOLDER', 'uploads/gallery')
-    app.config['SEESTAR_IMPORT_PATH'] = os.getenv('SEESTAR_IMPORT_PATH', '')
-    app.config['ASTROMETRY_API_KEY'] = os.getenv('ASTROMETRY_API_KEY', '')
-    app.config['ASTROMETRY_URL'] = os.getenv('ASTROMETRY_URL', 'http://nova.astrometry.net/api/')
-    app.config['TELESCOPIUS_BASE_URL'] = os.getenv('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
-    app.config['RCLONE_REMOTE'] = os.getenv('RCLONE_REMOTE', '')
-    app.config['RCLONE_PATH'] = os.getenv('RCLONE_PATH', '')
 
     db.init_app(app)
+    
+    with app.app_context():
+        # Carregar configs da DB
+        app.config['GALLERY_UPLOAD_FOLDER'] = get_config('GALLERY_UPLOAD_FOLDER', 'uploads/gallery')
+        app.config['SEESTAR_IMPORT_PATH'] = get_config('SEESTAR_IMPORT_PATH', '')
+        app.config['ASTROMETRY_API_KEY'] = get_config('ASTROMETRY_API_KEY', '')
+        app.config['ASTROMETRY_URL'] = get_config('ASTROMETRY_URL', 'http://nova.astrometry.net/api/')
+        app.config['TELESCOPIUS_BASE_URL'] = get_config('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
+        app.config['RCLONE_REMOTE'] = get_config('RCLONE_REMOTE', '')
+        app.config['RCLONE_PATH'] = get_config('RCLONE_PATH', '')
+
     from app import models
     migrate.init_app(app, db)
     login_manager.init_app(app)
     csrf.init_app(app)
+
 
     from app.auth.routes import auth_bp
     from app.gallery.routes import gallery_bp

@@ -22,6 +22,12 @@
             </thead>
             <tbody id="weather-tbody"></tbody>
         </table>
+        <footer>
+            <small>
+                Fonte: <span id="weather-source"></span> | 
+                Última atualização: <span id="weather-last-update"></span>
+            </small>
+        </footer>
     </figure>
 </section>
 
@@ -42,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loading.style.display = 'none';
             content.style.display = 'block';
+            document.getElementById('weather-source').textContent = data.source;
+            document.getElementById('weather-last-update').textContent = new Date(data.last_update).toLocaleString();
 
             data.forecast.forEach(f => {
                 const row = `<tr>

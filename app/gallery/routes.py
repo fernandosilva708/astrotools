@@ -76,16 +76,23 @@ def upload():
             flash('Nenhum ficheiro selecionado.', 'warning')
             return redirect(request.url)
         safe_name = secure_filename(file.filename)
-        if Path(safe_name).suffix.lower() not in ALLOWED_EXTENSIONS:
-            flash('Tipo de ficheiro não permitido.', 'danger')
-            return redirect(request.url)
+        
+        # Gerar nome único se ficheiro já existir
         upload_dir = Path(current_app.root_path).parent / current_app.config['GALLERY_UPLOAD_FOLDER']
         upload_dir.mkdir(parents=True, exist_ok=True)
+        
         filepath = upload_dir / safe_name
+        counter = 1
+        while filepath.exists():
+            stem = Path(safe_name).stem
+            suffix = Path(safe_name).suffix
+            filepath = upload_dir / f"{stem}_{counter}{suffix}"
+            counter += 1
+        
         file.save(filepath)
         image = GalleryImage(
-            filename=safe_name,
-            title=request.form.get('title') or safe_name,
+            filename=filepath.name,
+            title=request.form.get('title') or filepath.name,
             description=request.form.get('description', ''),
             filepath=str(filepath),
             user_id=current_user.id,
