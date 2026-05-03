@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from app import db
 from app.utils import safe_get
-from app.models import AppConfig
+from app.models import AppConfig, Location
 
 weather_bp = Blueprint('weather', __name__)
 

@@ -31,7 +31,15 @@ function applyTranslations() {
             } else if (el.tagName === 'OPTGROUP' || el.tagName === 'OPTION') {
                 el.text = texts[key];
             } else {
-                el.innerText = texts[key];
+                // Preservar elementos filhos (como inputs dentro de labels)
+                // Procura o primeiro nó de texto
+                let textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                if (textNode) {
+                    textNode.textContent = texts[key];
+                } else {
+                    // Se não houver nó de texto, insere no início
+                    el.prepend(document.createTextNode(texts[key]));
+                }
             }
         }
     });
