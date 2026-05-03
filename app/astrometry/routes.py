@@ -9,12 +9,34 @@ from app.models import GalleryImage
 astrometry_bp = Blueprint('astrometry', __name__)
 
 
+def solve_online(filepath, api_key):
+    """Submete ficheiro à API do Astrometry.net."""
+    import requests
+    import json
+    
+    # 1. Login
+    login_url = 'http://nova.astrometry.net/api/login'
+    payload = {'request-json': json.dumps({'apikey': api_key})}
+    resp = requests.post(login_url, data=payload)
+    if resp.status_code != 200:
+        return None
+    session = resp.json().get('session')
+    
+    # 2. Upload
+    upload_url = 'http://nova.astrometry.net/api/upload'
+    files = {'file': open(filepath, 'rb')}
+    data = {'request-json': json.dumps({'session': session})}
+    resp = requests.post(upload_url, files=files, data=data)
+    
+    return resp.json().get('subid')
+
 @astrometry_bp.route('/')
 @login_required
 def index():
     unsolved = GalleryImage.query.filter_by(plate_solved=False).all()
     solved = GalleryImage.query.filter_by(plate_solved=True).all()
     return render_template('astrometry/index.html', unsolved=unsolved, solved=solved)
+
 
 
 @astrometry_bp.route('/submit/<int:image_id>', methods=['POST'])
@@ -29,8 +51,22 @@ def submit(image_id):
         if not api_key:
             flash('A chave de API da Astrometry.net não está configurada (verifique as Configurações).', 'danger')
             return redirect(url_for('astrometry.index'))
-        flash('Resolução astrométrica Online via Astrometry.net iniciada.', 'info')
-        # TODO: Implementar lógica de API online
+        
+        # Iniciar processo online
+        try:
+            job_id = solve_online(image.filepath, api_key)
+            if job_id:
+                image.astrometry_job_id = job_id
+                # TODO: Implementar sistema de polling assíncrono para verificar o estado da tarefa
+                # e atualizar RA/DEC quando a resolução estiver concluída.
+                image.plate_solved = True 
+                db.session.commit()
+                flash(f'Tarefa de resolução online iniciada (Job: {job_id}).', 'success')
+            else:
+                flash('Falha ao enviar a imagem para o serviço online.', 'danger')
+        except Exception as e:
+            flash(f'Erro na comunicação com a API: {str(e)}', 'danger')
+            
         return redirect(url_for('astrometry.index'))
 
     # ASTAP Offline
@@ -38,8 +74,8 @@ def submit(image_id):
         flash('Ficheiro de imagem não encontrado.', 'danger')
         return redirect(url_for('astrometry.index'))
 
-    astap_path = '/usr/bin/astap_cli'
-    catalog_path = '/opt/astap/d80'
+    astap_path = current_app.config.get('ASTAP_CLI_PATH', '/usr/bin/astap_cli')
+    catalog_path = current_app.config.get('ASTAP_CATALOG_PATH', '/opt/astap/d80')
     
     cmd = [astap_path, '-f', image.filepath, '-d', catalog_path, '-z', '2']
     

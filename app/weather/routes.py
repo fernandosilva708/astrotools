@@ -11,20 +11,26 @@ weather_bp = Blueprint('weather', __name__)
 @weather_bp.route('/')
 @login_required
 def index():
-    return render_template('weather/index.html')
+    locations = Location.query.filter_by(user_id=current_user.id).all()
+    return render_template('weather/index.html', locations=locations)
 
 @weather_bp.route('/api_data')
 @login_required
 def api_data():
     """Obtém previsões meteorológicas astronómicas via Open-Meteo."""
-    location = current_user.default_location
+    location_id = request.args.get('location_id')
+    if location_id and location_id != 'default':
+        location = Location.query.get(location_id)
+    else:
+        location = current_user.default_location
+        
     lat = location.latitude if location else 38.7169
     lon = location.longitude if location else -9.1395
     
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": lat, "longitude": lon,
-        "hourly": "temperature_2m,relative_humidity_2m,cloud_cover,visibility,wind_speed_10m",
+        "hourly": "temperature_2m,relative_humidity_2m,cloud_cover,visibility,wind_speed_10m,pressure_msl,dew_point_2m",
         "timezone": "auto", "forecast_days": 2
     }
     
@@ -45,6 +51,10 @@ def api_data():
         hourly = data.get('hourly', {})
         times = hourly.get('time', [])
         temps = hourly.get('temperature_2m', [])
+        humidity = hourly.get('relative_humidity_2m', [])
+        pressure = hourly.get('pressure_msl', [])
+        dew_point = hourly.get('dew_point_2m', [])
+        wind_speed = hourly.get('wind_speed_10m', [])
         clouds = hourly.get('cloud_cover', [])
         
         forecast = []
@@ -55,6 +65,10 @@ def api_data():
                 forecast.append({
                     "time": f_time.strftime('%H:%M'),
                     "temp": f"{temps[i]}°C",
+                    "humidity": f"{humidity[i]}%",
+                    "pressure": f"{pressure[i]} hPa",
+                    "dew_point": f"{dew_point[i]}°C",
+                    "wind": f"{wind_speed[i]} km/h",
                     "clouds": clouds[i],
                     "status": "Céu Limpo" if clouds[i] < 20 else "Nublado"
                 })

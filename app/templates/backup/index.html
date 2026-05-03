@@ -9,9 +9,9 @@
     <article>
         <h2 data-i18n="backup_sync_title">Sincronização rclone</h2>
         <p>
-            <strong>Status:</strong> {{ 'Em curso...' if status.running else 'Parado' }}<br>
-            <strong>Último resultado:</strong> {{ status.last_result }}<br>
-            <strong>Última execução:</strong> {{ status.last_run or 'Nunca' }}
+            <strong><span data-i18n="backup_status_label">Status</span>:</strong> {{ t('backup_running') if status.running else t('backup_stopped') }}<br>
+            <strong><span data-i18n="backup_last_result">Último resultado</span>:</strong> {{ status.last_result }}<br>
+            <strong><span data-i18n="backup_last_run">Última execução</span>:</strong> {{ status.last_run or t('backup_never') }}
         </p>
         <form method="post" action="{{ url_for('backup.run_backup') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -23,8 +23,8 @@
         <h2 data-i18n="backup_config">Configuração</h2>
         <p data-i18n="backup_config_hint">Edite o ficheiro .env para configurar as definições do rclone.</p>
         <ul>
-            <li><strong>Remote:</strong> <code>{{ config.get('RCLONE_REMOTE') or 'Não definido' }}</code></li>
-            <li><strong>Path:</strong> <code>{{ config.get('RCLONE_PATH') or 'Não definido' }}</code></li>
+            <li><strong>Remote:</strong> <code>{{ config.get('RCLONE_REMOTE') or t('not_defined') }}</code></li>
+            <li><strong>Path:</strong> <code>{{ config.get('RCLONE_PATH') or t('not_defined') }}</code></li>
         </ul>
     </article>
 </div>

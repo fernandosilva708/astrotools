@@ -27,12 +27,43 @@ O projeto encontra-se na fase de **conclusão das funcionalidades core**. A inte
 - **UI:** Usar componentes semânticos do Pico.css. Botões que executam ações lentas devem ter `onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')"`.
 - **Modelos:** Relações devem ser explícitas (ex: Imagens ligadas a Observações).
 
-## Plano de Implementação (Estado do Projeto)
+## Estrutura da Base de Dados
+A base de dados utiliza **SQLite** gerido pelo **SQLAlchemy**. Abaixo descreve-se a estrutura das tabelas principais:
 
-### 1. Base de Dados e Modelos
-- [x] Migrar modelos para incluir definições de utilizador (API keys).
-- [x] Ligar o modelo `Observation` ao modelo `GalleryImage`.
-- [x] Garantir migrações consistentes com SQLite (nomes de restrições).
+### 1. `users` (Utilizadores)
+Armazena as informações de autenticação e preferências.
+- `id`: Identificador único (Primary Key).
+- `username`: Nome de utilizador único.
+- `email`: Endereço de correio eletrónico.
+- `password_hash`: Palavra-passe encriptada.
+- `astrometry_api_key`: Chave API encriptada para serviços de resolução astrométrica.
+- `telescopius_base_url`: URL base personalizada para o proxy.
+
+### 2. `gallery_images` (Imagens da Galeria)
+Regista todas as astrofotografias importadas ou carregadas.
+- `id`: Identificador único.
+- `filename`: Nome original do ficheiro.
+- `title`: Título atribuído pelo utilizador.
+- `description`: Notas sobre a captura.
+- `filepath`: Caminho no sistema de ficheiros (Raspberry Pi).
+- `ra` / `dec`: Coordenadas celestes após resolução astrométrica.
+- `plate_solved`: Booleano, indica se a imagem foi resolvida.
+- `observation_id`: Foreign Key para a tabela `observations`.
+- `backup_status`: Booleano, indica sucesso da sincronização via rclone.
+
+### 3. `observations` (Diário de Observações)
+Regista sessões de observação no diário.
+- `id`: Identificador único.
+- `target`: Nome do objeto alvo.
+- `notes`: Observações detalhadas da sessão.
+- `observed_at`: Data e hora da observação.
+- `ra` / `dec`: Coordenadas do alvo.
+- `user_id`: Foreign Key para o `users` (autor).
+- `images`: Relação (One-to-Many) com `gallery_images`.
+
+---
+## Plano de Implementação (Estado do Projeto)
+... (mantém o plano existente) ...
 
 ### 2. Frontend e Localização
 - [x] Sistema de i18n funcional no lado do cliente.

@@ -63,18 +63,24 @@ def calculate():
 
     target_map = {
         'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
-        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus'
+        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus',
+        'm42': 'm42'
     }
 
     if target_name not in target_map:
         return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400
 
     try:
-        from skyfield.api import utc
+        from skyfield.api import utc, Star
         t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
         observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev)
         
-        body = planets[target_map[target_name]]
+        if target_name == 'm42':
+            # M42 Coordenadas (J2000): RA 05h 35m 17s, Dec -05° 23′ 28″
+            body = Star(ra_hours=(5, 35, 17), dec_degrees=(-5, 23, 28))
+        else:
+            body = planets[target_map[target_name]]
+            
         astrometric = observer.at(t).observe(body)
         alt, az, distance = astrometric.apparent().altaz()
 

@@ -10,7 +10,7 @@ echo "--- AstroTools: Iniciando configuração para Raspberry Pi ---"
 # 1. Instalar dependências do sistema
 echo "Instalando dependências do sistema (necessita de sudo)..."
 sudo apt update
-sudo apt install -y python3-venv python3-dev build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev astap-cli
+sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev
 
 # Automatizar instalação do catálogo D80
 if [ ! -d "/opt/astap/d80" ]; then
@@ -25,14 +25,29 @@ if [ ! -d "/opt/astap/d80" ]; then
 fi
 
 # 2. Criar e ativar ambiente virtual
-echo "Criando ambiente virtual Python (venv)..."
-python3 -m venv venv
+echo "Configurando ambiente virtual Python (venv)..."
+if [ -d "venv" ]; then
+    echo "Removendo venv antigo para garantir integridade..."
+    rm -rf venv
+fi
+
+# Tentar criar venv. Em algumas distros, o venv não traz o pip por defeito.
+python3 -m venv venv || { echo "Erro ao criar venv"; exit 1; }
 source venv/bin/activate
+
+# Garantir que o pip existe dentro do venv
+if ! python3 -m pip --version > /dev/null 2>&1; then
+    echo "Pip não encontrado no venv, tentando instalar com ensurepip..."
+    python3 -m ensurepip || {
+        echo "ensurepip falhou, tentando baixar get-pip.py..."
+        curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+    }
+fi
 
 # 3. Instalar dependências Python
 echo "Instalando dependências Python (isto pode demorar no Pi 2)..."
-pip install --upgrade pip
-pip install -r requirements.txt
+python3 -m pip install --upgrade pip
+python3 -m pip install -r requirements.txt
 
 # 4. Criar estrutura de diretórios e .env
 echo "Criando pastas de sistema..."

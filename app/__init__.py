@@ -34,13 +34,17 @@ def create_app():
     
     with app.app_context():
         # Carregar configs da DB
-        app.config['GALLERY_UPLOAD_FOLDER'] = get_config('GALLERY_UPLOAD_FOLDER', 'uploads/gallery')
-        app.config['SEESTAR_IMPORT_PATH'] = get_config('SEESTAR_IMPORT_PATH', '')
-        app.config['ASTROMETRY_API_KEY'] = get_config('ASTROMETRY_API_KEY', '')
-        app.config['ASTROMETRY_URL'] = get_config('ASTROMETRY_URL', 'http://nova.astrometry.net/api/')
-        app.config['TELESCOPIUS_BASE_URL'] = get_config('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
-        app.config['RCLONE_REMOTE'] = get_config('RCLONE_REMOTE', '')
-        app.config['RCLONE_PATH'] = get_config('RCLONE_PATH', '')
+        try:
+            app.config['GALLERY_UPLOAD_FOLDER'] = get_config('GALLERY_UPLOAD_FOLDER', 'uploads/gallery')
+            app.config['SEESTAR_IMPORT_PATH'] = get_config('SEESTAR_IMPORT_PATH', '')
+            app.config['ASTROMETRY_API_KEY'] = get_config('ASTROMETRY_API_KEY', '')
+            app.config['ASTROMETRY_URL'] = get_config('ASTROMETRY_URL', 'http://nova.astrometry.net/api/')
+            app.config['TELESCOPIUS_BASE_URL'] = get_config('TELESCOPIUS_BASE_URL', 'https://telescopius.com')
+            app.config['RCLONE_REMOTE'] = get_config('RCLONE_REMOTE', '')
+            app.config['RCLONE_PATH'] = get_config('RCLONE_PATH', '')
+        except Exception as e:
+            print(f"Aviso: Não foi possível carregar configurações da base de dados: {e}. Certifique-se de que a migração foi executada.")
+
 
     from app import models
     migrate.init_app(app, db)
