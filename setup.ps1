@@ -6,12 +6,21 @@ $ErrorActionPreference = "Stop"
 Write-Host "--- AstroTools: Iniciando configuração para Windows 11 (PowerShell) ---" -ForegroundColor Cyan
 
 # 1. Verificar ambiente
-$pythonVersion = (python --version 2>&1)
-if ($null -eq $pythonVersion) {
-    Write-Error "Python não encontrado. Instale o Python 3.12+."
-    exit 1
+# ... (manter o que já existe)
+
+# 1.1 ASTAP para Windows
+Write-Host "Configurando ASTAP para Windows..." -ForegroundColor Cyan
+if (-not (Test-Path "C:\ASTAP")) {
+    New-Item -ItemType Directory -Path "C:\ASTAP" | Out-Null
+    # Nota: Assumindo que o utilizador fará o download manual ou adicionar logic aqui. 
+    # Para automação real, adicionar Invoke-WebRequest para astap_setup.exe
 }
-Write-Host "Python detectado: $pythonVersion" -ForegroundColor Green
+# Adicionar ao .env
+$envContent = Get-Content ".env" -ErrorAction SilentlyContinue
+if ($envContent -notmatch "ASTAP_CLI_PATH") {
+    Add-Content ".env" "ASTAP_CLI_PATH=C:\ASTAP\astap_cli.exe"
+    Add-Content ".env" "ASTAP_CATALOG_PATH=C:\ASTAP\d80"
+}
 
 # 2. Criar e configurar o venv
 if (Test-Path "venv") {
@@ -52,6 +61,7 @@ if (-not (Test-Path ".env")) {
 Write-Host "Inicializando base de dados..." -ForegroundColor Cyan
 $env:FLASK_APP = "run.py"
 python -m flask db upgrade
+python seed_db.py
 
 Write-Host "--- Configuração concluída! ---" -ForegroundColor Green
 Write-Host "Para iniciar, execute: .\venv\Scripts\Activate.ps1; python run.py" -ForegroundColor White

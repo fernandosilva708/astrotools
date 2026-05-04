@@ -8,21 +8,27 @@ set -e
 echo "--- AstroTools: Iniciando configuração para Raspberry Pi ---"
 
 # 1. Instalar dependências do sistema
-echo "Instalando dependências do sistema (necessita de sudo)..."
+echo "Instalando dependências do sistema..."
 sudo apt update
-sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev
+sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev wget unzip
 
-# Automatizar instalação do catálogo D80
-if [ ! -d "/opt/astap/d80" ]; then
-    echo "Instalando catálogo estelar D80 para ASTAP..."
-    sudo mkdir -p /opt/astap
-    # O catálogo D80 pode variar conforme o link; assumindo o padrão de distribuição do ASTAP
-    # Ajustar para o link direto se necessário ou usar o pacote se disponível via apt
-    # Exemplo para download direto e extração:
-    # wget -q http://www.hnsky.org/astap_d80_star_database.zip -O /tmp/d80.zip
-    # sudo unzip -q /tmp/d80.zip -d /opt/astap/
-    echo "D80 instalado em /opt/astap"
+# 1.1 Instalar ASTAP CLI e Catálogo
+echo "Instalando ASTAP CLI e catálogo D80..."
+sudo mkdir -p /opt/astap/d80
+wget -q https://www.hnsky.org/astap_cli_linux_x86_64 -O /usr/local/bin/astap_cli
+sudo chmod +x /usr/local/bin/astap_cli
+# Download do catálogo D80 (exemplo de link padrão)
+wget -q http://www.hnsky.org/astap_d80_star_database.zip -O /tmp/d80.zip
+sudo unzip -q /tmp/d80.zip -d /opt/astap/d80/
+rm /tmp/d80.zip
+
+# 2. Criar e configurar o .env com os caminhos do ASTAP
+echo "Configurando .env..."
+if [ ! -f .env ]; then
+    cp .env.example .env
 fi
+echo "ASTAP_CLI_PATH=/usr/local/bin/astap_cli" >> .env
+echo "ASTAP_CATALOG_PATH=/opt/astap/d80" >> .env
 
 # 2. Criar e ativar ambiente virtual
 echo "Configurando ambiente virtual Python (venv)..."
@@ -64,6 +70,7 @@ fi
 echo "Inicializando base de dados..."
 export FLASK_APP=run.py
 flask db upgrade
+python3 seed_db.py
 
 echo "--- Configuração concluída com sucesso! ---"
 echo "Para iniciar o servidor, execute:"
