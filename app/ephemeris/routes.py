@@ -65,8 +65,28 @@ from skyfield.api import utc, Star, load, Loader, Topos
 
 # ... (código existente DATA_PATH, load, etc.)
 
+from skyfield.api import utc, Star, load, Loader, Topos, Orbit
+# ...
+def get_mpc_body(target_name):
+    """Procura por um corpo menor nos ficheiros descarregados do MPC."""
+    mpc_file = os.path.join(DATA_PATH, 'comets_bright.txt')
+    if not os.path.exists(mpc_file):
+        return None
+    
+    # Parser simples para o formato MPC Soft00
+    with open(mpc_file, 'r') as f:
+        for line in f:
+            # O nome do objeto costuma estar nos primeiros caracteres
+            if target_name.upper() in line.upper():
+                # Nota: Parseamento de elementos orbitais completo exige 
+                # manipulação detalhada de campos MPC. 
+                # Aqui usaremos a estrutura de dados para criar um Orbit.
+                # Por simplicidade, este é um esqueleto da lógica.
+                return None # Placeholder para a lógica de construção do objeto Orbit
+    return None
+
 def get_body_object(target_name):
-    """Fábrica para retornar o objeto Skyfield apropriado para o cálculo."""
+    """Fábrica para retornar o objeto Skyfield apropriado."""
     target_map = {
         'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
         'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus'
@@ -76,7 +96,14 @@ def get_body_object(target_name):
         return planets[target_map[target_name]], 'planet'
     elif target_name == 'm42':
         return Star(ra_hours=(5, 35, 17), dec_degrees=(-5, 23, 28)), 'star'
-    # TODO: Implementar lógica para Satélites (ISS) e Corpos Menores (MPC/JPL)
+    elif target_name == 'iss':
+        return get_iss(), 'satellite'
+    else:
+        # Tenta procurar como corpo menor
+        body = get_mpc_body(target_name)
+        if body:
+            return body, 'minor_body'
+            
     return None, None
 
 @ephemeris_bp.route('/calculate', methods=['POST'])
@@ -100,15 +127,22 @@ def calculate():
         t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
         observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev)
         
-        astrometric = observer.at(t).observe(body)
-        alt, az, distance = astrometric.apparent().altaz()
+        if body_type == 'satellite':
+            # Cálculo específico para satélites
+            difference = body - observer
+            topocentric = difference.at(t)
+            alt, az, distance = topocentric.altaz()
+        else:
+            # Cálculo para corpos celestes
+            astrometric = observer.at(t).observe(body)
+            alt, az, distance = astrometric.apparent().altaz()
 
         return jsonify({
             'status': 'success',
             'target': target_name,
             'altitude': f'{alt.degrees:.2f}°',
             'azimuth': f'{az.degrees:.2f}°',
-            'distance_au': f'{distance.au:.4f}'
+            'distance_km': f'{distance.km:.2f}' if body_type == 'satellite' else f'{distance.au:.4f} AU'
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -146,15 +180,36 @@ def calculate_iss():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
+def update_mpc_data():
+    """Descarrega dados de asteroides brilhantes do Minor Planet Center."""
+    url = "https://www.minorplanetcenter.net/iau/Ephemerides/Comets/Soft00Bright.txt"
+    try:
+        import requests
+        resp = requests.get(url)
+        with open(os.path.join(DATA_PATH, 'comets_bright.txt'), 'w') as f:
+            f.write(resp.text)
+        return True
+    except:
+        return False
+
 @ephemeris_bp.route('/update-ephemeris', methods=['POST'])
 @login_required
 def update_ephemeris():
-    """Atualiza ficheiros de efemérides e TLEs."""
+    """Atualiza ficheiros de efemérides, TLEs e dados de corpos menores."""
+    results = {
+        'ephem': False, 'tle': False, 'mpc': False
+    }
     try:
         load.download('de440.bsp')
         load.download_delta_t()
         load.download_iers()
+        results['ephem'] = True
+        
         load.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
-        return jsonify({'status': 'success', 'message': 'Efemérides e TLEs atualizados.'})
+        results['tle'] = True
+        
+        results['mpc'] = update_mpc_data()
+        
+        return jsonify({'status': 'success', 'results': results})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
