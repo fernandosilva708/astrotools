@@ -68,21 +68,36 @@ from skyfield.api import utc, Star, load, Loader, Topos
 from skyfield.api import utc, Star, load, Loader, Topos, Orbit
 # ...
 def get_mpc_body(target_name):
-    """Procura por um corpo menor nos ficheiros descarregados do MPC."""
+    """Procura e cria um objeto Orbit para um corpo menor do formato MPC."""
     mpc_file = os.path.join(DATA_PATH, 'comets_bright.txt')
     if not os.path.exists(mpc_file):
         return None
     
-    # Parser simples para o formato MPC Soft00
     with open(mpc_file, 'r') as f:
         for line in f:
-            # O nome do objeto costuma estar nos primeiros caracteres
             if target_name.upper() in line.upper():
-                # Nota: Parseamento de elementos orbitais completo exige 
-                # manipulação detalhada de campos MPC. 
-                # Aqui usaremos a estrutura de dados para criar um Orbit.
-                # Por simplicidade, este é um esqueleto da lógica.
-                return None # Placeholder para a lógica de construção do objeto Orbit
+                # Formato Soft00 (simplificado):
+                # Campos chave: Época, Inclinação, Long. Ascendente, Argumento Periélio, Excentricidade, Periélio (q), Época Periélio
+                # Exemplo: 0001P   1986 02 09.0000 162.2354 306.6148  58.9796  0.967272  0.587146  1986 02 09.4513
+                try:
+                    parts = line.split()
+                    epoch = f"{parts[1]}-{parts[2]}-{parts[3]}"
+                    incl = float(parts[4])
+                    node = float(parts[5])
+                    argp = float(parts[6])
+                    e = float(parts[7])
+                    q = float(parts[8]) # Distância do periélio em UA
+                    
+                    return Orbit({
+                        'epoch': epoch,
+                        'inclination': incl,
+                        'longitude_of_ascending_node': node,
+                        'argument_of_perihelion': argp,
+                        'eccentricity': e,
+                        'perihelion_distance': q
+                    }, ts=ts, earth=earth), 'minor_body'
+                except:
+                    continue
     return None
 
 def get_body_object(target_name):
