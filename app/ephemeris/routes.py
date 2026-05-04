@@ -47,19 +47,22 @@ def iss_page():
     return render_template('ephemeris/iss.html')
 
 
+from app.utils import LocationService
+
 @ephemeris_bp.route('/calculate', methods=['POST'])
 @login_required
 def calculate():
-    """Calcula a altitude e azimute de um corpo celeste."""
+    """Calcula a altitude e azimute de um objeto."""
     data = request.get_json() or {}
     target_name = data.get('target', '').lower()
-    
+
     # Usar localização do user ou defaults
-    loc = current_user.default_location
-    lat = loc.latitude if loc else 38.7169
-    lon = loc.longitude if loc else -9.1395
-    elev = loc.elevation if loc else 0.0
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    elev = loc.elevation
     date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+
 
 from skyfield.api import utc, Star, load, Loader, Topos
 
@@ -120,6 +123,7 @@ def get_body_object(target_name):
             return body, 'minor_body'
             
     return None, None
+from app.utils import LocationService
 
 @ephemeris_bp.route('/calculate', methods=['POST'])
 @login_required
@@ -127,12 +131,14 @@ def calculate():
     """Calcula a altitude e azimute de um objeto."""
     data = request.get_json() or {}
     target_name = data.get('target', '').lower()
-    
-    loc = current_user.default_location
-    lat = loc.latitude if loc else 38.7169
-    lon = loc.longitude if loc else -9.1395
-    elev = loc.elevation if loc else 0.0
+
+    # Usar localização do user ou defaults
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    elev = loc.elevation
     date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+
 
     body, body_type = get_body_object(target_name)
     if not body:
