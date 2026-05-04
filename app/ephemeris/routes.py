@@ -68,7 +68,8 @@ from skyfield.api import utc, Star, load, Loader, Topos
 
 # ... (código existente DATA_PATH, load, etc.)
 
-from skyfield.api import utc, Star, load, Loader, Topos, Orbit
+from skyfield.api import utc, Star, load, Loader, Topos
+from skyfield.orbits import Orbit
 # ...
 def get_mpc_body(target_name):
     """Procura e cria um objeto Orbit para um corpo menor do formato MPC."""
