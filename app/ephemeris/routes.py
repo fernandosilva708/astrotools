@@ -61,26 +61,45 @@ def calculate():
     elev = loc.elevation if loc else 0.0
     date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
 
+from skyfield.api import utc, Star, load, Loader, Topos
+
+# ... (código existente DATA_PATH, load, etc.)
+
+def get_body_object(target_name):
+    """Fábrica para retornar o objeto Skyfield apropriado para o cálculo."""
     target_map = {
         'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
-        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus',
-        'm42': 'm42'
+        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus'
     }
+    
+    if target_name in target_map:
+        return planets[target_map[target_name]], 'planet'
+    elif target_name == 'm42':
+        return Star(ra_hours=(5, 35, 17), dec_degrees=(-5, 23, 28)), 'star'
+    # TODO: Implementar lógica para Satélites (ISS) e Corpos Menores (MPC/JPL)
+    return None, None
 
-    if target_name not in target_map:
+@ephemeris_bp.route('/calculate', methods=['POST'])
+@login_required
+def calculate():
+    """Calcula a altitude e azimute de um objeto."""
+    data = request.get_json() or {}
+    target_name = data.get('target', '').lower()
+    
+    loc = current_user.default_location
+    lat = loc.latitude if loc else 38.7169
+    lon = loc.longitude if loc else -9.1395
+    elev = loc.elevation if loc else 0.0
+    date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+
+    body, body_type = get_body_object(target_name)
+    if not body:
         return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400
 
     try:
-        from skyfield.api import utc, Star
         t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
         observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev)
         
-        if target_name == 'm42':
-            # M42 Coordenadas (J2000): RA 05h 35m 17s, Dec -05° 23′ 28″
-            body = Star(ra_hours=(5, 35, 17), dec_degrees=(-5, 23, 28))
-        else:
-            body = planets[target_map[target_name]]
-            
         astrometric = observer.at(t).observe(body)
         alt, az, distance = astrometric.apparent().altaz()
 
