@@ -92,6 +92,7 @@ const TRANSLATIONS = {
     weather_forecast_for: 'Previsão para', weather_clouds: 'Nuvens',
     weather_temp: 'Temp.', weather_humidity: 'Humidade', weather_pressure: 'Pressão',
     weather_dew_point: 'Pto. Orvalho', weather_wind: 'Vento',
+    weather_seeing: 'Seeing', weather_transparency: 'Transparência',
     weather_status: 'Estado', weather_source: 'Fonte:',
     weather_source_light: 'Dados de poluição luminosa: LightPollutionMap.info',
     weather_last_update: 'Última atualização:',

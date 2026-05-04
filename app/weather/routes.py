@@ -59,6 +59,16 @@ def api_data():
         
         forecast = []
         now = datetime.now()
+        def estimate_seeing(clouds, wind):
+            if clouds < 10 and wind < 10: return "Bom"
+            if clouds < 30 and wind < 20: return "Médio"
+            return "Pobre"
+
+        def estimate_transparency(clouds):
+            if clouds < 10: return "Excelente"
+            if clouds < 30: return "Boa"
+            return "Pobre"
+
         for i in range(len(times)):
             f_time = datetime.fromisoformat(times[i])
             if f_time >= now and len(forecast) < 24:
@@ -70,6 +80,8 @@ def api_data():
                     "dew_point": f"{dew_point[i]}°C",
                     "wind": f"{wind_speed[i]} km/h",
                     "clouds": clouds[i],
+                    "seeing": estimate_seeing(clouds[i], wind_speed[i]),
+                    "transparency": estimate_transparency(clouds[i]),
                     "status": "Céu Limpo" if clouds[i] < 20 else "Nublado"
                 })
         return jsonify({

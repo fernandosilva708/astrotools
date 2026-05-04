@@ -29,6 +29,8 @@
                     <th data-i18n="weather_pressure">Pressão</th>
                     <th data-i18n="weather_dew_point">Pto. Orvalho</th>
                     <th data-i18n="weather_wind">Vento</th>
+                    <th data-i18n="weather_seeing">Seeing</th>
+                    <th data-i18n="weather_transparency">Transparência</th>
                 </tr>
             </thead>
             <tbody id="weather-tbody"></tbody>
@@ -73,6 +75,8 @@ function loadWeather() {
                     <td>${f.pressure}</td>
                     <td>${f.dew_point}</td>
                     <td>${f.wind}</td>
+                    <td>${f.seeing}</td>
+                    <td>${f.transparency}</td>
                 </tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
