@@ -8,17 +8,29 @@ Write-Host "--- AstroTools: Iniciando configuração para Windows 11 (PowerShell
 # 1. Verificar ambiente
 # ... (manter o que já existe)
 
-# 1.1 ASTAP para Windows
+# 1.1 ASTAP para Windows (Automação)
 Write-Host "Configurando ASTAP para Windows..." -ForegroundColor Cyan
 if (-not (Test-Path "C:\ASTAP")) {
     New-Item -ItemType Directory -Path "C:\ASTAP" | Out-Null
-    # Nota: Assumindo que o utilizador fará o download manual ou adicionar logic aqui. 
-    # Para automação real, adicionar Invoke-WebRequest para astap_setup.exe
 }
+
+if (-not (Test-Path "C:\ASTAP\astap_cli.exe")) {
+    Write-Host "Baixando ASTAP CLI..." -ForegroundColor Yellow
+    Invoke-WebRequest -Uri "http://www.hnsky.org/astap_cli_win64.exe" -OutFile "C:\ASTAP\astap_cli.exe"
+}
+
+if (-not (Test-Path "C:\ASTAP\d80")) {
+    Write-Host "Baixando e extraindo catálogo D80..." -ForegroundColor Yellow
+    $zipPath = "C:\ASTAP\d80.zip"
+    Invoke-WebRequest -Uri "http://www.hnsky.org/astap_d80_star_database.zip" -OutFile $zipPath
+    Expand-Archive -Path $zipPath -DestinationPath "C:\ASTAP\d80" -Force
+    Remove-Item $zipPath
+}
+
 # Adicionar ao .env
 $envContent = Get-Content ".env" -ErrorAction SilentlyContinue
 if ($envContent -notmatch "ASTAP_CLI_PATH") {
-    Add-Content ".env" "ASTAP_CLI_PATH=C:\ASTAP\astap_cli.exe"
+    Add-Content ".env" "`nASTAP_CLI_PATH=C:\ASTAP\astap_cli.exe"
     Add-Content ".env" "ASTAP_CATALOG_PATH=C:\ASTAP\d80"
 }
 
