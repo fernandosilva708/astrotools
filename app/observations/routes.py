@@ -12,58 +12,56 @@ observations_bp = Blueprint('observations', __name__)
 def index():
     """Lista todas as observações do utilizador."""
     observations = Observation.query.filter_by(user_id=current_user.id).order_by(Observation.observed_at.desc()).all()
-    from app.models import Observation, GalleryImage
-    from datetime import datetime
+    return render_template('observations/index.html', observations=observations)
 
-    # ... (rest of routes)
+@observations_bp.route('/add', methods=['GET', 'POST'])
+@login_required
+def add():
+    """Adiciona uma nova observação ao diário."""
+    from app.models import GalleryImage
+    if request.method == 'POST':
+        target = request.form.get('target', '').strip()
+        notes = request.form.get('notes', '').strip()
+        observed_at_str = request.form.get('observed_at', '')
+        ra = request.form.get('ra')
+        dec = request.form.get('dec')
+        image_ids = request.form.getlist('image_ids')
 
-    @observations_bp.route('/add', methods=['GET', 'POST'])
-    @login_required
-    def add():
-        """Adiciona uma nova observação ao diário."""
-        if request.method == 'POST':
-            target = request.form.get('target', '').strip()
-            notes = request.form.get('notes', '').strip()
-            observed_at_str = request.form.get('observed_at', '')
-            ra = request.form.get('ra')
-            dec = request.form.get('dec')
-            image_ids = request.form.getlist('image_ids') # IDs das imagens selecionadas
+        if not target:
+            flash('O nome do alvo é obrigatório.', 'warning')
+            return redirect(url_for('observations.add'))
 
-            if not target:
-                flash('O nome do alvo é obrigatório.', 'warning')
-                return redirect(url_for('observations.add'))
+        try:
+            observed_at = datetime.strptime(observed_at_str, '%Y-%m-%dT%H:%M') if observed_at_str else datetime.utcnow()
 
-            try:
-                observed_at = datetime.strptime(observed_at_str, '%Y-%m-%dT%H:%M') if observed_at_str else datetime.utcnow()
+            obs = Observation(
+                target=target,
+                notes=notes,
+                observed_at=observed_at,
+                ra=float(ra) if ra else None,
+                dec=float(dec) if dec else None,
+                user_id=current_user.id
+            )
+            db.session.add(obs)
+            db.session.commit()
 
-                obs = Observation(
-                    target=target,
-                    notes=notes,
-                    observed_at=observed_at,
-                    ra=float(ra) if ra else None,
-                    dec=float(dec) if dec else None,
-                    user_id=current_user.id
-                )
-                db.session.add(obs)
+            if image_ids:
+                images = GalleryImage.query.filter(GalleryImage.id.in_(image_ids), GalleryImage.user_id == current_user.id).all()
+                for img in images:
+                    img.observation_id = obs.id
                 db.session.commit()
 
-                # Associar imagens
-                if image_ids:
-                    images = GalleryImage.query.filter(GalleryImage.id.in_(image_ids), GalleryImage.user_id == current_user.id).all()
-                    for img in images:
-                        img.observation_id = obs.id
-                    db.session.commit()
+            flash('Observação registada com sucesso.', 'success')
+            return redirect(url_for('observations.index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao guardar observação: {str(e)}', 'danger')
 
-                flash('Observação registada com sucesso.', 'success')
-                return redirect(url_for('observations.index'))
-            except Exception as e:
-                db.session.rollback()
-                flash(f'Erro ao guardar observação: {str(e)}', 'danger')
+    available_images = GalleryImage.query.filter_by(user_id=current_user.id, observation_id=None).all()
+    return render_template('observations/add.html', now=datetime.utcnow().strftime('%Y-%m-%dT%H:%M'), available_images=available_images)
 
-        # Obter imagens sem observação para o utilizador
-        available_images = GalleryImage.query.filter_by(user_id=current_user.id, observation_id=None).all()
-        return render_template('observations/add.html', now=datetime.utcnow().strftime('%Y-%m-%dT%H:%M'), available_images=available_images)
-
+@observations_bp.route('/delete/<int:obs_id>')
+@login_required
 def delete(obs_id):
     """Elimina um registo de observação."""
     obs = Observation.query.get_or_404(obs_id)
