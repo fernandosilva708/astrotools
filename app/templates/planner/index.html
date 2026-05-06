@@ -1,0 +1,103 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Planeador de Sessão — AstroTools{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section>
+    <h1 data-i18n="nav_planner">Planeador de Sessão</h1>
+    <p><span data-i18n="planner_subtitle">Objetos sugeridos para a sua localização atual em</span> <strong>{{ now }}</strong></p>
+</section>
+
+<!-- Espaço para o Gráfico -->
+<dialog id="chartModal">
+  <article style="max-width: 800px; width: 90vw;">
+    <header>
+      <a href="#close" aria-label="Close" class="close" onclick="document.getElementById('chartModal').close()"></a>
+      <h3 id="chartTitle">Altitude</h3>
+    </header>
+    <canvas id="altitudeChart"></canvas>
+  </article>
+</dialog>
+
+<section style="overflow-x: auto; white-space: nowrap; padding-bottom: 1rem;">
+    <div style="display: inline-flex; gap: 1rem;">
+        {% for obj in objects %}
+        <article style="width: 300px; border-left: 5px solid {% if obj.visible %}var(--pico-ins-color){% else %}var(--pico-del-color){% endif %}; flex-shrink: 0;">
+            <header>
+                <h3 style="margin: 0; white-space: normal;">{{ obj.name }}</h3>
+            <h3 id="chartTitle" data-i18n="planner_altitude_chart">Altitude</h3>
+            ...
+                      <div>
+                          <small data-i18n="eph_elevation">Altitude</small><br>
+                          <strong>{{ obj.altitude }}</strong>
+                      </div>
+                      <div>
+                          <small data-i18n="eph_azimuth">Azimute</small><br>
+                          <strong>{{ obj.azimuth }}</strong>
+                      </div>
+
+            </div>
+            <div style="margin-top: 1rem; text-align: center;">
+                {% if obj.visible %}
+                    <ins data-i18n="planner_visible">Visível</ins>
+                {% else %}
+                    <del data-i18n="planner_hidden">Abaixo do Horizonte</del>
+                {% endif %}
+            </div>
+            <footer style="margin-top: 1rem;">
+                <div class="grid">
+                    <button class="outline" onclick="showChart('{{ obj.name }}')" data-i18n="planner_altitude_chart" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Gráfico</button>
+                    <a href="{{ url_for('observations.add', target=obj.name) }}" role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="planner_log_btn">Registar</a>
+                </div>
+            </footer>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<script>
+let myChart = null;
+
+async function showChart(objName) {
+    const modal = document.getElementById('chartModal');
+    const title = document.getElementById('chartTitle');
+    title.innerText = `${t('planner_altitude_chart')}: ${objName}`;
+    modal.showModal();
+    
+    const response = await fetch(`/planner/chart/${objName}`);
+    const data = await response.json();
+    
+    const ctx = document.getElementById('altitudeChart').getContext('2d');
+    
+    if (myChart) {
+        myChart.destroy();
+    }
+    
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Altitude (°)',
+                data: data.altitudes,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 90,
+                    title: { display: true, text: 'Graus (°)' }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

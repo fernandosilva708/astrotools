@@ -1,0 +1,63 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Registar Observação — AstroTools{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="{{ url_for('observations.index') }}" data-i18n="nav_observations">Diário de Observações</a></li>
+    <li data-i18n="obs_add_title">Registar Observação</li>
+  </ul>
+</nav>
+
+<article>
+    <h2 data-i18n="obs_add_title">Registar Observação</h2>
+    <form method="post" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <label>
+            <span data-i18n="eph_target">Alvo</span>
+            <input type="text" name="target" placeholder="M31, Jupiter, etc." required>
+        </label>
+        
+        <div class="grid">
+            <label>
+                <span data-i18n="eph_date">Data e Hora</span>
+                <input type="datetime-local" name="observed_at" value="{{ now }}">
+            </label>
+            <label>
+                <span>RA (deg)</span> <small data-i18n="optional">(opcional)</small>
+                <input type="number" step="0.0001" name="ra" placeholder="0.0000">
+            </label>
+            <label>
+                <span>Dec (deg)</span> <small data-i18n="optional">(opcional)</small>
+                <input type="number" step="0.0001" name="dec" placeholder="0.0000">
+            </label>
+        </div>
+        
+        <label>
+            <span data-i18n="gallery_title_page">Imagens da Galeria</span>
+            <div class="grid">
+                {% for img in available_images %}
+                <label>
+                    <input type="checkbox" name="image_ids" value="{{ img.id }}">
+                    {{ img.title or img.filename }}
+                </label>
+                {% else %}
+                <small>Nenhuma imagem disponível para associar.</small>
+                {% endfor %}
+            </div>
+        </label>
+        
+        <label>
+            <span data-i18n="gallery_description">Notas / Descrição</span>
+            <textarea name="notes" rows="5" placeholder="Condições do céu, equipamento usado, etc."></textarea>
+        </label>
+        
+        <div class="grid">
+            <button type="submit" data-i18n="save">Guardar</button>
+            <a href="{{ url_for('observations.index') }}" role="button" class="secondary outline" data-i18n="cancel">Cancelar</a>
+        </div>
+    </form>
+</article>
+{% endblock %}

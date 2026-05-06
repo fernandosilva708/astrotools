@@ -1,0 +1,70 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}{{ image.title }} — AstroTools{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="{{ url_for('gallery.index') }}" data-i18n="nav_gallery">Galeria</a></li>
+    <li>{{ image.title }}</li>
+  </ul>
+</nav>
+
+<div class="grid">
+    <section>
+        <article style="padding: 0;">
+            <img src="{{ url_for('gallery.serve_image', filename=image.filename) }}" alt="{{ image.title }}" style="width: 100%; border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;">
+            <div style="padding: 1rem;">
+                <h2 data-i18n="gallery_tech_data">Dados Técnicos</h2>
+                <ul>
+                    <li><strong data-i18n="gallery_target">Alvo:</strong> {{ image.target_name or '—' }}</li>
+                    <li><strong data-i18n="gallery_exposure">Exposição:</strong> {{ image.exposure_time or '—' }}s</li>
+                    <li><strong data-i18n="gallery_gain">Ganho:</strong> {{ image.gain or '—' }}</li>
+                    <li><strong data-i18n="gallery_captured">Capturada em:</strong> {{ image.captured_at.strftime('%Y-%m-%d %H:%M:%S') if image.captured_at else '—' }}</li>
+                    <li><strong data-i18n="gallery_status">Estado:</strong> 
+                        {% if image.plate_solved %}
+                            <mark data-i18n="gallery_solved_badge">Resolvido</mark>
+                        {% else %}
+                            <span data-i18n="astrometry_pending">Pendente</span>
+                        {% endif %}
+                    </li>
+                    {% if image.plate_solved %}
+                        <li><strong>RA:</strong> {{ '%.4f'|format(image.ra) if image.ra else '—' }}</li>
+                        <li><strong>Dec:</strong> {{ '%.4f'|format(image.dec) if image.dec else '—' }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </article>
+    </section>
+
+    <section>
+        <article>
+            <h2 data-i18n="gallery_edit_title">Editar Detalhes</h2>
+            <form method="post" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>
+                    <span data-i18n="gallery_title">Título</span>
+                    <input type="text" name="title" value="{{ image.title }}">
+                </label>
+                <label>
+                    <span data-i18n="gallery_target">Alvo</span>
+                    <input type="text" name="target_name" value="{{ image.target_name or '' }}">
+                </label>
+                <label>
+                    <span data-i18n="gallery_description">Descrição</span>
+                    <textarea name="description" rows="4">{{ image.description or '' }}</textarea>
+                </label>
+                <button type="submit" data-i18n="save">Guardar Alterações</button>
+            </form>
+
+            <hr>
+
+            <h2 data-i18n="gallery_danger_zone" style="color: var(--pico-del-color);">Zona de Perigo</h2>
+            <form action="{{ url_for('gallery.delete', image_id=image.id) }}" method="post" onsubmit="if(confirm(t('gallery_delete_confirm'))) { this.querySelector('button').setAttribute('aria-busy', 'true'); return true; } return false;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="secondary outline" data-i18n="delete">Eliminar Imagem</button>
+            </form>
+        </article>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Dashboard — AstroTools{% endblock %}
+
+{% block content %}
+<section>
+    <div class="grid">
+        <h1 data-i18n="nav_dashboard">Dashboard</h1>
+        <div style="text-align: right;">
+            <p><strong data-i18n="backup_status_label">Estado do Backup:</strong> 
+                {% if backup_status.running %}
+                    <span aria-busy="true" data-i18n="backup_running">A sincronizar...</span>
+                {% else %}
+                    <mark>{{ backup_status.last_result }}</mark>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="grid">
+    <!-- Estatísticas Rápidas -->
+    <article>
+        <h5 data-i18n="dash_images">Imagens</h5>
+        <div style="font-size: 2rem; font-weight: bold;">{{ image_count }}</div>
+        <small><span data-i18n="dash_images_no_backup">Sem Backup</span>: {{ images_no_backup|length }}</small>
+    </article>
+    <article>
+        <h5 data-i18n="nav_observations">Observações</h5>
+        <div style="font-size: 2rem; font-weight: bold;">{{ obs_count }}</div>
+        <small data-i18n="dash_obs_recorded">Registos no diário</small>
+    </article>
+    <article>
+        <h5 data-i18n="dash_visible_now">Visíveis Agora</h5>
+        {% if visible_now %}
+            <ul style="margin: 0; font-size: 0.9rem;">
+                {% for obj in visible_now[:3] %}
+                    <li><strong>{{ obj.name }}</strong> (Alt: {{ obj.alt }})</li>
+                {% endfor %}
+            </ul>
+            <footer style="margin-top: 0.5rem; padding: 0.5rem 0 0 0;">
+                <a href="{{ url_for('planner.index') }}" style="font-size: 0.8rem;" data-i18n="nav_planner">Ver Planeador Completo</a>
+            </footer>
+        {% else %}
+            <small data-i18n="dash_no_objects">Nenhum objeto brilhante acima de 10°</small>
+        {% endif %}
+    </article>
+</div>
+
+<div class="grid" style="grid-template-columns: 2fr 1fr;">
+    <!-- Secção de Atividade Recente -->
+    <section>
+        <h3 data-i18n="dash_recent_activity">Atividade Recente</h3>
+        
+        <article>
+            <header data-i18n="dash_recent_images">Imagens Recentes</header>
+            <div class="grid">
+                {% for img in recent_images %}
+                <div style="text-align: center;">
+                    <a href="{{ url_for('gallery.details', image_id=img.id) }}">
+                        <img src="{{ url_for('gallery.serve_image', filename=img.filename) }}" alt="{{ img.title }}" style="height: 100px; width: 100%; object-fit: cover; border-radius: 4px;">
+                    </a>
+                    <small style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ img.title or img.filename }}</small>
+                </div>
+                {% else %}
+                <p data-i18n="dash_no_images">Sem imagens recentes.</p>
+                {% endfor %}
+            </div>
+            <footer>
+                <a href="{{ url_for('gallery.index') }}" class="secondary outline" style="font-size: 0.8rem;" data-i18n="nav_gallery">Ver Galeria Completa</a>
+            </footer>
+        </article>
+
+        <article>
+            <header data-i18n="nav_observations">Últimas Observações</header>
+            {% if recent_observations %}
+            <table role="grid">
+                <tbody>
+                    {% for obs in recent_observations %}
+                    <tr>
+                        <td><small>{{ obs.observed_at.strftime('%d/%m') }}</small></td>
+                        <td><strong>{{ obs.target }}</strong></td>
+                        <td><small>{{ obs.notes|truncate(50) }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p data-i18n="obs_no_records">Nenhuma observação registada.</p>
+            {% endif %}
+            <footer>
+                <a href="{{ url_for('observations.index') }}" class="secondary outline" style="font-size: 0.8rem;" data-i18n="nav_observations">Ver Diário Completo</a>
+            </footer>
+        </article>
+    </section>
+
+    <!-- Ações Rápidas -->
+    <aside>
+        <h3 data-i18n="dash_quick_actions">Ações Rápidas</h3>
+        <a href="{{ url_for('gallery.upload') }}" role="button" class="contrast" style="width: 100%;" data-i18n="gallery_upload">Carregar Imagem</a>
+        <a href="{{ url_for('observations.add') }}" role="button" class="secondary outline" style="width: 100%;" data-i18n="obs_add_btn">Registar Observação</a>
+        <a href="{{ url_for('planner.index') }}" role="button" class="outline" style="width: 100%;" data-i18n="nav_planner">Planear Noite</a>
+        
+        <hr>
+        
+        <article>
+            <header data-i18n="nav_backup">Cópia de Segurança</header>
+            <form action="{{ url_for('backup.run_backup') }}" method="post" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" style="width: 100%;" {% if backup_status.running %}disabled{% endif %} data-i18n="backup_run">Sincronizar Agora</button>
+            </form>
+            <p style="font-size: 0.8rem; text-align: center;"><span data-i18n="backup_last_run">Última:</span> {{ backup_status.last_run or '---' }}</p>
+        </article>
+    </aside>
+</div>
+{% endblock %}

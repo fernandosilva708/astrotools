@@ -1,0 +1,76 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Plate Solve — AstroTools{% endblock %}
+
+{% block content %}
+<h1 data-i18n="astrometry_title">Plate Solving</h1>
+
+<section>
+    <h2 data-i18n="astrometry_pending">A aguardar plate-solve</h2>
+    {% if unsolved %}
+    <figure>
+        <table>
+            <thead>
+                <tr>
+                    <th data-i18n="astrometry_file">Ficheiro</th>
+                    <th data-i18n="astrometry_uploaded">Carregado</th>
+                    <th data-i18n="astrometry_action">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for img in unsolved %}
+                <tr>
+                    <td>{{ img.title or img.filename }}</td>
+                    <td>{{ img.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <div class="grid">
+                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='offline') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="outline" data-i18n="astrometry_submit">Resolver Offline</button>
+                            </form>
+                            {% if config.get('ASTROMETRY_API_KEY') %}
+                            <form method="post" action="{{ url_for('astrometry.submit', image_id=img.id, mode='online') }}" onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="outline secondary" data-i18n="astrometry_submit">Resolver Online</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </figure>
+    {% else %}
+        <p data-i18n="astrometry_none_pending">Sem imagens a aguardar plate-solving.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h2 data-i18n="astrometry_solved_section">Resolvidas</h2>
+    {% if solved %}
+    <figure>
+        <table>
+            <thead>
+                <tr>
+                    <th data-i18n="astrometry_file">Ficheiro</th>
+                    <th>RA</th>
+                    <th>Dec</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for img in solved %}
+                <tr>
+                    <td>{{ img.title or img.filename }}</td>
+                    <td>{{ '%.4f'|format(img.ra) if img.ra else '—' }}</td>
+                    <td>{{ '%.4f'|format(img.dec) if img.dec else '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </figure>
+    {% else %}
+        <p data-i18n="astrometry_no_images">Sem imagens resolvidas.</p>
+    {% endif %}
+</section>
+{% endblock %}

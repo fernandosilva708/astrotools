@@ -1,0 +1,94 @@
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+{% extends 'base.html' %}
+{% block title %}Efemérides — AstroTools{% endblock %}
+
+{% block content %}
+<h1 data-i18n="nav_ephemeris">Efemérides</h1>
+
+<div class="grid">
+    <article>
+        <h2 data-i18n="eph_search">Pesquisa de Objeto</h2>
+        <form id="ephemerisForm">
+            <label>
+                <span data-i18n="eph_target">Objeto Alvo</span>
+                <input type="text" id="target" placeholder="e.g. Mars, M42" required>
+            </label>
+            <div class="grid">
+                <label>
+                    <span data-i18n="eph_lat">Latitude</span>
+                    <input type="number" id="lat" step="0.0001" placeholder="38.7169">
+                </label>
+                <label>
+                    <span data-i18n="eph_lon">Longitude</span>
+                    <input type="number" id="lon" step="0.0001" placeholder="-9.1395">
+                </label>
+            </div>
+            <div class="grid">
+                <label>
+                    <span data-i18n="eph_elevation">Altitude (m)</span>
+                    <input type="number" id="elevation" value="0">
+                </label>
+                <label>
+                    <span data-i18n="eph_date">Data</span>
+                    <input type="date" id="date">
+                </label>
+            </div>
+            <button type="submit" data-i18n="eph_calculate">Calcular</button>
+        </form>
+        <button type="button" class="secondary outline" onclick="updateEphemeris()" data-i18n="eph_update_bsp">Atualizar Dados (.bsp)</button>
+    </article>
+
+    <article>
+        <h2 data-i18n="eph_results">Resultados</h2>
+        <div id="results">
+            <p data-i18n="eph_hint">Introduza um objeto e localização para calcular as efemérides.</p>
+        </div>
+    </article>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('date').valueAsDate = new Date();
+
+async function updateEphemeris() {
+    const btn = event.target;
+    btn.disabled = true;
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const res = await fetch('{{ url_for("ephemeris.update_ephemeris") }}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken }
+        });
+        const data = await res.json();
+        alert(data.message);
+    } catch (e) {
+        alert('Erro ao atualizar efemérides.');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+document.getElementById('ephemerisForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const body = {
+    target: document.getElementById('target').value,
+    lat: parseFloat(document.getElementById('lat').value) || 0,
+    lon: parseFloat(document.getElementById('lon').value) || 0,
+    elevation: parseFloat(document.getElementById('elevation').value) || 0,
+    date: document.getElementById('date').value,
+  };
+  const res = await fetch('{{ url_for("ephemeris.calculate") }}', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  document.getElementById('results').innerHTML = `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
+});
+</script>
+{% endblock %}
