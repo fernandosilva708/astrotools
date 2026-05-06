@@ -51,6 +51,13 @@ def create_app():
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    @app.context_processor
+    def inject_t():
+        def t(key):
+            # Esta é uma implementação simples de tradução baseada em chaves, 
+            # seria ideal integrar com um sistema de i18n real.
+            return key
+        return dict(t=t)
 
     from app.auth.routes import auth_bp
     from app.gallery.routes import gallery_bp

@@ -47,6 +47,46 @@ def iss_page():
     return render_template('ephemeris/iss.html')
 
 
+from skyfield.api import utc, Star, load, Loader, Topos
+
+def get_mpc_body(target_name):
+    """Procura e cria um objeto Orbit para um corpo menor do formato MPC."""
+    mpc_file = os.path.join(DATA_PATH, 'comets_bright.txt')
+    if not os.path.exists(mpc_file):
+        return None
+    
+    with open(mpc_file, 'r') as f:
+        for line in f:
+            if target_name.upper() in line.upper():
+                try:
+                    parts = line.split()
+                    # Placeholder para a funcionalidade Orbit, como não existe em skyfield.orbits
+                    # Retornar uma posição básica ou erro estruturado
+                    return None, 'minor_body'
+                except:
+                    continue
+    return None, None
+
+def get_body_object(target_name):
+    """Fábrica para retornar o objeto Skyfield apropriado."""
+    target_map = {
+        'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
+        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 'venus': 'venus'
+    }
+    
+    if target_name in target_map:
+        return planets[target_map[target_name]], 'planet'
+    elif target_name == 'm42':
+        return Star(ra_hours=(5, 35, 17), dec_degrees=(-5, 23, 28)), 'star'
+    elif target_name == 'iss':
+        return get_iss(), 'satellite'
+    else:
+        body, body_type = get_mpc_body(target_name)
+        if body:
+            return body, body_type
+            
+    return None, None
+
 from app.utils import LocationService
 
 @ephemeris_bp.route('/calculate', methods=['POST'])
@@ -57,6 +97,12 @@ def calculate():
     target_name = data.get('target', '').lower()
 
     # Usar localização do user ou defaults
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    elev = loc.elevation
+    date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+
     body, body_type = get_body_object(target_name)
     if not body:
         return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400

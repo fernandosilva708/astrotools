@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-only
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from flask_login import login_required, current_user
 from datetime import datetime
 from app import db
