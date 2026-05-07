@@ -24,6 +24,7 @@
 - [ ] Melhorar a cobertura de testes unitários (atualmente muito baixa).
 - [ ] Implementar gestão de perfis de utilizador (avatar, alteração de password robusta).
 - [ ] Refatorar os cálculos de Seeing/Transparência para usar modelos meteorológicos mais precisos em vez de stubs baseados em nuvens/vento.
+- [ ] Verificar se os ficheiros em falta na galeria precisam de ser importados manualmente ou se a ingestão do Seestar precisa de ser revista para garantir que todos os ficheiros são lidos.
 
 ---
 *Estado: Revisão concluída em 03/05/2026. Projeto funcional e estável.*
