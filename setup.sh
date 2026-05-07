@@ -15,7 +15,7 @@ sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-
 # 1.1 Instalar ASTAP CLI e Catálogo
 echo "Instalando ASTAP CLI e catálogo D80..."
 sudo apt update
-sudo apt install -y astap_cli
+sudo apt install -y astap-cli
 
 # Instalar catálogo D80 (copiar da pasta local)
 echo "Instalando catálogo D80..."
