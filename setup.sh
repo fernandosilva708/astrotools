@@ -12,27 +12,26 @@ echo "Instalando dependências do sistema..."
 sudo apt update
 sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev wget unzip
 
-# 1.1 Instalar ASTAP CLI e Catálogo (ARM 32-bit)
-echo "Instalando ASTAP CLI (armhf) e catálogo D80..."
+# 1.1 Instalar ASTAP CLI e Catálogo
+echo "Instalando ASTAP CLI e catálogo D80..."
+sudo apt update
+sudo apt install -y astap_cli
+
+# Instalar catálogo D80 (copiar da pasta local)
+echo "Instalando catálogo D80..."
 sudo mkdir -p /opt/astap/d80
-# URL oficial para ARM 32-bit (armhf)
-wget -q http://www.hnsky.org/astap_cli_linux_armhf -O /usr/local/bin/astap_cli
-sudo chmod +x /usr/local/bin/astap_cli
+sudo cp -r D80/* /opt/astap/d80/
 
-# Download do catálogo D80
-wget -q http://www.hnsky.org/astap_d80_star_database.zip -O /tmp/d80.zip
-sudo unzip -q /tmp/d80.zip -d /opt/astap/d80/
-rm /tmp/d80.zip
-
-# 2. Criar e configurar o .env com os caminhos do ASTAP
+# 2. Criar e configurar o .env
 echo "Configurando .env..."
 if [ ! -f .env ]; then
     cp .env.example .env
+    echo "Ficheiro .env criado a partir de .env.example."
+else
+    echo "Ficheiro .env já existe."
 fi
-echo "ASTAP_CLI_PATH=/usr/local/bin/astap_cli" >> .env
-echo "ASTAP_CATALOG_PATH=/opt/astap/d80" >> .env
 
-# 2. Criar e ativar ambiente virtual
+# 3. Criar e ativar ambiente virtual
 echo "Configurando ambiente virtual Python (venv)..."
 if [ -d "venv" ]; then
     echo "Removendo venv antigo para garantir integridade..."
@@ -57,16 +56,10 @@ echo "Instalando dependências Python (isto pode demorar no Pi 2)..."
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 
-# 4. Criar estrutura de diretórios e .env
+# 4. Criar estrutura de diretórios
 echo "Criando pastas de sistema..."
 mkdir -p uploads/gallery
 mkdir -p instance
-
-if [ ! -f .env ]; then
-    echo "Criando ficheiro .env inicial..."
-    cp .env.example .env
-    echo "AVISO: Edite o ficheiro .env para configurar as chaves de API e caminhos."
-fi
 
 # 5. Inicializar base de dados
 echo "Inicializando base de dados..."
