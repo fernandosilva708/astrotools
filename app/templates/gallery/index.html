@@ -39,7 +39,6 @@
     </div>
 
 <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
-    {% if images %}
     {% for img in images %}
     <article style="border: {% if not img.backup_status %}2px solid var(--pico-del-color){% else %}none{% endif %}; padding: 0; position: relative;">
         <input type="checkbox" name="image_ids" value="{{ img.id }}" style="position: absolute; top: 10px; left: 10px; z-index: 10;">
@@ -61,8 +60,11 @@
             </div>
         </div>
     </article>
+    {% else %}
+    <section>
+        <p data-i18n="gallery_no_images">Sem imagens na galeria.</p>
+    </section>
     {% endfor %}
-    {% endif %}
 </div>
 </form>
 
@@ -91,11 +93,5 @@
     </li>
   </ul>
 </nav>
-{% endif %}
-
-{% else %}
-<section>
-    <p data-i18n="gallery_no_images">Sem imagens na galeria.</p>
-</section>
 {% endif %}
 {% endblock %}
