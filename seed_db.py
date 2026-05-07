@@ -28,7 +28,9 @@ def seed():
             {"name": "Ilha do Corvo", "lat": 39.6728, "lon": -31.1144, "elev": 36},
             {"name": "Sydney", "lat": -33.8678, "lon": 151.2073, "elev": 37},
             {"name": "Buenos Aires", "lat": -34.6037, "lon": -58.3816, "elev": 25},
-            {"name": "Luanda", "lat": -8.8368, "lon": 13.2343, "elev": 73}
+            {"name": "Luanda", "lat": -8.8368, "lon": 13.2343, "elev": 73},
+            {"name": "Póvoa de Santa Iria", "lat": 38.8610, "lon": -9.0645, "elev": 20},
+            {"name": "Moimenta da Beira", "lat": 40.9851, "lon": -7.6177, "elev": 697}
         ]
 
         default_loc = None
