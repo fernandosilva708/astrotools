@@ -74,7 +74,7 @@ def submit(image_id):
         flash('Ficheiro de imagem não encontrado.', 'danger')
         return redirect(url_for('astrometry.index'))
 
-    astap_path = current_app.config.get('ASTAP_CLI_PATH', '/usr/bin/astap-cli')
+    astap_path = current_app.config.get('ASTAP_CLI_PATH', '/usr/bin/astap_cli')
     catalog_path = current_app.config.get('ASTAP_CATALOG_PATH', '/opt/astap/d80')
     
     cmd = [astap_path, '-f', image.filepath, '-d', catalog_path, '-z', '2']
