@@ -80,7 +80,7 @@ def submit(image_id):
     cmd = [astap_path, '-f', image.filepath, '-d', catalog_path, '-z', '2']
     
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=480)
         if result.returncode == 0:
             image.plate_solved = True
             db.session.commit()
