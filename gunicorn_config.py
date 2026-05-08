@@ -12,8 +12,8 @@ bind = "0.0.0.0:5000"
 # (2 * cores + 1 seria 9, o que é demasiado para 1GB RAM)
 workers = 2
 
-# Timeout longo para operações de astronomia pesadas
-timeout = 120
+# Timeout longo para operações de astronomia pesadas (8 min de ASTAP + margem)
+timeout = 600
 
 # Log de erros
 accesslog = "-"
