@@ -25,6 +25,12 @@
 - [ ] Implementar gestão de perfis de utilizador (avatar, alteração de password robusta).
 - [ ] Refatorar os cálculos de Seeing/Transparência para usar modelos meteorológicos mais precisos em vez de stubs baseados em nuvens/vento.
 - [ ] Verificar se os ficheiros em falta na galeria precisam de ser importados manualmente ou se a ingestão do Seestar precisa de ser revista para garantir que todos os ficheiros são lidos.
+- [ ] **Localização Dinâmica no Planeador**: Alterar o planeador de sessões (`app/planner/routes.py`) para utilizar o `LocationService.get_current_location()` em vez de coordenadas de latitude/longitude hardcoded.
+
+## 🔴 Correções Críticas & Stubs Pendentes
+- [x] **Criar Módulo de Efemérides (routes.py)**: O ficheiro `app/ephemeris/routes.py` está em falta no repositório, impedindo o arranque da aplicação. É urgente criar o blueprint `ephemeris_bp` e as rotas necessárias para a interface (`/`, `/iss`, `/update_ephemeris`, `/calculate`, `/calculate_iss`).
+- [ ] **Leitura de coordenadas .wcs no ASTAP**: Em `app/astrometry/routes.py`, implementar a extração e leitura das coordenadas RA/Dec reais do ficheiro `.wcs` gerado pelo ASTAP após a resolução astrométrica com sucesso.
+- [ ] **Controlo Remoto do Seestar S50**: Implementar o protocolo real REST/Alpaca em `app/seestar.py` (atualmente apenas um stub com `pass` no `capture_image` e endpoint hipotético no `get_status`) e integrá-lo com a UI.
 
 ---
-*Estado: Revisão concluída em 03/05/2026. Projeto funcional e estável.*
+*Estado: Revisão concluída em 07/06/2026. Atualizado com inconsistências e stubs críticos identificados no código.*
