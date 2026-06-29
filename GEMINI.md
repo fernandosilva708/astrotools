@@ -26,6 +26,7 @@ O projeto encontra-se na fase de **conclusão das funcionalidades core**. A inte
 - **Traduções:** Novas funcionalidades devem incluir chaves em `app/static/js/translations.js` para PT e EN.
 - **UI:** Usar componentes semânticos do Pico.css. Botões que executam ações lentas devem ter `onsubmit="this.querySelector('button').setAttribute('aria-busy', 'true')"`.
 - **Modelos:** Relações devem ser explícitas (ex: Imagens ligadas a Observações).
+- **Cálculos Skyfield:** Quando utilizar o ficheiro de efemérides local `de440.bsp` para obter a posição de planetas, mapear os alvos para os seus respetivos baricentros (ex: `'mars barycenter'`, `'jupiter barycenter'`, `'venus barycenter'`), uma vez que os nomes simples dos planetas não constam desse kernel.
 
 ## Estrutura da Base de Dados
 A base de dados utiliza **SQLite** gerido pelo **SQLAlchemy**. Abaixo descreve-se a estrutura das tabelas principais:
