@@ -7,7 +7,7 @@
 - [ ] Expandir o suporte a busca de satélites além da ISS.
 
 ### 2. Galeria e Imagens
-- [ ] Implementar *background workers* (ex: Celery ou threads dedicadas) para Plate Solving automático após ingestão.
+- [x] Implementar *background workers* (ex: Celery ou threads dedicadas) para Plate Solving automático após ingestão.
 - [ ] Adicionar suporte a edição de metadados em lote.
 
 ### 3. Diário de Observações
@@ -22,7 +22,7 @@
 - [ ] **Setup Windows**: Investigar falha persistente na instalação de dependências e ativação do venv no Windows (módulos como `skyfield.orbits` e `cryptography` não são encontrados após setup).
 - [ ] Centralizar toda a configuração em uma única tabela `system_settings` em vez de múltiplos ficheiros `.env` e chaves individuais.
 - [ ] Melhorar a cobertura de testes unitários (atualmente muito baixa).
-- [ ] Implementar gestão de perfis de utilizador (avatar, alteração de password robusta).
+- [x] Implementar gestão de perfis de utilizador (avatar, alteração de password robusta).
 - [ ] Refatorar os cálculos de Seeing/Transparência para usar modelos meteorológicos mais precisos em vez de stubs baseados em nuvens/vento.
 - [ ] Verificar se os ficheiros em falta na galeria precisam de ser importados manualmente ou se a ingestão do Seestar precisa de ser revista para garantir que todos os ficheiros são lidos.
 - [ ] **Localização Dinâmica no Planeador**: Alterar o planeador de sessões (`app/planner/routes.py`) para utilizar o `LocationService.get_current_location()` em vez de coordenadas de latitude/longitude hardcoded.

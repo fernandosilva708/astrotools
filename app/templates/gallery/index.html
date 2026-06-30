@@ -15,11 +15,45 @@
         </div>
     </div>
     
-    <!-- Barra de Pesquisa -->
-    <form method="get" action="{{ url_for('gallery.index') }}">
-        <div class="grid">
-            <input type="search" name="q" placeholder="Pesquisar por alvo, título..." value="{{ search_query or '' }}" data-i18n="gallery_search_placeholder">
-            <button type="submit" data-i18n="gallery_search_btn">Filtrar</button>
+    <!-- Barra de Pesquisa e Filtros Avançados -->
+    <form method="get" action="{{ url_for('gallery.index') }}" style="margin-bottom: 2rem;">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: end;">
+            <label style="margin-bottom: 0;">
+                <span style="font-size: 0.8rem;">Pesquisa de texto</span>
+                <input type="search" name="q" placeholder="Alvo, título, ficheiro..." value="{{ search_query or '' }}" style="margin-bottom: 0;">
+            </label>
+            
+            <label style="margin-bottom: 0;">
+                <span style="font-size: 0.8rem;">Filtrar por Alvo</span>
+                <select name="target" style="margin-bottom: 0;">
+                    <option value="">Todos os Alvos</option>
+                    {% for t in targets %}
+                    <option value="{{ t }}" {% if target_filter == t %}selected{% endif %}>🔭 {{ t }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label style="margin-bottom: 0;">
+                <span style="font-size: 0.8rem;">Astrometria</span>
+                <select name="solved" style="margin-bottom: 0;">
+                    <option value="">Todos</option>
+                    <option value="yes" {% if solved_filter == 'yes' %}selected{% endif %}>Resolvidos</option>
+                    <option value="no" {% if solved_filter == 'no' %}selected{% endif %}>Não Resolvidos</option>
+                </select>
+            </label>
+
+            <label style="margin-bottom: 0;">
+                <span style="font-size: 0.8rem;">Cópia de Segurança</span>
+                <select name="backup" style="margin-bottom: 0;">
+                    <option value="">Todos</option>
+                    <option value="yes" {% if backup_filter == 'yes' %}selected{% endif %}>Com Cópia</option>
+                    <option value="no" {% if backup_filter == 'no' %}selected{% endif %}>Sem Cópia</option>
+                </select>
+            </label>
+            
+            <div style="margin-bottom: 0;">
+                <button type="submit" style="width: 100%; margin-bottom: 0;">Filtrar</button>
+            </div>
         </div>
     </form>
 </section>
@@ -27,10 +61,10 @@
 <form id="gallery-form" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <div style="margin-bottom: 1rem;">
-        <button type="submit" name="action" value="delete" class="secondary" data-i18n="delete">Eliminar</button>
-        <button type="submit" name="action" value="associate" class="primary" data-i18n="obs_add_title">Associar a Observação</button>
-        <select name="observation_id" style="width: auto; display: inline-block;">
+    <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <button type="submit" name="action" value="delete" class="secondary" style="margin-bottom: 0;" data-i18n="delete">Eliminar</button>
+        <button type="submit" name="action" value="associate" class="primary" style="margin-bottom: 0;" data-i18n="obs_add_title">Associar a Observação</button>
+        <select name="observation_id" style="width: auto; display: inline-block; margin-bottom: 0;">
             <option value="" disabled selected data-i18n="obs_target">Selecionar Observação</option>
             {% for obs in observations %}
             <option value="{{ obs.id }}">{{ obs.target }} ({{ obs.observed_at.strftime('%Y-%m-%d') }})</option>
@@ -50,7 +84,9 @@
             <p style="font-size: 0.8rem; margin-bottom: 0.5rem;">{{ img.created_at.strftime('%Y-%m-%d') }}</p>
             <div class="grid" style="align-items: center; grid-template-columns: 1fr auto;">
                 {% if img.plate_solved %}
-                    <span role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.7rem;" data-i18n="gallery_solved_badge">Resolvido</span>
+                    <span class="badge contrast" style="padding: 0.25rem 0.5rem; font-size: 0.7rem; background-color: var(--pico-primary-background); color: #fff; border-radius: 4px;" data-i18n="gallery_solved_badge">Resolvido</span>
+                {% elif img.astrometry_job_id %}
+                    <span class="badge" style="padding: 0.25rem 0.5rem; font-size: 0.7rem; background-color: var(--pico-muted-color); color: #fff; border-radius: 4px; animation: pulse 1.5s infinite;">A resolver...</span>
                 {% else %}
                     <span></span>
                 {% endif %}
@@ -74,7 +110,7 @@
   <ul>
     <li>
         {% if pagination.has_prev %}
-            <a href="{{ url_for('gallery.index', page=pagination.prev_num, q=search_query) }}" data-i18n="nav_prev">Anterior</a>
+            <a href="{{ url_for('gallery.index', page=pagination.prev_num, q=search_query, solved=solved_filter, backup=backup_filter, target=target_filter) }}" data-i18n="nav_prev">Anterior</a>
         {% else %}
             <span data-i18n="nav_prev" style="opacity: 0.5;">Anterior</span>
         {% endif %}
@@ -86,7 +122,7 @@
   <ul>
     <li>
         {% if pagination.has_next %}
-            <a href="{{ url_for('gallery.index', page=pagination.next_num, q=search_query) }}" data-i18n="nav_next">Próximo</a>
+            <a href="{{ url_for('gallery.index', page=pagination.next_num, q=search_query, solved=solved_filter, backup=backup_filter, target=target_filter) }}" data-i18n="nav_next">Próximo</a>
         {% else %}
             <span data-i18n="nav_next" style="opacity: 0.5;">Próximo</span>
         {% endif %}
@@ -94,4 +130,13 @@
   </ul>
 </nav>
 {% endif %}
+
+<style>
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+</style>
 {% endblock %}
+

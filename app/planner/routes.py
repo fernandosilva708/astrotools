@@ -33,12 +33,25 @@ CATALOG = [
 @login_required
 def index():
     """Planeia a sessão de observação sugerindo objetos visíveis."""
-    lat, lon = 38.7169, -9.1395
+    from app.utils import LocationService
+    from app.models import CelestialObject
+
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    
     observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon)
     now = ts.now()
     
+    # Tentar carregar objetos celestes da BD
+    catalog_objs = CelestialObject.query.all()
+    if not catalog_objs:
+        db_catalog = CATALOG
+    else:
+        db_catalog = [{"name": obj.name, "ra": obj.ra, "dec": obj.dec} for obj in catalog_objs]
+    
     visible_objects = []
-    for obj in CATALOG:
+    for obj in db_catalog:
         star = Star(ra_hours=obj['ra'], dec_degrees=obj['dec'])
         alt, az, dist = observer.at(now).observe(star).apparent().altaz()
         
@@ -57,14 +70,29 @@ def index():
 @login_required
 def get_chart_data(object_name):
     """Gera pontos de altitude para as próximas 12 horas para um objeto."""
-    lat, lon = 38.7169, -9.1395
+    from app.utils import LocationService
+    from app.models import CelestialObject
+
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    
     observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon)
     
-    obj_data = next((item for item in CATALOG if item["name"] == object_name), None)
-    if not obj_data:
-        return {"error": "Objeto não encontrado"}, 404
+    # Procurar primeiro na base de dados
+    db_obj = CelestialObject.query.filter(CelestialObject.name.ilike(object_name)).first()
+    if db_obj:
+        ra_val = db_obj.ra
+        dec_val = db_obj.dec
+    else:
+        # Fallback para o catálogo estático
+        obj_data = next((item for item in CATALOG if item["name"].lower() == object_name.lower()), None)
+        if not obj_data:
+            return {"error": "Objeto não encontrado"}, 404
+        ra_val = obj_data['ra']
+        dec_val = obj_data['dec']
         
-    star = Star(ra_hours=obj_data['ra'], dec_degrees=obj_data['dec'])
+    star = Star(ra_hours=ra_val, dec_degrees=dec_val)
     labels, altitudes = [], []
     start_time = datetime.utcnow()
     
@@ -77,3 +105,4 @@ def get_chart_data(object_name):
         altitudes.append(round(max(0, alt.degrees), 1))
         
     return {"labels": labels, "altitudes": altitudes, "object": object_name}
+

@@ -1,177 +1,229 @@
 # SPDX-License-Identifier: GPL-2.0-only
 from flask import Blueprint, render_template, request, jsonify
-from flask_login import login_required
-from skyfield.api import Loader, Topos, Star, EarthSatellite
-from datetime import datetime
+from flask_login import login_required, current_user
+from skyfield.api import load, Loader, Topos
+from skyfield.sgp4lib import EarthSatellite
 import os
+from datetime import datetime
 
 ephemeris_bp = Blueprint('ephemeris', __name__)
 
-# Configuração da pasta de dados local para dados efêmeros
+# Configuração da pasta de dados local
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'instance', 'ephem_data')
 os.makedirs(DATA_PATH, exist_ok=True)
-load_sky = Loader(DATA_PATH)
-ts = load_sky.timescale()
-planets = load_sky('de440.bsp')
+load = Loader(DATA_PATH)
+
+# Carregamento de efemérides e escala de tempo
+planets = load('de440.bsp')
+earth = planets['earth']
+ts = load.timescale()
+
+def get_iss():
+    """Carrega o TLE da ISS a partir de ficheiro local."""
+    stations_file = os.path.join(DATA_PATH, 'stations.txt')
+    if not os.path.exists(stations_file):
+        # Tenta descarregar se não existir
+        try:
+            load.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
+        except:
+            return None
+        
+    satellites = load.tle_file(stations_file)
+    for sat in satellites:
+        if sat.name == 'ISS (ZARYA)':
+            return sat
+    return None
+
 
 @ephemeris_bp.route('/')
 @login_required
 def index():
-    """Renderiza a página principal das efemérides."""
     return render_template('ephemeris/index.html')
+
 
 @ephemeris_bp.route('/iss')
 @login_required
-def iss_index():
-    """Renderiza a página das efemérides da ISS."""
+def iss_page():
     return render_template('ephemeris/iss.html')
 
-@ephemeris_bp.route('/update_ephemeris', methods=['POST'])
-@login_required
-def update_ephemeris():
-    """Verifica ou atualiza os ficheiros de dados astronómicos localmente."""
-    bsp_path = os.path.join(DATA_PATH, 'de440.bsp')
-    # Se o ficheiro já existir e tiver um tamanho considerável, assume-se que está atualizado
-    if os.path.exists(bsp_path) and os.path.getsize(bsp_path) > 100000000:
-        return jsonify({"status": "success", "message": "Dados (.bsp) já estão atualizados localmente."})
+
+from skyfield.api import utc, Star, load, Loader, Topos
+
+from skyfield.data import mpc
+from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
+from app.models import CelestialObject
+
+def get_mpc_body(target_name):
+    """Procura e cria um objeto Orbit para um cometa ou corpo menor do formato MPC."""
+    mpc_file = os.path.join(DATA_PATH, 'comets_bright.txt')
+    if not os.path.exists(mpc_file):
+        update_mpc_data()
+        if not os.path.exists(mpc_file):
+            return None, None
     
     try:
-        load_sky.download('de440.bsp')
-        return jsonify({"status": "success", "message": "Dados (.bsp) descarregados com sucesso."})
+        with open(mpc_file, 'rb') as f:
+            comets = mpc.load_comets_dataframe(f)
+        
+        # Limpar o dataframe: manter apenas a órbita mais recente por cometa
+        comets = (comets.sort_values('reference')
+                  .groupby('designation', as_index=False).last()
+                  .set_index('designation', drop=False))
+        
+        # Procurar correspondência parcial de string na designação (case insensitive)
+        comets['designation_upper'] = comets['designation'].str.upper()
+        matched = comets[comets['designation_upper'].str.contains(target_name.upper(), na=False)]
+        
+        if not matched.empty:
+            row = matched.iloc[0]
+            sun = planets['sun']
+            orbit = sun + mpc.comet_orbit(row, ts, GM_SUN)
+            return orbit, 'minor_body'
     except Exception as e:
-        return jsonify({"status": "error", "message": f"Erro ao descarregar dados: {str(e)}"}), 500
+        print(f"Erro ao carregar cometa {target_name} do MPC: {e}")
+        
+    return None, None
+
+def get_body_object(target_name):
+    """Fábrica para retornar o objeto Skyfield apropriado."""
+    target_name_clean = target_name.strip().lower()
+    
+    target_map = {
+        'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
+        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter', 
+        'venus': 'venus', 'mercury': 'mercury',
+        'uranus': 'uranus barycenter', 'neptune': 'neptune barycenter'
+    }
+    
+    if target_name_clean in target_map:
+        return planets[target_map[target_name_clean]], 'planet'
+    elif target_name_clean == 'iss':
+        return get_iss(), 'satellite'
+    
+    # Procurar na base de dados no catálogo dinâmico
+    db_obj = CelestialObject.query.filter(CelestialObject.name.ilike(target_name_clean)).first()
+    if db_obj:
+        return Star(ra_hours=db_obj.ra, dec_degrees=db_obj.dec), 'star'
+        
+    # Se não encontrado na BD, procurar no ficheiro de cometas do MPC
+    body, body_type = get_mpc_body(target_name_clean)
+    if body:
+        return body, body_type
+            
+    return None, None
+
+
+from app.utils import LocationService
 
 @ephemeris_bp.route('/calculate', methods=['POST'])
 @login_required
 def calculate():
-    """Calcula a posição (RA, Dec, Alt, Az) de um objeto a partir da localização fornecida."""
+    """Calcula a altitude e azimute de um objeto."""
     data = request.get_json() or {}
-    target = data.get('target', '').strip()
-    lat = float(data.get('lat') or 0.0)
-    lon = float(data.get('lon') or 0.0)
-    elevation = float(data.get('elevation') or 0.0)
-    date_str = data.get('date', '')
-    
-    if not target:
-        return jsonify({"status": "error", "message": "Alvo em falta."}), 400
-        
-    try:
-        if date_str:
-            dt = datetime.strptime(date_str, '%Y-%m-%d')
-        else:
-            dt = datetime.utcnow()
-    except Exception:
-        dt = datetime.utcnow()
-        
-    # Usar 22:00 UTC/Local da data especificada como hora de referência de observação noturna
-    t = ts.utc(dt.year, dt.month, dt.day, 22, 0, 0)
-    
-    # Criar observador
-    observer = planets['earth'] + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elevation)
-    
-    # Mapeamento em português/inglês para os corpos do sistema solar no arquivo de efemérides
-    solar_system_map = {
-        'sun': 'sun',
-        'sol': 'sun',
-        'moon': 'moon',
-        'lua': 'moon',
-        'mercury': 'mercury barycenter',
-        'mercurio': 'mercury barycenter',
-        'venus': 'venus barycenter',
-        'mars': 'mars barycenter',
-        'marte': 'mars barycenter',
-        'jupiter': 'jupiter barycenter',
-        'saturn': 'saturn barycenter',
-        'saturno': 'saturn barycenter',
-        'uranus': 'uranus barycenter',
-        'urano': 'uranus barycenter',
-        'neptune': 'neptune barycenter',
-        'netuno': 'neptune barycenter',
-    }
-    
-    target_lower = target.lower()
-    distance_str = "N/A"
-    
-    if target_lower in solar_system_map:
-        body_name = solar_system_map[target_lower]
-        try:
-            target_body = planets[body_name]
-            astrometric = observer.at(t).observe(target_body)
-            apparent = astrometric.apparent()
-            ra, dec, distance = apparent.radec()
-            alt, az, _ = apparent.altaz()
-            distance_str = f"{distance.au:.6f} AU"
-        except Exception as e:
-            return jsonify({"status": "error", "message": f"Erro no cálculo do sistema solar: {str(e)}"}), 500
-    else:
-        # Tentar procurar no catálogo de objetos brilhantes do planeador
-        from app.planner.routes import CATALOG
-        found = None
-        for obj in CATALOG:
-            if target_lower in obj['name'].lower():
-                found = obj
-                break
-        
-        if found:
-            target_body = Star(ra_hours=found['ra'], dec_degrees=found['dec'])
-            try:
-                astrometric = observer.at(t).observe(target_body)
-                apparent = astrometric.apparent()
-                ra, dec, _ = apparent.radec()
-                alt, az, _ = apparent.altaz()
-            except Exception as e:
-                return jsonify({"status": "error", "message": f"Erro no cálculo do objeto estelar: {str(e)}"}), 500
-        else:
-            return jsonify({"status": "error", "message": f"Alvo '{target}' não encontrado no catálogo nem no sistema solar."}), 404
-            
-    return jsonify({
-        "status": "success",
-        "target": target,
-        "date": dt.strftime('%Y-%m-%d'),
-        "ra": str(ra),
-        "dec": str(dec),
-        "alt": f"{alt.degrees:.4f}°",
-        "az": f"{az.degrees:.4f}°",
-        "distance": distance_str
-    })
+    target_name = data.get('target', '').lower()
 
-@ephemeris_bp.route('/calculate_iss', methods=['POST'])
-@login_required
-def calculate_iss():
-    """Calcula a distância relativa em tempo real entre a ISS e um corpo do sistema solar."""
-    data = request.get_json() or {}
-    target = data.get('target', '').strip().lower()
-    
-    solar_system_map = {
-        'sun': 'sun',
-        'moon': 'moon',
-        'mars': 'mars barycenter',
-        'jupiter': 'jupiter barycenter',
-        'saturn': 'saturn barycenter'
-    }
-    
-    if target not in solar_system_map:
-        return jsonify({"status": "error", "message": "Alvo inválido para comparação com a ISS."}), 400
-        
+    # Usar localização do user ou defaults
+    loc = LocationService.get_current_location()
+    lat = loc.latitude
+    lon = loc.longitude
+    elev = loc.elevation
+    date_str = data.get('date', datetime.utcnow().strftime('%Y-%m-%d'))
+
+    body, body_type = get_body_object(target_name)
+    if not body:
+        return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400
+
     try:
-        # Dados TLE da ISS (Zarya) como fallback estático
-        line1 = '1 25544U 98067A   26179.80556713  .00016717  00000-0  10270-3 0  9011'
-        line2 = '2 25544  51.6428  22.3789 0005722 135.1234 225.8765 15.49876543 12345'
+        t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
+        observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=elev)
         
-        iss = EarthSatellite(line1, line2, 'ISS', ts)
-        t = ts.now()
-        
-        # Obter posições
-        target_body = planets[solar_system_map[target]]
-        iss_pos = planets['earth'] + iss
-        
-        # Calcular distância
-        diff = (target_body - iss_pos).at(t)
-        distance_au = diff.distance().au
-        
+        if body_type == 'satellite':
+            # Cálculo específico para satélites
+            difference = body - observer
+            topocentric = difference.at(t)
+            alt, az, distance = topocentric.altaz()
+        else:
+            # Cálculo para corpos celestes
+            astrometric = observer.at(t).observe(body)
+            alt, az, distance = astrometric.apparent().altaz()
+
         return jsonify({
-            "status": "success",
-            "distance_au": round(distance_au, 6)
+            'status': 'success',
+            'target': target_name,
+            'altitude': f'{alt.degrees:.2f}°',
+            'azimuth': f'{az.degrees:.2f}°',
+            'distance_km': f'{distance.km:.2f}' if body_type == 'satellite' else f'{distance.au:.4f} AU'
         })
     except Exception as e:
-        return jsonify({"status": "error", "message": f"Erro ao calcular distância da ISS: {str(e)}"}), 500
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@ephemeris_bp.route('/calculate-iss', methods=['POST'])
+@login_required
+def calculate_iss():
+    """Calcula a posição da ISS em relação a um corpo celeste."""
+    data = request.get_json() or {}
+    target_name = data.get('target', '').lower()
+    
+    target_map = {
+        'sun': 'sun', 'moon': 'moon', 'mars': 'mars',
+        'jupiter': 'jupiter barycenter', 'saturn': 'saturn barycenter'
+    }
+    
+    iss = get_iss()
+    if not iss or target_name not in target_map:
+        return jsonify({'status': 'error', 'message': 'ISS ou objeto não encontrado.'}), 400
+
+    try:
+        t = ts.now()
+        body = planets[target_map[target_name]]
+        iss_pos = iss.at(t).position.au
+        body_pos = body.at(t).position.au
+        
+        distance = sum((a - b)**2 for a, b in zip(iss_pos, body_pos))**0.5
+        
+        return jsonify({
+            'status': 'success',
+            'distance_au': f'{distance:.4f}'
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+def update_mpc_data():
+    """Descarrega dados de cometas do Minor Planet Center (MPC)."""
+    from skyfield.data import mpc
+    url = mpc.COMET_URL
+    try:
+        import requests
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            with open(os.path.join(DATA_PATH, 'comets_bright.txt'), 'wb') as f:
+                f.write(resp.content)
+            return True
+    except Exception as e:
+        print(f"Erro ao atualizar efemérides do MPC: {e}")
+    return False
+
+
+@ephemeris_bp.route('/update-ephemeris', methods=['POST'])
+@login_required
+def update_ephemeris():
+    """Atualiza ficheiros de efemérides, TLEs e dados de corpos menores."""
+    results = {
+        'ephem': False, 'tle': False, 'mpc': False
+    }
+    try:
+        load.download('de440.bsp')
+        load.download_delta_t()
+        load.download_iers()
+        results['ephem'] = True
+        
+        load.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
+        results['tle'] = True
+        
+        results['mpc'] = update_mpc_data()
+        
+        return jsonify({'status': 'success', 'results': results})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500

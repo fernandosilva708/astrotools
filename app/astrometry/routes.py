@@ -46,48 +46,33 @@ def submit(image_id):
     image = GalleryImage.query.get_or_404(image_id)
     mode = request.args.get('mode', 'offline')
     
+    # Verificar se a imagem já está a ser processada
+    if image.astrometry_job_id:
+        flash('Esta imagem já se encontra em processo de resolução.', 'warning')
+        return redirect(url_for('astrometry.index'))
+        
     if mode == 'online':
         api_key = current_user.astrometry_api_key or current_app.config.get('ASTROMETRY_API_KEY', '')
         if not api_key:
             flash('A chave de API da Astrometry.net não está configurada (verifique as Configurações).', 'danger')
             return redirect(url_for('astrometry.index'))
-        
-        # Iniciar processo online
-        try:
-            job_id = solve_online(image.filepath, api_key)
-            if job_id:
-                image.astrometry_job_id = job_id
-                # TODO: Implementar sistema de polling assíncrono para verificar o estado da tarefa
-                # e atualizar RA/DEC quando a resolução estiver concluída.
-                image.plate_solved = True 
-                db.session.commit()
-                flash(f'Tarefa de resolução online iniciada (Job: {job_id}).', 'success')
-            else:
-                flash('Falha ao enviar a imagem para o serviço online.', 'danger')
-        except Exception as e:
-            flash(f'Erro na comunicação com a API: {str(e)}', 'danger')
-            
-        return redirect(url_for('astrometry.index'))
+    else:
+        # ASTAP Offline
+        if not os.path.exists(image.filepath):
+            flash('Ficheiro de imagem não encontrado.', 'danger')
+            return redirect(url_for('astrometry.index'))
 
-    # ASTAP Offline
-    if not os.path.exists(image.filepath):
-        flash('Ficheiro de imagem não encontrado.', 'danger')
-        return redirect(url_for('astrometry.index'))
-
-    astap_path = current_app.config.get('ASTAP_CLI_PATH', '/usr/bin/astap_cli')
-    catalog_path = current_app.config.get('ASTAP_CATALOG_PATH', '/opt/astap/d80')
+    # Importar solver em background
+    from app.astrometry.solver import start_solving_thread
     
-    cmd = [astap_path, '-f', image.filepath, '-d', catalog_path, '-z', '2']
-    
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=480)
-        if result.returncode == 0:
-            image.plate_solved = True
-            db.session.commit()
-            flash(f'Resolução astrométrica offline concluída para "{image.filename}".', 'success')
+    success = start_solving_thread(current_app, image.id, mode=mode)
+    if success:
+        if mode == 'online':
+            flash('Tarefa de resolução online iniciada em segundo plano.', 'info')
         else:
-            flash(f'Falha na resolução astrométrica: {result.stderr}', 'danger')
-    except Exception as e:
-        flash(f'Erro ao executar ASTAP: {str(e)}', 'danger')
+            flash('Tarefa de resolução local (ASTAP) iniciada em segundo plano.', 'info')
+    else:
+        flash('Não foi possível iniciar a resolução astrométrica.', 'danger')
         
     return redirect(url_for('astrometry.index'))
+

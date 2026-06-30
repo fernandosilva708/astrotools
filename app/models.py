@@ -53,6 +53,8 @@ class User(UserMixin, db.Model):
     # Definições personalizadas do utilizador
     _astrometry_api_key = db.Column(db.String(256))
     telescopius_base_url = db.Column(db.String(256), default='https://telescopius.com')
+    avatar_filename = db.Column(db.String(256), nullable=True)
+
 
 
     @property
@@ -132,3 +134,18 @@ class Observation(db.Model):
 
     def __repr__(self):
         return f'<Observation {self.target}>'
+
+
+class CelestialObject(db.Model):
+    __tablename__ = 'celestial_objects'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), unique=True, nullable=False)
+    ra = db.Column(db.Float, nullable=False)  # Ascensão Reta em horas (formato float)
+    dec = db.Column(db.Float, nullable=False) # Declinação em graus (formato float)
+    category = db.Column(db.String(64), default='DSO') # DSO, Star, Planet, Comet, Asteroid
+    description = db.Column(db.Text)
+
+    def __repr__(self):
+        return f'<CelestialObject {self.name}>'
+

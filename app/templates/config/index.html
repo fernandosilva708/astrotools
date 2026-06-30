@@ -3,14 +3,41 @@
 {% block content %}
 <h1 data-i18n="nav_config">Configurações</h1>
 <article>
-    <form method="post" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
+    <form method="post" enctype="multipart/form-data" onsubmit="this.querySelector('button[type=submit]').setAttribute('aria-busy', 'true')">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
         <h3 data-i18n="config_profile">Perfil</h3>
-        <label>
-            <span data-i18n="config_username">Nome de utilizador</span>
-            <input type="text" name="username" value="{{ current_user.username }}">
-        </label>
+        <div class="grid" style="align-items: center; margin-bottom: 2rem;">
+            <div style="text-align: center;">
+                {% if current_user.avatar_filename %}
+                    <img src="{{ url_for('config.serve_avatar', filename=current_user.avatar_filename) }}" alt="Avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid var(--pico-primary-background);">
+                {% else %}
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--pico-primary-background); display: inline-flex; align-items: center; justify-content: center; font-size: 3rem; color: #fff; margin-bottom: 0.5rem;">
+                        {{ current_user.username[0]|upper }}
+                    </div>
+                {% endif %}
+                <label style="max-width: 250px; margin: 0 auto;">
+                    <span data-i18n="config_avatar">Alterar Avatar</span>
+                    <input type="file" name="avatar" accept="image/*" style="font-size: 0.8rem;">
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span data-i18n="config_username">Nome de utilizador</span>
+                    <input type="text" name="username" value="{{ current_user.username }}" required>
+                </label>
+                <label>
+                    <span>Email</span>
+                    <input type="email" name="email" value="{{ current_user.email or '' }}" required>
+                </label>
+            </div>
+        </div>
+
         <h3 data-i18n="config_change_password">Alterar Password</h3>
+        <label>
+            <span>Password Atual (Necessária para alterar password)</span>
+            <input type="password" name="current_password">
+        </label>
         <label>
             <span data-i18n="config_new_password">Nova Password</span>
             <input type="password" name="new_password">
@@ -20,6 +47,10 @@
         <label>
             <span data-i18n="config_api_astrometry">Astrometry.net API Key</span>
             <input type="text" name="astrometry_key" value="{{ current_user.astrometry_api_key or '' }}">
+        </label>
+        <label>
+            <span>Telescopius Base URL</span>
+            <input type="text" name="telescopius_url" value="{{ current_user.telescopius_base_url or 'https://telescopius.com' }}">
         </label>
         <label>
             <span data-i18n="config_seestar_path">Seestar Import Path</span>
@@ -64,3 +95,4 @@
     </form>
 </article>
 {% endblock %}
+

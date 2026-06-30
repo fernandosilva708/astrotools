@@ -85,7 +85,7 @@ Regista sessões de observação no diário.
 - [ ] **Integração de Coordenadas ASTAP:** Extrair dados do ficheiro `.wcs` para atualizar `image.ra` e `image.dec` na base de dados após o solve.
 - [ ] **Controlo Remoto do Seestar S50:** Substituir os stubs em `app/seestar.py` por lógica real do protocolo REST/Alpaca e integrar com a interface.
 - [ ] **Localização Dinâmica no Planeador:** Corrigir as coordenadas de latitude/longitude hardcoded no planeador de sessões para utilizar o `LocationService`.
-- [ ] Melhorar a UI da Galeria (filtros, paginação) — Filtros básicos já implementados.
-- [ ] Integração avançada entre Observações e Imagens.
+- [x] Melhorar a UI da Galeria (filtros, paginação) — Filtros avançados e paginação unificada implementados.
+- [x] Integração avançada entre Observações e Imagens.
 
 Trabalho de equipa. 🚀

@@ -67,6 +67,9 @@ def index():
 
     page = request.args.get('page', 1, type=int)
     query = request.args.get('q', '').strip()
+    solved_filter = request.args.get('solved', '').strip()
+    backup_filter = request.args.get('backup', '').strip()
+    target_filter = request.args.get('target', '').strip()
     per_page = 12
     
     base_query = GalleryImage.query.filter_by(user_id=current_user.id)
@@ -78,6 +81,19 @@ def index():
             (GalleryImage.filename.ilike(search)) |
             (GalleryImage.target_name.ilike(search))
         )
+        
+    if solved_filter == 'yes':
+        base_query = base_query.filter_by(plate_solved=True)
+    elif solved_filter == 'no':
+        base_query = base_query.filter_by(plate_solved=False)
+        
+    if backup_filter == 'yes':
+        base_query = base_query.filter_by(backup_status=True)
+    elif backup_filter == 'no':
+        base_query = base_query.filter_by(backup_status=False)
+        
+    if target_filter:
+        base_query = base_query.filter(GalleryImage.target_name.ilike(target_filter))
     
     pagination = base_query.order_by(GalleryImage.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
@@ -85,12 +101,25 @@ def index():
     images = pagination.items
     observations = Observation.query.filter_by(user_id=current_user.id).order_by(Observation.observed_at.desc()).all()
     
+    # Obter lista de targets únicos
+    targets_query = db.session.query(GalleryImage.target_name).filter(
+        GalleryImage.user_id == current_user.id,
+        GalleryImage.target_name.isnot(None),
+        GalleryImage.target_name != ""
+    ).distinct().all()
+    targets = [t[0] for t in targets_query]
+    
     return render_template('gallery/index.html', 
                            images=images, 
                            pagination=pagination,
                            search_query=query,
+                           solved_filter=solved_filter,
+                           backup_filter=backup_filter,
+                           target_filter=target_filter,
+                           targets=targets,
                            observations=observations,
                            ingest_status=ingest_status)
+
 
 
 @gallery_bp.route('/image/<path:filename>')

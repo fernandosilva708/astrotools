@@ -63,5 +63,43 @@ def seed():
             db.session.commit()
             print(f"Localização default definida para {default_loc.name}.")
 
+        # 3. Adicionar objetos celestes do catálogo (DSOs e Estrelas)
+        from app.models import CelestialObject
+        
+        objects_data = [
+            {"name": "M31", "ra": 0.712, "dec": 41.269, "category": "DSO", "description": "Galáxia de Andromeda"},
+            {"name": "M42", "ra": 5.588, "dec": -5.391, "category": "DSO", "description": "Nebulosa de Orion"},
+            {"name": "M45", "ra": 3.790, "dec": 24.117, "category": "DSO", "description": "Pleiades"},
+            {"name": "M13", "ra": 16.695, "dec": 36.460, "category": "DSO", "description": "Enxame de Hércules"},
+            {"name": "M51", "ra": 13.498, "dec": 47.195, "category": "DSO", "description": "Galáxia do Remoinho"},
+            {"name": "M81", "ra": 9.926, "dec": 69.065, "category": "DSO", "description": "Galáxia de Bode"},
+            {"name": "M27", "ra": 19.993, "dec": 22.721, "category": "DSO", "description": "Nebulosa do Haltere"},
+            {"name": "M57", "ra": 18.885, "dec": 33.029, "category": "DSO", "description": "Nebulosa do Anel"},
+            {"name": "M44", "ra": 8.667, "dec": 19.667, "category": "DSO", "description": "Enxame da Colmeia"},
+            {"name": "Polaris", "ra": 2.530, "dec": 89.264, "category": "Star", "description": "Estrela Polar"}
+        ]
+
+        for obj_info in objects_data:
+            obj = CelestialObject.query.filter_by(name=obj_info["name"]).first()
+            if not obj:
+                obj = CelestialObject(
+                    name=obj_info["name"],
+                    ra=obj_info["ra"],
+                    dec=obj_info["dec"],
+                    category=obj_info["category"],
+                    description=obj_info["description"]
+                )
+                db.session.add(obj)
+                db.session.commit()
+                print(f"Objeto {obj.name} adicionado ao catálogo.")
+            else:
+                obj.ra = obj_info["ra"]
+                obj.dec = obj_info["dec"]
+                obj.category = obj_info["category"]
+                obj.description = obj_info["description"]
+                db.session.commit()
+                print(f"Objeto {obj.name} atualizado.")
+
 if __name__ == "__main__":
     seed()
+

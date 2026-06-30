@@ -27,17 +27,16 @@
         <article style="width: 300px; border-left: 5px solid {% if obj.visible %}var(--pico-ins-color){% else %}var(--pico-del-color){% endif %}; flex-shrink: 0;">
             <header>
                 <h3 style="margin: 0; white-space: normal;">{{ obj.name }}</h3>
-            <h3 id="chartTitle" data-i18n="planner_altitude_chart">Altitude</h3>
-            ...
-                      <div>
-                          <small data-i18n="eph_elevation">Altitude</small><br>
-                          <strong>{{ obj.altitude }}</strong>
-                      </div>
-                      <div>
-                          <small data-i18n="eph_azimuth">Azimute</small><br>
-                          <strong>{{ obj.azimuth }}</strong>
-                      </div>
-
+            </header>
+            <div class="grid">
+                <div>
+                    <small data-i18n="eph_elevation">Altitude</small><br>
+                    <strong>{{ obj.altitude }}</strong>
+                </div>
+                <div>
+                    <small data-i18n="eph_azimuth">Azimute</small><br>
+                    <strong>{{ obj.azimuth }}</strong>
+                </div>
             </div>
             <div style="margin-top: 1rem; text-align: center;">
                 {% if obj.visible %}

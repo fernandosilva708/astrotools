@@ -1,8 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-only
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, send_from_directory
 from flask_login import login_required, current_user
 from app import db
 from app.models import AppConfig, Location, User
+from pathlib import Path
+import os
+from werkzeug.utils import secure_filename
 
 config_bp = Blueprint('config', __name__)
 
@@ -20,14 +23,39 @@ def index():
     if request.method == 'POST':
         # Atualizar Perfil
         current_user.username = request.form.get('username', current_user.username)
+        current_user.email = request.form.get('email', current_user.email)
         
+        # Tratar upload do avatar
+        avatar_file = request.files.get('avatar')
+        if avatar_file and avatar_file.filename != '':
+            safe_name = f"user_{current_user.id}_{secure_filename(avatar_file.filename)}"
+            avatar_dir = Path(current_app.root_path).parent / 'uploads' / 'avatars'
+            avatar_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Remover o avatar antigo se existir
+            if current_user.avatar_filename:
+                old_avatar_path = avatar_dir / current_user.avatar_filename
+                try:
+                    if old_avatar_path.exists():
+                        old_avatar_path.unlink()
+                except: pass
+                
+            avatar_filepath = avatar_dir / safe_name
+            avatar_file.save(avatar_filepath)
+            current_user.avatar_filename = safe_name
+            
         # Atualizar Password se fornecida
         new_password = request.form.get('new_password')
         if new_password:
+            current_password = request.form.get('current_password')
+            if not current_password or not current_user.check_password(current_password):
+                flash('A palavra-passe atual está incorreta. As alterações não foram gravadas.', 'danger')
+                return redirect(url_for('config.index'))
             current_user.set_password(new_password)
             
         # Atualizar APIs (Algumas no user, outras nas configs globais)
         current_user.astrometry_api_key = request.form.get('astrometry_key', current_user.astrometry_api_key)
+        current_user.telescopius_base_url = request.form.get('telescopius_url', current_user.telescopius_base_url)
         
         update_app_config('SEESTAR_IMPORT_PATH', request.form.get('seestar_path'))
         update_app_config('RCLONE_REMOTE', request.form.get('rclone_remote'))
@@ -52,3 +80,11 @@ def index():
     locations = Location.query.filter_by(user_id=current_user.id).all()
     configs = {c.key: c.value for c in AppConfig.query.all()}
     return render_template('config/index.html', locations=locations, configs=configs)
+
+@config_bp.route('/avatar/<path:filename>')
+@login_required
+def serve_avatar(filename):
+    """Serve as imagens de avatar carregadas."""
+    avatar_dir = Path(current_app.root_path).parent / 'uploads' / 'avatars'
+    return send_from_directory(avatar_dir, filename)
+
