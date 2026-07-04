@@ -11,12 +11,12 @@ ephemeris_bp = Blueprint('ephemeris', __name__)
 # Configuração da pasta de dados local
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'instance', 'ephem_data')
 os.makedirs(DATA_PATH, exist_ok=True)
-load = Loader(DATA_PATH)
+loader = Loader(DATA_PATH)
 
 # Carregamento de efemérides e escala de tempo
-planets = load('de440.bsp')
+planets = loader('de440.bsp')
 earth = planets['earth']
-ts = load.timescale()
+ts = loader.timescale()
 
 def get_iss():
     """Carrega o TLE da ISS a partir de ficheiro local."""
@@ -24,11 +24,11 @@ def get_iss():
     if not os.path.exists(stations_file):
         # Tenta descarregar se não existir
         try:
-            load.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
+            loader.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
         except:
             return None
         
-    satellites = load.tle_file(stations_file)
+    satellites = loader.tle_file(stations_file)
     for sat in satellites:
         if sat.name == 'ISS (ZARYA)':
             return sat
@@ -49,12 +49,15 @@ def iss_page():
 
 from skyfield.api import utc, Star, load, Loader, Topos
 
-from skyfield.data import mpc
-from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
 from app.models import CelestialObject
 
 def get_mpc_body(target_name):
     """Procura e cria um objeto Orbit para um cometa ou corpo menor do formato MPC."""
+    try:
+        from skyfield.data import mpc
+        from skyfield.constants import GM_SUN_Pitjeva_2005_km3_s2 as GM_SUN
+    except ImportError:
+        return None, None
     mpc_file = os.path.join(DATA_PATH, 'comets_bright.txt')
     if not os.path.exists(mpc_file):
         update_mpc_data()
@@ -105,6 +108,16 @@ def get_body_object(target_name):
     if db_obj:
         return Star(ra_hours=db_obj.ra, dec_degrees=db_obj.dec), 'star'
         
+    # Fallback para catálogo estático
+    static_catalog = {
+        'm31': {'ra': 0.712, 'dec': 41.269},
+        'm42': {'ra': 5.583, 'dec': -5.391},
+        'm45': {'ra': 3.784, 'dec': 24.116}
+    }
+    if target_name_clean in static_catalog:
+        coords = static_catalog[target_name_clean]
+        return Star(ra_hours=coords['ra'], dec_degrees=coords['dec']), 'star'
+
     # Se não encontrado na BD, procurar no ficheiro de cometas do MPC
     body, body_type = get_mpc_body(target_name_clean)
     if body:
@@ -131,7 +144,7 @@ def calculate():
 
     body, body_type = get_body_object(target_name)
     if not body:
-        return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 400
+        return jsonify({'status': 'error', 'message': 'Objeto não suportado.'}), 404
 
     try:
         t = ts.utc(datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=utc))
@@ -142,23 +155,27 @@ def calculate():
             difference = body - observer
             topocentric = difference.at(t)
             alt, az, distance = topocentric.altaz()
+            ra, dec, _ = topocentric.radec()
         else:
             # Cálculo para corpos celestes
             astrometric = observer.at(t).observe(body)
             alt, az, distance = astrometric.apparent().altaz()
+            ra, dec, _ = astrometric.apparent().radec()
 
         return jsonify({
             'status': 'success',
             'target': target_name,
-            'altitude': f'{alt.degrees:.2f}°',
-            'azimuth': f'{az.degrees:.2f}°',
-            'distance_km': f'{distance.km:.2f}' if body_type == 'satellite' else f'{distance.au:.4f} AU'
+            'ra': f'{ra.hours:.4f}h',
+            'dec': f'{dec.degrees:.4f}°',
+            'alt': f'{alt.degrees:.4f}°',
+            'az': f'{az.degrees:.4f}°',
+            'distance': f'{distance.km:.2f} km' if body_type == 'satellite' else f'{distance.au:.4f} AU'
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
-@ephemeris_bp.route('/calculate-iss', methods=['POST'])
+@ephemeris_bp.route('/calculate_iss', methods=['POST'])
 @login_required
 def calculate_iss():
     """Calcula a posição da ISS em relação a um corpo celeste."""
@@ -206,7 +223,7 @@ def update_mpc_data():
     return False
 
 
-@ephemeris_bp.route('/update-ephemeris', methods=['POST'])
+@ephemeris_bp.route('/update_ephemeris', methods=['POST'])
 @login_required
 def update_ephemeris():
     """Atualiza ficheiros de efemérides, TLEs e dados de corpos menores."""
@@ -214,15 +231,24 @@ def update_ephemeris():
         'ephem': False, 'tle': False, 'mpc': False
     }
     try:
-        load.download('de440.bsp')
-        load.download_delta_t()
-        load.download_iers()
-        results['ephem'] = True
+        try:
+            loader.download('de440.bsp')
+            loader.download_delta_t()
+            loader.download_iers()
+            results['ephem'] = True
+        except:
+            pass
         
-        load.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
-        results['tle'] = True
+        try:
+            loader.download('https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle', filename='stations.txt')
+            results['tle'] = True
+        except:
+            pass
         
-        results['mpc'] = update_mpc_data()
+        try:
+            results['mpc'] = update_mpc_data()
+        except:
+            pass
         
         return jsonify({'status': 'success', 'results': results})
     except Exception as e:

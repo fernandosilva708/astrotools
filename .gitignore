@@ -33,3 +33,8 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/
+
+# Gemini CLI and scratch settings
+.gemini/
+scratch/
+

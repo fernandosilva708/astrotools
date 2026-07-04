@@ -82,9 +82,9 @@ Regista sessões de observação no diário.
 - [x] **Módulo de Meteorologia:** Previsões específicas para astronomia via Open-Meteo.
 - [x] **Gráficos de visibilidade no Planeador:** Gráfico de altitude dinâmica via Chart.js.
 - [x] **Módulo de Efemérides:** Implementar o blueprint e rotas em `app/ephemeris/routes.py` que estão em falta e impedem o arranque da aplicação.
-- [ ] **Integração de Coordenadas ASTAP:** Extrair dados do ficheiro `.wcs` para atualizar `image.ra` e `image.dec` na base de dados após o solve.
-- [ ] **Controlo Remoto do Seestar S50:** Substituir os stubs em `app/seestar.py` por lógica real do protocolo REST/Alpaca e integrar com a interface.
-- [ ] **Localização Dinâmica no Planeador:** Corrigir as coordenadas de latitude/longitude hardcoded no planeador de sessões para utilizar o `LocationService`.
+- [x] **Integração de Coordenadas ASTAP:** Extrair dados do ficheiro `.wcs` para atualizar `image.ra` e `image.dec` na base de dados após o solve.
+- [x] **Controlo Remoto do Seestar S50:** Substituir os stubs em `app/seestar.py` por lógica real do protocolo REST/Alpaca e integrar com a interface.
+- [x] **Localização Dinâmica no Planeador:** Corrigir as coordenadas de latitude/longitude hardcoded no planeador de sessões para utilizar o `LocationService`.
 - [x] Melhorar a UI da Galeria (filtros, paginação) — Filtros avançados e paginação unificada implementados.
 - [x] Integração avançada entre Observações e Imagens.
 

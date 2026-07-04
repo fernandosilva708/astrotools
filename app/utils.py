@@ -20,7 +20,6 @@ class LocationService:
         return FallbackLocation()
 
 def safe_get(url, params=None, timeout=10):
-# ... (rest of the file)
     """Executa um pedido GET de forma segura com tratamento de erros padronizado."""
     try:
         response = http.get(url, params=params, timeout=timeout)
