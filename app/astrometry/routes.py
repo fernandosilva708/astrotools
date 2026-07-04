@@ -46,6 +46,12 @@ def submit(image_id):
     image = GalleryImage.query.get_or_404(image_id)
     mode = request.args.get('mode', 'offline')
     
+    # Verificar se já existe alguma resolução em curso
+    any_running = GalleryImage.query.filter(GalleryImage.astrometry_job_id.isnot(None)).first()
+    if any_running:
+        flash('Já existe uma em curso.', 'warning')
+        return redirect(url_for('astrometry.index'))
+
     # Verificar se a imagem já está a ser processada
     if image.astrometry_job_id:
         flash('Esta imagem já se encontra em processo de resolução.', 'warning')

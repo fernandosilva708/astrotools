@@ -16,17 +16,17 @@
             <div class="grid">
                 <label>
                     <span data-i18n="eph_lat">Latitude</span>
-                    <input type="number" id="lat" step="0.0001" placeholder="38.7169">
+                    <input type="number" id="lat" step="0.0001" value="{{ loc.latitude }}">
                 </label>
                 <label>
                     <span data-i18n="eph_lon">Longitude</span>
-                    <input type="number" id="lon" step="0.0001" placeholder="-9.1395">
+                    <input type="number" id="lon" step="0.0001" value="{{ loc.longitude }}">
                 </label>
             </div>
             <div class="grid">
                 <label>
                     <span data-i18n="eph_elevation">Altitude (m)</span>
-                    <input type="number" id="elevation" value="0">
+                    <input type="number" id="elevation" value="{{ loc.elevation }}">
                 </label>
                 <label>
                     <span data-i18n="eph_date">Data</span>
@@ -79,16 +79,55 @@ document.getElementById('ephemerisForm').addEventListener('submit', async (e) =>
     elevation: parseFloat(document.getElementById('elevation').value) || 0,
     date: document.getElementById('date').value,
   };
-  const res = await fetch('{{ url_for("ephemeris.calculate") }}', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify(body),
-  });
-  const data = await res.json();
-  document.getElementById('results').innerHTML = `<pre><code>${JSON.stringify(data, null, 2)}</code></pre>`;
+  
+  const resultsDiv = document.getElementById('results');
+  try {
+      const res = await fetch('{{ url_for("ephemeris.calculate") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.status === 200 && data.status === 'success') {
+          resultsDiv.innerHTML = `
+            <table class="striped">
+              <tbody>
+                <tr>
+                  <td><strong>${t('eph_target')}</strong></td>
+                  <td>${data.target.toUpperCase()}</td>
+                </tr>
+                <tr>
+                  <td><strong>${t('obs_ra')}</strong></td>
+                  <td>${data.ra}</td>
+                </tr>
+                <tr>
+                  <td><strong>${t('obs_dec')}</strong></td>
+                  <td>${data.dec}</td>
+                </tr>
+                <tr>
+                  <td><strong>${t('eph_elevation')}</strong></td>
+                  <td>${data.alt}</td>
+                </tr>
+                <tr>
+                  <td><strong>${t('eph_azimuth')}</strong></td>
+                  <td>${data.az}</td>
+                </tr>
+                <tr>
+                  <td><strong>${t('eph_distance')}</strong></td>
+                  <td>${data.distance}</td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+      } else {
+          resultsDiv.innerHTML = `<p class="alert alert-warning" data-i18n="eph_no_ephemeris">${t('eph_no_ephemeris')}</p>`;
+      }
+  } catch (err) {
+      resultsDiv.innerHTML = `<p class="alert alert-warning" data-i18n="eph_no_ephemeris">${t('eph_no_ephemeris')}</p>`;
+  }
 });
 </script>
 {% endblock %}

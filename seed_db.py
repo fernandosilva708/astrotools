@@ -30,7 +30,15 @@ def seed():
             {"name": "Buenos Aires", "lat": -34.6037, "lon": -58.3816, "elev": 25},
             {"name": "Luanda", "lat": -8.8368, "lon": 13.2343, "elev": 73},
             {"name": "Póvoa de Santa Iria", "lat": 38.8610, "lon": -9.0645, "elev": 20},
-            {"name": "Moimenta da Beira", "lat": 40.9851, "lon": -7.6177, "elev": 697}
+            {"name": "Moimenta da Beira", "lat": 40.9851, "lon": -7.6177, "elev": 697},
+            {"name": "Porto", "lat": 41.1579, "lon": -8.6291, "elev": 83},
+            {"name": "Coimbra", "lat": 40.2033, "lon": -8.4103, "elev": 100},
+            {"name": "Faro", "lat": 37.0179, "lon": -7.9308, "elev": 8},
+            {"name": "Évora", "lat": 38.5714, "lon": -7.9096, "elev": 279},
+            {"name": "Funchal (Madeira)", "lat": 32.6500, "lon": -16.9080, "elev": 98},
+            {"name": "Ponta Delgada (Açores)", "lat": 37.7412, "lon": -25.6756, "elev": 45},
+            {"name": "Observatório Alqueva", "lat": 38.2667, "lon": -7.5333, "elev": 200},
+            {"name": "Serra da Estrela (Torre)", "lat": 40.3218, "lon": -7.6129, "elev": 1993}
         ]
 
         default_loc = None

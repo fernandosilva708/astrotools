@@ -47,7 +47,7 @@
             </div>
             <footer style="margin-top: 1rem;">
                 <div class="grid">
-                    <button class="outline" onclick="showChart('{{ obj.name }}')" data-i18n="planner_altitude_chart" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Gráfico</button>
+                    <button class="outline btn-chart" data-object="{{ obj.name }}" data-i18n="planner_altitude_chart" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Gráfico</button>
                     <a href="{{ url_for('observations.add', target=obj.name) }}" role="button" class="outline contrast" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-i18n="planner_log_btn">Registar</a>
                 </div>
             </footer>
@@ -65,7 +65,7 @@ async function showChart(objName) {
     title.innerText = `${t('planner_altitude_chart')}: ${objName}`;
     modal.showModal();
     
-    const response = await fetch(`/planner/chart/${objName}`);
+    const response = await fetch(`/planner/chart/${encodeURIComponent(objName)}`);
     const data = await response.json();
     
     const ctx = document.getElementById('altitudeChart').getContext('2d');
@@ -98,5 +98,14 @@ async function showChart(objName) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.btn-chart').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showChart(this.getAttribute('data-object'));
+        });
+    });
+});
 </script>
 {% endblock %}

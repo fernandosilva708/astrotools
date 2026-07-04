@@ -11,6 +11,7 @@ function setLanguage(lang) {
         localStorage.setItem('language', lang);
         applyTranslations();
         document.documentElement.lang = lang;
+        location.reload();
     }
 }
 

@@ -38,7 +38,9 @@ def get_iss():
 @ephemeris_bp.route('/')
 @login_required
 def index():
-    return render_template('ephemeris/index.html')
+    from app.utils import LocationService
+    loc = LocationService.get_current_location()
+    return render_template('ephemeris/index.html', loc=loc)
 
 
 @ephemeris_bp.route('/iss')
