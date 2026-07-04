@@ -9,18 +9,19 @@ echo "--- AstroTools: Iniciando configuração para Raspberry Pi ---"
 
 # 1. Instalar dependências do sistema
 echo "Instalando dependências do sistema..."
-sudo apt update
-sudo apt install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev wget unzip
+sudo apt-get update
+sudo apt-get install -y python3-venv python3-dev python3-pip build-essential libffi-dev libssl-dev rclone libopenjp2-7 libtiff6 libjpeg-dev libopenblas-dev wget unzip
 
 # 1.1 Instalar ASTAP CLI e Catálogo
 echo "Instalando ASTAP CLI e catálogo D80..."
-sudo apt update
-sudo apt install -y astap-cli
+sudo apt-get install -y astap-cli || echo "Aviso: Não foi possível instalar astap-cli via apt, poderá ser necessário instalar manualmente."
 
 # Instalar catálogo D80 (copiar da pasta local)
 echo "Instalando catálogo D80..."
 sudo mkdir -p /opt/astap/d80
-sudo cp -r D80/* /opt/astap/d80/
+if [ -d "D80" ]; then
+    sudo cp -r D80/* /opt/astap/d80/
+fi
 
 # 2. Criar e configurar o .env
 echo "Configurando .env..."
@@ -44,11 +45,8 @@ source venv/bin/activate
 
 # Garantir que o pip existe dentro do venv
 if ! python3 -m pip --version > /dev/null 2>&1; then
-    echo "Pip não encontrado no venv, tentando instalar com ensurepip..."
-    python3 -m ensurepip || {
-        echo "ensurepip falhou, tentando baixar get-pip.py..."
-        curl -sS https://bootstrap.pypa.io/get-pip.py | python3
-    }
+    echo "Pip não encontrado no venv, tentando instalar..."
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python3
 fi
 
 # 3. Instalar dependências Python
